@@ -10,4 +10,4 @@ game.state.add('play', playState);
 // call the boot boot
 game.state.start('boot');
 
-// try to push
+// try to push 2

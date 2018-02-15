@@ -23,8 +23,8 @@
 
 
 var playState = {
-		
-		
+		 // Global variables declaration
+		// Instantiate and assign game objects
     create: function () {
         
         this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player1');

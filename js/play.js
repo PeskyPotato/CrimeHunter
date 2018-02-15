@@ -23,7 +23,11 @@
 
 
 var playState = {
-		 // Global variables declaration
+		// Global variables declaration
+    player: null, 
+    enemies: null,
+    enemy: null,
+  
 		// Instantiate and assign game objects
     create: function () {
         
@@ -33,8 +37,8 @@ var playState = {
         this.player.anchor.setTo(0.2, 0.2);
         this.player.scale.setTo(1, 1);
         
-       // this.player.animations.add('run');   wait for image
-       // this.player.animations.play('run', 10, true);   wait for image
+        this.player.animations.add('run');   
+        this.player.animations.play('run', 10, true); 
        
        //game.camera.follow(this.player);  //wait for big map
       
@@ -52,11 +56,18 @@ var playState = {
          this.handgun.trackSprite(this.player, 14, 0);   
         
         fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+      	// Enemy
+	      this.enemies = game.add.group();
+	      this.enemies.add(Enemy(250, 250));
+	      this.enemies.forEach(function(enemy, index){
+		      game.physics.enable(enemy,Phaser.Physics.ARCADE);
+		      enemy.body.immovable = true;
+	      });
     },
 
+    // Anything that needs to be checked
+    // Collisions, user input etc...
     update: function () {
-    	
-    	
     	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
     		this.player.x -= 4;
         }
@@ -73,13 +84,28 @@ var playState = {
         if (fireButton.isDown){
             this.handgun.fire();
         }
-
+	     //Enemy update
+    	 this.enemies.forEach(function(enemy, index){
+         enemy.update();
+	     });
+	game.physics.arcade.overlap(this.player, this.enemies, this.decreaseHealth, null, this);
+	game.physics.arcade.overlap(this.handgun, this.enemies, this.increaseScore, null, this);
+	    
     }
-
 };
 
 function render() {
     game.debug.spriteInfo(player, 20, 32);
     this.handgun.debug();
  
+}
+
+// Helper functions go below
+function Enemy(x, y){
+	var enemy = game.add.sprite(x, y, 'enemy'); //x=480 y=360
+	//enemy.speed= 7000;
+	enemy.update= function(){	
+		enemy.body.velocity.y=-50;
+	}
+	return enemy;
 }

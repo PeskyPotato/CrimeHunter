@@ -88,6 +88,9 @@ var playState = {
     	 this.enemies.forEach(function(enemy, index){
          enemy.update();
 	     });
+	game.physics.arcade.overlap(this.player, this.enemies, this.decreaseHealth, null, this);
+	game.physics.arcade.overlap(this.handgun, this.enemies, this.increaseScore, null, this);
+	    
     }
 };
 

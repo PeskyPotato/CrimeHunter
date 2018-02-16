@@ -44,7 +44,6 @@ var playState = {
         game.camera.y = game.world.centerY;
         game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-
        // this.player.animations.add('run');   wait for image
        // this.player.animations.play('run', 10, true);   wait for image
 

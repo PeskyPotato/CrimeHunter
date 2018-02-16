@@ -110,6 +110,10 @@ var playState = {
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(){
         console.log("hit");
       }, null, this);
+      game.physics.arcade.overlap(this.player, this.enemies, function(){
+        console.log("crash!");
+      }, null, this);
+
     }
 };
 

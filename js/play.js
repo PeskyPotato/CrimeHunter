@@ -35,7 +35,7 @@ var playState = {
        
         game.physics.enable(this.player, Phaser.Physics.ARCADE);
         this.player.anchor.setTo(0.2, 0.2);
-        this.player.scale.setTo(1, 1);
+        this.player.scale.setTo(2,2);
         
        // this.player.animations.add('run');   wait for image
        // this.player.animations.play('run', 10, true);   wait for image

@@ -66,7 +66,8 @@ var playState = {
 
         // Enemy
 	      this.enemies = game.add.group();
-	      this.enemies.add(Enemy(270, 23900));
+	      this.enemies.add(Enemy(270, 23900)); 
+		  this.enemies.add(Enemy(200,23900));
 	      this.enemies.forEach(function(enemy, index){
 		      game.physics.enable(enemy,Phaser.Physics.ARCADE);
 		      enemy.body.immovable = true;
@@ -107,11 +108,20 @@ var playState = {
       // game.physics.arcade.overlap(this.player, this.enemies, this.decreaseHealth, null, this);
       // game.physics.arcade.overlap(this.handgun, this.enemies, this.increaseScore, null, this);
 
-      game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(){
+      game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         console.log("hit");
+		e.stop();
+		b.kill();
+		
+		
+		//this.enemies.kill();
+		
       }, null, this);
-      game.physics.arcade.overlap(this.player, this.enemies, function(){
+      game.physics.arcade.overlap(this.player, this.enemies, function(p,e){
         console.log("crash!");
+		e.stop();
+		
+		
       }, null, this);
 
     }
@@ -154,10 +164,25 @@ function Player(x, y) {
 function Enemy(x, y){
 	var enemy = game.add.sprite(x, y, 'enemy'); //x=480 y=360
 	//enemy.speed= 7000;
-	enemy.update= function(){
-
-		enemy.body.velocity.y=-50;
+	enemy.xDest = x;
+	enemy.yDest = y;
+	
+	enemy.goToXY = function(x, y){
+		enemy.xDest = x;
+		enemy.yDest = y
 	}
+	
+	enemy.update= function(){	
+		this.speed = 40;
+		this.goToXY(this.x, this.y - 100);
+		//enemy.body.velocity.y=-50;
+		move(this);
+	}
+	enemy.stop = function(){
+		this.kill();
+	}
+
+	
 	return enemy;
 }
 

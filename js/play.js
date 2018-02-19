@@ -52,8 +52,6 @@ var playState = {
        // fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         //this.player.body.collideWorldBounds = true;
 
-
-
         this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
         this.handgun.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
         this.handgun.bulletAngleOffset = 90;
@@ -65,13 +63,25 @@ var playState = {
         fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
         // Enemy
-	      this.enemies = game.add.group();
-	      this.enemies.add(Enemy(270, 23900));
-		  this.enemies.add(Enemy(200,23900));
-	      this.enemies.forEach(function(enemy, index){
-		      game.physics.enable(enemy,Phaser.Physics.ARCADE);
-		      enemy.body.immovable = true;
-	      });
+	this.enemies = game.add.group();
+	this.enemies.add(Enemy(270, 23900));
+	this.enemies.add(Enemy(200,23900));
+	this.enemies.forEach(function(enemy, index){
+		game.physics.enable(enemy,Phaser.Physics.ARCADE);
+		enemy.body.immovable = true;
+	});
+	this.enemies.enableBody = true;
+
+	// Civil Cars (Random Cars)
+   	this.civils = game.add.group();	
+	this.civils.enableBody = true;
+	var yAx = 23700;
+	var numberOfRandomCars = 600;
+	for (var y=0; y < numberOfRandomCars; y++) {
+		var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'civil');
+		yAx -= 100;
+	}
+	    
     },
 
     // Anything that needs to be checked
@@ -108,21 +118,35 @@ var playState = {
       // game.physics.arcade.overlap(this.player, this.enemies, this.decreaseHealth, null, this);
       // game.physics.arcade.overlap(this.handgun, this.enemies, this.increaseScore, null, this);
 
+
+     game.physics.arcade.collide(this.player, this.enemies, function(p,e){
+        console.log("crash!"); });
+
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         console.log("hit");
 		e.stop();
 		b.kill();
 
-
 		//this.enemies.kill();
 
       }, null, this);
-      game.physics.arcade.overlap(this.player, this.enemies, function(p,e){
-        console.log("crash!");
-		e.stop();
 
-
+      game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
+        console.log("hit");
+		c.kill();
+	      	b.kill();
       }, null, this);
+
+      game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
+        console.log("hit");
+	      	c.kill();
+      }, null, this);
+
+      game.physics.arcade.overlap(this.player, this.civils, function(p,c){
+        console.log("hit");
+	      	c.kill();
+      }, null, this);
+
 
     }
 };

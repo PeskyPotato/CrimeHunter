@@ -158,6 +158,10 @@ function Enemy(x, y){
 
 		enemy.body.velocity.y=-50;
 	}
+
+  enemy.remove = function() {
+
+  }
 	return enemy;
 }
 

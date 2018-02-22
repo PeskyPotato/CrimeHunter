@@ -10,7 +10,8 @@ var loadState={
     game.load.image('player1', 'assets/player.png');
     game.load.image('enemy', 'assets/badguy.png');
     game.load.image('bullet', 'assets/bullet.png');
-
+    game.load.spritesheet('characters', 'assets/Spritesheet.png', 38, 64);
+    
     game.load.tilemap('level', 'assets/map/Level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tiles', 'assets/map/TilesetRoad1.png');
   },

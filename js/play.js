@@ -126,7 +126,7 @@ var playState = {
         console.log("crash! Player + Enemy"); });
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
-        console.log("hit");
+        console.log("hit! Bullet + Enemy");
 		e.stop();
 		b.kill();
 
@@ -135,18 +135,18 @@ var playState = {
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
-        console.log("hit");
+        console.log("hit! Bullet + Civil");
 		c.kill();
 	      	b.kill();
       }, null, this);
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
-        console.log("hit");
+        console.log("crash! Enemy + Civil");
 	      	c.kill();
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
-        console.log("hit");
+        console.log("crash! Enemy + Civil");
 	      	c.kill();
       }, null, this);
 
@@ -162,8 +162,11 @@ function render() {
 
 // Helper functions go below
 function Player(x, y) {
-  var player = game.add.sprite(x, y, 'player1');
+  var player = game.add.sprite(x, y, 'characters');
 
+  player.frame = 0;
+  player.animations.add('running', [0, 1, 2, 3], 4);
+  player.animations.add('runningShoot', [4, 5, 6, 7], 4);
   player.speed = 60; //80
   player.xDest = x;
   player.yDest = y;

@@ -181,6 +181,7 @@ function Player(x, y) {
     move(this);
     game.camera.x = this.x - 150;
     game.camera.y = this.y - 300;
+    this.animations.play('runningShoot');
   };
 
   player.stop = function() {
@@ -192,8 +193,10 @@ function Player(x, y) {
 };
 
 function Enemy(x, y){
-	var enemy = game.add.sprite(x, y, 'enemy'); //x=480 y=360
+	var enemy = game.add.sprite(x, y, 'characters'); //x=480 y=360
 	//enemy.speed= 7000;
+	enemy.frame = 8;
+	
 	enemy.xDest = x;
 	enemy.yDest = y;
 

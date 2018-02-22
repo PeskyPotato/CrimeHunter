@@ -65,8 +65,8 @@ var playState = {
 
         // Enemy
 	this.enemies = game.add.group();
-	this.enemies.add(Enemy(270, 23900));
-	this.enemies.add(Enemy(200,23900));
+	this.enemies.add(Enemy(200, 23900));
+	this.enemies.add(Enemy(200,23800));
 	this.enemies.forEach(function(enemy, index){
 		game.physics.enable(enemy,Phaser.Physics.ARCADE);
 		enemy.body.immovable = true;
@@ -79,7 +79,8 @@ var playState = {
 	var yAx = 23700;
 	var numberOfRandomCars = 600;
 	for (var y=0; y < numberOfRandomCars; y++) {
-		var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'civil');
+		var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'characters');
+		car.frame = 16;
 		yAx -= 100;
 	}
 

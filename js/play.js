@@ -27,6 +27,7 @@ var playState = {
     player: null,
     enemies: null,
     enemy: null,
+    bulletNum: null,
 
 		// Instantiate and assign game objects
     create: function () {
@@ -40,8 +41,8 @@ var playState = {
 
         //this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player1');
         this.player = new Player(300, 24000);
-        //game.camera.x = game.world.centerX;
-        //game.camera.y = game.world.centerY;
+        game.camera.x = game.world.centerX;
+        game.camera.y = game.world.centerY;
         game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
        // this.player.animations.add('run');   wait for image
@@ -58,14 +59,14 @@ var playState = {
         this.handgun.bulletSpeed = 400;
         //sprite = this.add.sprite(250, 250, 'player1');  //???
         game.physics.arcade.enable(this.player);
-        this.handgun.trackSprite(this.player, 0, 0);
+        this.handgun.trackSprite(this.player, 14, 0);
 
         fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
         // Enemy
 	this.enemies = game.add.group();
-	this.enemies.add(Enemy(200, 23900));
-	this.enemies.add(Enemy(200,23800));
+	this.enemies.add(Enemy(270, 23900));
+	this.enemies.add(Enemy(200,23900));
 	this.enemies.forEach(function(enemy, index){
 		game.physics.enable(enemy,Phaser.Physics.ARCADE);
 		enemy.body.immovable = true;
@@ -73,14 +74,13 @@ var playState = {
 	this.enemies.enableBody = true;
 
 	// Civil Cars (Random Cars)
-  this.civils = game.add.group();
+   	this.civils = game.add.group();
 	this.civils.enableBody = true;
 	var yAx = 23700;
 	var numberOfRandomCars = 600;
 	for (var y=0; y < numberOfRandomCars; y++) {
-	 var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'characters');
-   car.frame = 16;
-   yAx -= 100;
+		var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'civil');
+		yAx -= 100;
 	}
 
     },
@@ -91,11 +91,11 @@ var playState = {
       // Keyboard controls
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
     		//this.player.x -= 2;
-        this.player.setDest(this.player.x - 10, this.player.y - 10);
+        this.player.setDest(this.player.x - 10, this.player.y);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
         //this.player.x += 4;
-        this.player.setDest(this.player.x + 10, this.player.y -10);
+        this.player.setDest(this.player.x + 10, this.player.y);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         //this.player.y -=4;
@@ -106,11 +106,11 @@ var playState = {
         this.player.setDest(this.player.x, this.player.y + 10);
       }
 
-
       if (fireButton.isDown){
           this.handgun.fire();
-          this.player.animations.play('runningShoot');
+
       }
+
 	    //Enemy update
       this.enemies.forEach(function(enemy, index){
         enemy.update();
@@ -122,28 +122,31 @@ var playState = {
 
 
      game.physics.arcade.collide(this.player, this.enemies, function(p,e){
-        console.log("crash! Player + Enemy"); });
+        console.log("crash!"); });
 
-     game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
-        console.log("hit! Bullet + Enemy");
-		      e.stop();
-		      b.kill();
+      game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
+        console.log("hit");
+		e.stop();
+		b.kill();
+
+		//this.enemies.kill();
+
       }, null, this);
 
-     game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
-        console.log("hit! Bullet + Civil");
-		    c.kill();
-	      b.kill();
+      game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
+        console.log("hit");
+		c.kill();
+	      	b.kill();
       }, null, this);
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
-        console.log("crash! Enemy + Civil");
-	      c.kill();
+        console.log("hit");
+	      	c.kill();
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
-        console.log("crash! Enemy + Civil");
-	      c.kill();
+        console.log("hit");
+	      	c.kill();
       }, null, this);
 
 
@@ -158,11 +161,7 @@ function render() {
 
 // Helper functions go below
 function Player(x, y) {
-  var player = game.add.sprite(x, y, 'characters');
-
-  player.frame = 0;
-  player.animations.add('running', [0, 1, 2, 3], 4);
-  player.animations.add('runningShoot', [4, 5, 6, 7], 4);
+  var player = game.add.sprite(x, y, 'player1');
 
   player.speed = 60; //80
   player.xDest = x;
@@ -178,8 +177,6 @@ function Player(x, y) {
     move(this);
     game.camera.x = this.x - 150;
     game.camera.y = this.y - 300;
-
-    this.animations.play('runningShoot');
   };
 
   player.stop = function() {
@@ -191,10 +188,8 @@ function Player(x, y) {
 };
 
 function Enemy(x, y){
-	var enemy = game.add.sprite(x, y, 'characters'); //x=480 y=360
+	var enemy = game.add.sprite(x, y, 'enemy'); //x=480 y=360
 	//enemy.speed= 7000;
-  enemy.frame = 8;
-
 	enemy.xDest = x;
 	enemy.yDest = y;
 
@@ -232,4 +227,12 @@ function move(self){
   } else if (Math.floor(self.y) > Math.floor(self.yDest)) {
     self.body.velocity.y = -self.speed;
   }
+}
+
+function playerFrame(numB) {
+  // control bullet bar
+  var bulletBar = document.getElementsByClassName("numBullet");
+  var bar = document.getElementsByClassName("nBullet");
+  var barWidth = (numB / 1000) * 100;
+  bar.css('width', barWidth + "%");
 }

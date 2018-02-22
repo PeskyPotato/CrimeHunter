@@ -92,11 +92,11 @@ var playState = {
       // Keyboard controls
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
     		//this.player.x -= 2;
-        this.player.setDest(this.player.x - 10, this.player.y);
+        this.player.setDest(this.player.x - 10, this.player.y - 10);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
         //this.player.x += 4;
-        this.player.setDest(this.player.x + 10, this.player.y);
+        this.player.setDest(this.player.x + 10, this.player.y - 10);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         //this.player.y -=4;
@@ -109,7 +109,7 @@ var playState = {
 
       if (fireButton.isDown){
           this.handgun.fire();
-
+	  this.player.animations.play('runningShoot');
       }
 
 	    //Enemy update
@@ -123,7 +123,7 @@ var playState = {
 
 
      game.physics.arcade.collide(this.player, this.enemies, function(p,e){
-        console.log("crash!"); });
+        console.log("crash! Player + Enemy"); });
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         console.log("hit");

@@ -27,7 +27,6 @@ var playState = {
     player: null,
     enemies: null,
     enemy: null,
-    bulletNum: null,
 
 		// Instantiate and assign game objects
     create: function () {
@@ -45,6 +44,11 @@ var playState = {
         game.camera.y = game.world.centerY;
         game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
+        this.player.healthText = game.add.text(0, 10, "Health " + this.player.health, { font: "20px", fill: "#ffffff", align: "center" });
+        this.player.healthText.fixedToCamera = true;
+
+        this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
+        this.player.scoreText.fixedToCamera = true;
        // this.player.animations.add('run');   wait for image
        // this.player.animations.play('run', 10, true);   wait for image
 
@@ -108,8 +112,8 @@ var playState = {
       }
 
       if (fireButton.isDown){
-          this.handgun.fire();
-	  this.player.animations.play('runningShoot');
+        this.handgun.fire();
+        this.player.animations.play('runningShoot');
       }
 
 	    //Enemy update
@@ -121,33 +125,40 @@ var playState = {
       // game.physics.arcade.overlap(this.player, this.enemies, this.decreaseHealth, null, this);
       // game.physics.arcade.overlap(this.handgun, this.enemies, this.increaseScore, null, this);
 
-
-     game.physics.arcade.collide(this.player, this.enemies, function(p,e){
-        console.log("crash! Player + Enemy"); });
+      game.physics.arcade.collide(this.player, this.enemies, function(p,e){
+        console.log("crash! Player + Enemy");
+        p.health = p.health - 1;
+        p.healthText.setText("Health " + p.health);
+      });
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         console.log("hit! Bullet + Enemy");
-		e.stop();
-		b.kill();
-
-		//this.enemies.kill();
-
+        e.stop();
+        b.kill();
+        //this.enemies.kill();
+        this.player.score = this.player.score + 5;
+        this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
         console.log("hit! Bullet + Civil");
-		c.kill();
-	      	b.kill();
+        c.kill();
+        b.kill();
+        this.player.score = this.player.score - 5;
+        this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         console.log("crash! Enemy + Civil");
-	      	c.kill();
+        c.kill();
+        
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
         console.log("crash! Enemy + Civil");
-	      	c.kill();
+        c.kill();
+        p.health = p.health - 5;
+        p.healthText.setText("Health " + p.health);
       }, null, this);
 
 
@@ -171,6 +182,12 @@ function Player(x, y) {
   player.xDest = x;
   player.yDest = y;
   player.anchor.setTo(.5, 1);
+
+  player.health = 50;
+  player.healthText = null;
+
+  player.score = 0;
+  player.scoreText = null;
 
   player.setDest = function (x, y) {
     player.xDest = x;
@@ -196,7 +213,7 @@ function Enemy(x, y){
 	var enemy = game.add.sprite(x, y, 'characters'); //x=480 y=360
 	//enemy.speed= 7000;
 	enemy.frame = 8;
-	
+
 	enemy.xDest = x;
 	enemy.yDest = y;
 

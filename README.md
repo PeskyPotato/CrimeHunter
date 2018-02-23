@@ -1,6 +1,23 @@
 # CodeFarmer
 [![Join the chat at https://gitter.im/_CodeFarmer/Lobby](https://badges.gitter.im/_CodeFarmer/Lobby.svg)](https://gitter.im/_CodeFarmer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+## Prototype
+[YouTube Demo](https://www.youtube.com/watch?v=Vm7XSoXGqyI)
+
+### Running the game
+To run the game a local host must be created, one of the ways to do this is through python.
+
+Clone the repository using:
+`git clone https://github.com/LameLemon/CodeFarmer.git`
+
+For Python2 run the following command in the CodeFarmer folder:
+`python -m SimpleHTTPServer`
+For Python3 run the following command in the CodeFarmer folder:
+`python3 -m http.server`
+
+Both of these commands create a simple webserver in the CodeFarmer directory using the loopback IP on port 8000.
+To play the game open your browser and type in `127.0.0.1:8000`.
+
 ## Project Description
 
 ### Minimal Viable Product
@@ -24,26 +41,10 @@
 * I want to be able to save my game progress.
 
 ## Team Roles
-* [Darasy Reth](https://github.com/darasy) - Game Objects/Graphics, Animation and Sound
-* [Yizhou](https://github.com/sunyizhou) - Game Environment/Game Objects
-* [Gary Dos Santos](https://github.com/LameLemon) - In-Game Physics/Code Review
+* [Darasy Reth](https://github.com/darasy) - Game Objects Movements / Code Review
+* [Yizhou](https://github.com/sunyizhou) - Game Environment / Game Objects
+* [Gary Dos Santos](https://github.com/LameLemon) - In-Game Physics / Code Review / Graphics, Animation and Sound
 * [Lin](https://github.com/linlinlin3) - Game Environment/Graphics, Animation and Sound
-* [Jiayi Zheng](https://github.com/JiayiZheng) - In-Game Physics/Game Objects
+* [Jiayi Zheng](https://github.com/JiayiZheng) - In-Game Physics / Game Objects / Game Environment
 
-### Role Descriptions
-* In-Game Physics:
-  * Bullet mechanics
-  * Handling collisions between vehicles
-  * Sliding on turns
-* Game Objects:
-  * Creating game object and properties (i.e. User health, co-ordinate location etc...)
-  * Tracking and updating movements on screen (in coordination with animation)
-  * Link graphics and animation to relevant object
-* Game Environment:
-  * Orchestrate NPC movements during gameplay (avoid crashes as much as possible)
-  * Setup vehicles, road conditions etc...
-* Graphics, Animation and Sound
-  * Works in coordination with Game objects to display appropriate vehicles
-  * Rendering frames that is supported by the browser
-  * Animate movements of vehicles smoothly
-  * Sound design and application during gameplay
+More information on the team roles can be found on the [Wiki](https://github.com/LameLemon/CodeFarmer/wiki/Team-Roles)

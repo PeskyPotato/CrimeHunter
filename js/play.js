@@ -63,25 +63,25 @@ var playState = {
       fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
       // Enemy
-	this.enemies = game.add.group();
-	this.enemies.add(Enemy(200, 23900));
-	this.enemies.add(Enemy(200,23800));
-	this.enemies.forEach(function(enemy, index){
-		game.physics.enable(enemy,Phaser.Physics.ARCADE);
-		enemy.body.immovable = true;
-	});
-	this.enemies.enableBody = true;
+      this.enemies = game.add.group();
+      this.enemies.add(Enemy(200, 23900));
+      this.enemies.add(Enemy(200,23800));
+      this.enemies.forEach(function(enemy, index){
+        game.physics.enable(enemy,Phaser.Physics.ARCADE);
+        enemy.body.immovable = true;
+      });
+      this.enemies.enableBody = true;
 
-	// Civil Cars (Random Cars)
-   	this.civils = game.add.group();
-	this.civils.enableBody = true;
-	var yAx = 23700;
-	var numberOfRandomCars = 600;
-	for (var y=0; y < numberOfRandomCars; y++) {
-		var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'characters');
-		car.frame = 16;
-		yAx -= 100;
-	}
+      // Civil Cars (Random Cars)
+      this.civils = game.add.group();
+      this.civils.enableBody = true;
+      var yAx = 23700;
+      var numberOfRandomCars = 600;
+      for (var y=0; y < numberOfRandomCars; y++) {
+        var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'characters');
+        car.frame = 16;
+        yAx -= 100;
+      }
 
     },
 

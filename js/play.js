@@ -38,55 +38,50 @@ var playState = {
       this.layer = map.createLayer('Tile Layer 1');
       game.world.setBounds(0, 0, 480, 24000);
 
-        //this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player1');
-        this.player = new Player(300, 24000);
-        game.camera.x = game.world.centerX;
-        game.camera.y = game.world.centerY;
-        game.physics.enable(this.player, Phaser.Physics.ARCADE);
+      //this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player1');
+      this.player = new Player(300, 24000);
+      game.camera.x = game.world.centerX;
+      game.camera.y = game.world.centerY;
+      game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-        this.player.healthText = game.add.text(0, 10, "Health " + this.player.health, { font: "20px", fill: "#ffffff", align: "center" });
-        this.player.healthText.fixedToCamera = true;
+      this.player.healthText = game.add.text(0, 10, "Health " + this.player.health, { font: "20px", fill: "#ffffff", align: "center" });
+      this.player.healthText.fixedToCamera = true;
 
-        this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
-        this.player.scoreText.fixedToCamera = true;
-       // this.player.animations.add('run');   wait for image
-       // this.player.animations.play('run', 10, true);   wait for image
+      this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
+      this.player.scoreText.fixedToCamera = true;
 
-       game.camera.follow(this.player);  //wait for big map
+      // fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+      //this.player.body.collideWorldBounds = true;
 
-       // fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        //this.player.body.collideWorldBounds = true;
+      this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
+      this.handgun.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+      this.handgun.bulletAngleOffset = 90;
+      this.handgun.bulletSpeed = 400;
+      game.physics.arcade.enable(this.player);
+      this.handgun.trackSprite(this.player, 14, 0);
 
-        this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
-        this.handgun.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-        this.handgun.bulletAngleOffset = 90;
-        this.handgun.bulletSpeed = 400;
-        //sprite = this.add.sprite(250, 250, 'player1');  //???
-        game.physics.arcade.enable(this.player);
-        this.handgun.trackSprite(this.player, 14, 0);
+      fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
-        fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+      // Enemy
+      this.enemies = game.add.group();
+      this.enemies.add(Enemy(200, 23900));
+      this.enemies.add(Enemy(200,23800));
+      this.enemies.forEach(function(enemy, index){
+        game.physics.enable(enemy,Phaser.Physics.ARCADE);
+        enemy.body.immovable = true;
+      });
+      this.enemies.enableBody = true;
 
-        // Enemy
-	this.enemies = game.add.group();
-	this.enemies.add(Enemy(200, 23900));
-	this.enemies.add(Enemy(200,23800));
-	this.enemies.forEach(function(enemy, index){
-		game.physics.enable(enemy,Phaser.Physics.ARCADE);
-		enemy.body.immovable = true;
-	});
-	this.enemies.enableBody = true;
-
-	// Civil Cars (Random Cars)
-   	this.civils = game.add.group();
-	this.civils.enableBody = true;
-	var yAx = 23700;
-	var numberOfRandomCars = 600;
-	for (var y=0; y < numberOfRandomCars; y++) {
-		var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'characters');
-		car.frame = 16;
-		yAx -= 100;
-	}
+      // Civil Cars (Random Cars)
+      this.civils = game.add.group();
+      this.civils.enableBody = true;
+      var yAx = 23700;
+      var numberOfRandomCars = 600;
+      for (var y=0; y < numberOfRandomCars; y++) {
+        var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'characters');
+        car.frame = 16;
+        yAx -= 100;
+      }
 
     },
 
@@ -110,10 +105,14 @@ var playState = {
         //this.player.y += 4;
         this.player.setDest(this.player.x, this.player.y + 10);
       }
-
       if (fireButton.isDown){
         this.handgun.fire();
         this.player.animations.play('runningShoot');
+      }
+
+      // Mouse contorls
+      if (game.input.activePointer.isDown) {
+        this.player.setDest(game.input.x, game.input.y);
       }
 
 	    //Enemy update
@@ -151,7 +150,7 @@ var playState = {
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         console.log("crash! Enemy + Civil");
         c.kill();
-        
+
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
@@ -161,7 +160,10 @@ var playState = {
         p.healthText.setText("Health " + p.health);
       }, null, this);
 
-
+      game.physics.arcade.collide(this.player, this.layer, function(p, l){
+        p.stop();
+        console.log("side of road");
+      });
     }
 };
 
@@ -236,20 +238,20 @@ function Enemy(x, y){
 	return enemy;
 }
 
-function move(self){
-  if (Math.floor(self.x / 10) == Math.floor(self.xDest / 10)) {
-    self.body.velocity.x = 0;
-  } else if (Math.floor(self.x) < Math.floor(self.xDest)) {
-    self.body.velocity.x = self.speed;
-  } else if (Math.floor(self.x) > Math.floor(self.xDest)) {
-    self.body.velocity.x = -self.speed;
+function move(b){
+  if (Math.floor(b.x / 10) == Math.floor(b.xDest / 10)) {
+    b.body.velocity.x = 0;
+  } else if (Math.floor(b.x) < Math.floor(b.xDest)) {
+    b.body.velocity.x = b.speed;
+  } else if (Math.floor(b.x) > Math.floor(b.xDest)) {
+    b.body.velocity.x = -b.speed;
   }
-  if (Math.floor(self.y / 10) == Math.floor(self.yDest / 10)) {
-    self.body.velocity.y = 0;
-  } else if (Math.floor(self.y) < Math.floor(self.yDest)) {
-    self.body.velocity.y = self.speed;
-  } else if (Math.floor(self.y) > Math.floor(self.yDest)) {
-    self.body.velocity.y = -self.speed;
+  if (Math.floor(b.y / 10) == Math.floor(b.yDest / 10)) {
+    b.body.velocity.y = 0;
+  } else if (Math.floor(b.y) < Math.floor(b.yDest)) {
+    b.body.velocity.y = b.speed;
+  } else if (Math.floor(b.y) > Math.floor(b.yDest)) {
+    b.body.velocity.y = -b.speed;
   }
 }
 

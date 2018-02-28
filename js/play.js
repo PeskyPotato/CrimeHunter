@@ -21,7 +21,7 @@
  *
  */
 
-
+var k = 0;
 var playState = {
 		// Global variables declaration
     player: null,
@@ -74,14 +74,23 @@ var playState = {
 
       // Civil Cars (Random Cars)
       this.civils = game.add.group();
-      this.civils.enableBody = true;
-      var yAx = 23700;
-      var numberOfRandomCars = 600;
-      for (var y=0; y < numberOfRandomCars; y++) {
-        var car = this.civils.create(game.rnd.integerInRange(170, 290), yAx, 'characters');
-        car.frame = 16;
-        yAx -= 100;
-      }
+
+    	this.civils.enableBody = true;
+    	var y = 23700;     // Y Axis for the first car location; X Axis is defined randomly below
+    	var numberOfRandomCars = 600;  // Number of random cars
+      var lanes = [185, 265];// 185 middle left, 265 middle right
+    	for (var i=0; i < numberOfRandomCars; i++) {
+        var x = lanes[Math.floor(Math.random()*lanes.length)];
+    		var car = this.civils.create(x, y, 'characters');
+        car.xDest = x;
+        car.yDest = 0;
+        car.update = function() {
+          this.speed = 30;
+          move(this);
+        };
+    		car.frame = 16;
+    		y -= 150;
+    	}
 
     },
 
@@ -123,6 +132,25 @@ var playState = {
       this.player.update();
       // game.physics.arcade.overlap(this.player, this.enemies, this.decreaseHealth, null, this);
       // game.physics.arcade.overlap(this.handgun, this.enemies, this.increaseScore, null, this);
+
+      // Civil's Car Movement Update
+      if (k==300) {         // Use counting instead of timing where the larger makes it rarely move
+        this.civils.forEach(function(car){
+          var moveOrNot = [false, true];
+          var moveCar = moveOrNot[Math.floor(Math.random()*moveOrNot.length)];
+          if (moveCar == true) {
+            if (car.xDest==185) {
+              car.xDest = 265;
+            } else {
+              car.xDest = 185;
+            }
+          }
+          car.update();
+        });
+        k = 0;
+      }
+      k++;
+
 
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
         console.log("crash! Player + Enemy");

@@ -74,6 +74,7 @@ var playState = {
 
       // Civil Cars (Random Cars)
       this.civils = game.add.group();
+
     	this.civils.enableBody = true;
     	var y = 23700;     // Y Axis for the first car location; X Axis is defined randomly below
     	var numberOfRandomCars = 600;  // Number of random cars

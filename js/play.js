@@ -22,6 +22,7 @@
  */
 
 var k = 0;
+var m= 0;
 var playState = {
 		// Global variables declaration
     player: null,
@@ -64,13 +65,30 @@ var playState = {
 
       // Enemy
       this.enemies = game.add.group();
-      this.enemies.add(Enemy(200, 23900));
-      this.enemies.add(Enemy(200,23800));
+      this.enemies.add(Enemy(210,23900));
+      this.enemies.add(Enemy(250,23800));
+	  this.enemies.add(Enemy(270,23700));
+      this.enemies.add(Enemy(230,23600));
+	  this.enemies.add(Enemy(220,23500));
+      this.enemies.add(Enemy(290,23400));
+	  this.enemies.add(Enemy(240,24300));
+      this.enemies.add(Enemy(220,24200));
+	  this.enemies.add(Enemy(230,24100));
+      this.enemies.add(Enemy(220,24500));
+	  this.enemies.add(Enemy(250,24950));
+      this.enemies.add(Enemy(290,25860));
+	  this.enemies.add(Enemy(210,25770));
+      this.enemies.add(Enemy(250,25810));
+	  this.enemies.add(Enemy(230,25390));
+      this.enemies.add(Enemy(210,25670));
+
+	  
       this.enemies.forEach(function(enemy, index){
         game.physics.enable(enemy,Phaser.Physics.ARCADE);
         enemy.body.immovable = true;
       });
       this.enemies.enableBody = true;
+	  
 
       // Civil Cars (Random Cars)
       this.civils = game.add.group();
@@ -150,6 +168,24 @@ var playState = {
         k = 0;
       }
       k++;
+	  
+	  if(m==200){
+	          this.enemies.forEach(function(enemy){
+          var moving = [false, true];
+          var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
+          if (moveEnemy == true) {
+            if (enemy.xDest==210) {
+             enemy.xDest = 265;
+            } else {
+              enemy.xDest = 185;
+            }
+          }
+          enemy.update();
+        });
+        m = 0;
+      }
+      m++;
+	  
 
 
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
@@ -261,6 +297,10 @@ function Enemy(x, y){
 	enemy.stop = function(){
 		this.kill();
 	}
+	
+	
+		
+
 
 
 	return enemy;

@@ -98,22 +98,25 @@ var playState = {
     // Collisions, user input etc...
     update: function () {
       // Keyboard controls
-      if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-    		//this.player.x -= 2;
-        this.player.setDest(this.player.x - 10, this.player.y - 10);
+      if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
+        this.player.setDest(this.player.x - 23, this.player.y - 23);
       }
-      else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-        //this.player.x += 4;
-        this.player.setDest(this.player.x + 10, this.player.y - 10);
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
+        this.player.setDest(this.player.x + 23, this.player.y - 23);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
-        //this.player.y -=4;
-        this.player.setDest(this.player.x, this.player.y -15);
+        this.player.setDest(this.player.x, this.player.y - 15);
+      }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+        this.player.setDest(this.player.x - 23, this.player.y + 23);
+      }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+        this.player.setDest(this.player.x + 23, this.player.y + 23);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)){
-        //this.player.y += 4;
-        this.player.setDest(this.player.x, this.player.y + 10);
+        this.player.setDest(this.player.x, this.player.y + 23);
       }
+
       if (fireButton.isDown){
         this.handgun.fire();
         this.player.animations.play('runningShoot');

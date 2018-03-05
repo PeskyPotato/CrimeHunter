@@ -27,7 +27,7 @@ var playState = {
     player: null,
     enemies: null,
     enemy: null,
-
+    addhealth:null,
 		// Instantiate and assign game objects
     create: function () {
 
@@ -54,15 +54,35 @@ var playState = {
       //this.player.body.collideWorldBounds = true;
 
       this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
-      this.handgun.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+
       this.handgun.bulletAngleOffset = 90;
       this.handgun.bulletSpeed = 400;
+      this.handgun.fireRate =2000;
       game.physics.arcade.enable(this.player);
-      this.handgun.trackSprite(this.player, 14, 0);
-
+      this.handgun.trackSprite(this.player, -2, -80);
+      this.handgun.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
+        this.ultskill = game.add.weapon(1, 'ultskill');    // ammo 1
+        this.ultskill.bulletAngleOffset = 90;
+        this.ultskill.bulletSpeed = 400;
+        this.ultskill.fireRate =8000;
+        this.ultskill.trackSprite(this.player, -2, -80);
+        this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
+        ultskillButton = this.input.keyboard.addKey(Phaser.KeyCode.Z);
+        //ultskill cooldown shows
+        this.player.skillText = game.add.text(0, 50, "Unique skill : 1 hit / 8 sec  (press z)", { font: "20px", fill: "#ffffff", align: "centre" });
+        this.player.skillText.fixedToCamera = true;
+
+        this.addhealth = game.add.sprite(game.world.centerX+100, game.world.centerY+100, 'addhealth');
+        game.physics.enable(this.addhealth, Phaser.Physics.ARCADE);
+
+
+
+       
+
       // Enemy
+
       this.enemies = game.add.group();
       this.enemies.add(Enemy(200, 23900));
       this.enemies.add(Enemy(200,23800));
@@ -116,7 +136,17 @@ var playState = {
       }
       if (fireButton.isDown){
         this.handgun.fire();
-        this.player.animations.play('runningShoot');
+          this.player.animations.play('runningShoot');
+      }
+        if (ultskillButton.isDown){
+            this.ultskill.fire();
+            this.player.animations.play('runningShoot');
+        }
+
+
+        // Mouse contorls
+      if (game.input.activePointer.isDown) {
+        this.player.setDest(game.input.x, game.input.y);
       }
 
       // Mouse contorls
@@ -174,6 +204,25 @@ var playState = {
         this.player.score = this.player.score - 5;
         this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
+
+        game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
+            console.log("hit! Bullet + Enemy");
+            e.stop();
+
+            //this.enemies.kill();
+            this.player.score = this.player.score + 5;
+            this.player.scoreText.setText("Score " + this.player.score);
+        }, null, this);
+
+
+        game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
+            console.log("hit! Bullet + Civil");
+            c.kill();
+
+            this.player.score = this.player.score - 5;
+            this.player.scoreText.setText("Score " + this.player.score);
+        }, null, this);
+
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         console.log("crash! Enemy + Civil");
@@ -262,7 +311,6 @@ function Enemy(x, y){
 		this.kill();
 	}
 
-
 	return enemy;
 }
 
@@ -290,3 +338,6 @@ function playerFrame(numB) {
   var barWidth = (numB / 1000) * 100;
   bar.css('width', barWidth + "%");
 }
+
+
+

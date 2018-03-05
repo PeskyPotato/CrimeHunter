@@ -54,6 +54,7 @@ var playState = {
       //this.player.body.collideWorldBounds = true;
 
       this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
+
       this.handgun.bulletAngleOffset = 90;
       this.handgun.bulletSpeed = 400;
       this.handgun.fireRate =2000;
@@ -78,7 +79,10 @@ var playState = {
 
 
 
-        // Enemy
+       
+
+      // Enemy
+
       this.enemies = game.add.group();
       this.enemies.add(Enemy(200, 23900));
       this.enemies.add(Enemy(200,23800));
@@ -141,6 +145,11 @@ var playState = {
 
 
         // Mouse contorls
+      if (game.input.activePointer.isDown) {
+        this.player.setDest(game.input.x, game.input.y);
+      }
+
+      // Mouse contorls
       if (game.input.activePointer.isDown) {
         this.player.setDest(game.input.x, game.input.y);
       }

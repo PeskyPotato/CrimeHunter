@@ -22,9 +22,11 @@
  */
 
 var k = 0;
+
 var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
+var m =0;
 
 var playState = {
 		// Global variables declaration
@@ -96,8 +98,13 @@ var playState = {
       // Enemy
 
       this.enemies = game.add.group();
-      this.enemies.add(Enemy(200, 23900));
-      this.enemies.add(Enemy(200,23800));
+      this.enemies.add(Enemy(200, 23800));
+	  this.enemies.add(Enemy(200, 23950));
+	  this.enemies.add(Enemy(200, 23700));
+	  this.enemies.add(Enemy(170, 23600));
+	  this.enemies.add(Enemy(180, 23500));
+
+	  
       this.enemies.forEach(function(enemy, index){
         game.physics.enable(enemy,Phaser.Physics.ARCADE);
         enemy.body.immovable = true;
@@ -194,6 +201,24 @@ var playState = {
         k = 0;
       }
       k++;
+	  
+	  
+	        if (m==60) {         // Use counting instead of timing where the larger makes it rarely move
+        this.enemies.forEach(function(enemy){
+          var moving = [false, true];
+          var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
+          if (moveEnemy == true) {
+            if (enemy.xDest==200) {
+              enemy.xDest = 265;
+            } else {
+              enemy.xDest = 200;
+            }
+          }
+          enemy.update();
+        });
+        m = 0;
+      }
+      m++;
 
 
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
@@ -310,16 +335,14 @@ function Enemy(x, y){
 	enemy.frame = 8;
 
 	enemy.xDest = x;
-	enemy.yDest = y;
+	enemy.yDest = 0;
 
-	enemy.goToXY = function(x, y){
+	enemy.goToXY = function(x){
 		enemy.xDest = x;
-		enemy.yDest = y
 	}
 
 	enemy.update= function(){
-		this.speed = 40;
-		this.goToXY(this.x, this.y - 100);
+		this.speed = 30;
 		//enemy.body.velocity.y=-50;
 		move(this);
 	}

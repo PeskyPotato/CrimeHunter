@@ -22,7 +22,12 @@
  */
 
 var k = 0;
+
+var sound;  // Game music
+var epsound; // Explosion sound
+var gsound; // Shotgun sound
 var m =0;
+
 var playState = {
 		// Global variables declaration
     player: null,
@@ -38,6 +43,14 @@ var playState = {
       map.setCollision([10, 8]);
       this.layer = map.createLayer('Tile Layer 1');
       game.world.setBounds(0, 0, 480, 24000);
+
+      // Sound
+      // Game Music
+      sound = game.add.audio('gmusic');
+      sound.play();
+      // Explosion Sound
+      epsound = game.add.audio('boom');
+      gsound = game.add.audio('gunshot');
 
       //this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player1');
       this.player = new Player(300, 24000);
@@ -80,7 +93,7 @@ var playState = {
 
 
 
-       
+
 
       // Enemy
 
@@ -143,10 +156,12 @@ var playState = {
       if (fireButton.isDown){
         this.handgun.fire();
           this.player.animations.play('runningShoot');
+          gsound.play();
       }
         if (ultskillButton.isDown){
             this.ultskill.fire();
             this.player.animations.play('runningShoot');
+            gsound.play();
         }
 
 
@@ -214,6 +229,7 @@ var playState = {
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         console.log("hit! Bullet + Enemy");
+        epsound.play();
         e.stop();
         b.kill();
         //this.enemies.kill();
@@ -223,6 +239,7 @@ var playState = {
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
         console.log("hit! Bullet + Civil");
+        epsound.play();
         c.kill();
         b.kill();
         this.player.score = this.player.score - 5;
@@ -232,7 +249,6 @@ var playState = {
         game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
             console.log("hit! Bullet + Enemy");
             e.stop();
-
             //this.enemies.kill();
             this.player.score = this.player.score + 5;
             this.player.scoreText.setText("Score " + this.player.score);
@@ -250,12 +266,13 @@ var playState = {
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         console.log("crash! Enemy + Civil");
+        epsound.play();
         c.kill();
-
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
         console.log("crash! Enemy + Civil");
+        epsound.play();
         c.kill();
         p.health = p.health - 5;
         p.healthText.setText("Health " + p.health);
@@ -360,6 +377,3 @@ function playerFrame(numB) {
   var barWidth = (numB / 1000) * 100;
   bar.css('width', barWidth + "%");
 }
-
-
-

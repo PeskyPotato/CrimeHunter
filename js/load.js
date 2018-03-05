@@ -18,6 +18,12 @@ var loadState={
     game.load.image('tiles', 'assets/map/TilesetRoad1.png');
 
     game.load.image('title', 'assets/TitleScreen.png');
+
+    // Preload the music
+    // Phaser Examples
+    game.load.audio('gmusic', 'assets/Chinese Dream.mp3');
+    game.load.audio('boom', 'assets/explode1.wav');
+    game.load.audio('gunshot', 'assets/shotgun.wav');
   },
   // Called after preload
   create: function() {

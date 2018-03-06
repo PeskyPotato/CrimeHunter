@@ -124,7 +124,7 @@ var playState = {
         car.xDest = x;
         car.yDest = 0;
         car.update = function() {
-          this.speed = 30;
+          this.speed = 50;
           move(this);
         };
     		car.frame = 16;
@@ -137,22 +137,25 @@ var playState = {
     // Collisions, user input etc...
     update: function () {
       // Keyboard controls
-      if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-    		//this.player.x -= 2;
-        this.player.setDest(this.player.x - 10, this.player.y - 10);
+      if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
+        this.player.setDest(this.player.x - 30, this.player.y - 30);
       }
-      else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-        //this.player.x += 4;
-        this.player.setDest(this.player.x + 10, this.player.y - 10);
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
+        this.player.setDest(this.player.x + 30, this.player.y - 30);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
-        //this.player.y -=4;
-        this.player.setDest(this.player.x, this.player.y -15);
+        this.player.setDest(this.player.x, this.player.y - 38);
+      }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+        this.player.setDest(this.player.x - 25, this.player.y + 25);
+      }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+        this.player.setDest(this.player.x + 25, this.player.y + 25);
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)){
-        //this.player.y += 4;
-        this.player.setDest(this.player.x, this.player.y + 10);
+        this.player.setDest(this.player.x, this.player.y + 23);
       }
+
       if (fireButton.isDown){
         this.handgun.fire();
           this.player.animations.play('runningShoot');
@@ -298,7 +301,7 @@ function Player(x, y) {
   player.frame = 0;
   player.animations.add('running', [0, 1, 2, 3], 4);
   player.animations.add('runningShoot', [4, 5, 6, 7], 4);
-  player.speed = 60; //80
+  player.speed = 200; //80
   player.xDest = x;
   player.yDest = y;
   player.anchor.setTo(.5, 1);
@@ -342,7 +345,9 @@ function Enemy(x, y){
 	}
 
 	enemy.update= function(){
-		this.speed = 30;
+		this.speed = 180;
+		this.goToXY(this.x, this.y - 100);
+
 		//enemy.body.velocity.y=-50;
 		move(this);
 	}

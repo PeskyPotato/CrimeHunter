@@ -8,18 +8,30 @@ titleState = {
   // Start menu to be implemented
   create: function() {
 
-    console.log(localStorage.getItem("highScore"));
+    // console.log(localStorage.getItem("highScore") + " :");
+    //
+    // if (localStorage.getItem("highScore") === null){
+    //   console.log("here");
+    //   var score = [];
+    //   var myJSON = JSON.stringify(score);
+    //   localStorage.setItem("highScore", myJSON);
+    // }
+    //
+    // console.log(localStorage.getItem("highScore"));
+    //
+    // titleAction();
 
-    if (localStorage.getItem("highScore") == null){
+    var s = localStorage.getItem("highScore");
+
+    if (!s) {
+      console.log("1");
       var score = [];
       var myJSON = JSON.stringify(score);
       localStorage.setItem("highScore", myJSON);
+      titleAction();
+    } else {
+      titleAction();
     }
-
-    console.log(localStorage.getItem("highScore"));
-
-    titleAction();
-
 
   },
   // Input listener for menu

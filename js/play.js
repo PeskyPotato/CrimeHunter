@@ -64,7 +64,7 @@ var playState = {
       //Instantiate score to 0
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
-      p.push("0")
+      p.push("0");
       localStorage.setItem("highScore", JSON.stringify(p));
       this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;

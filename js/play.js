@@ -12,7 +12,7 @@ var playState = {
     enemies: null,
     enemy: null,
     addhealth:null,
-    
+
 		// Instantiate and assign game objects
     create: function () {
       // World variables
@@ -20,8 +20,10 @@ var playState = {
       var playerX = 300;
       var playerY = 3150;
       var civY = 3100;
-      var lane1 = 180;
-      var lane2 = 275;
+      var lane1 = 110;
+      var lane2 = 180;
+      var lane3 = 275;
+      var lane4 = 335;
       var civNumber = 100;
 
       // Tilemap
@@ -105,12 +107,12 @@ var playState = {
     	this.civils.enableBody = true;
     	var y = civY;
     	var numberOfRandomCars = civNumber;
-      var lanes = [lane1, lane2];
+      var lanes = [lane1, lane2, lane3, lane4];
     	for (var i=0; i < numberOfRandomCars; i++) {
         var x = lanes[Math.floor(Math.random()*lanes.length)];
     		var car = this.civils.create(x, y, 'characters');
         car.xDest = x;
-        car.yDest = 0;
+        car.yDest = -200;
         car.update = function() {
           this.speed = 50;
           move(this);
@@ -176,10 +178,9 @@ var playState = {
           var moveOrNot = [false, true];
           var moveCar = moveOrNot[Math.floor(Math.random()*moveOrNot.length)];
           if (moveCar == true) {
-            if (car.xDest==185) {
-              car.xDest = 265;
-            } else {
-              car.xDest = 185;
+            var lanes = [110, 180, 275, 325];
+            if (lanes.includes(car.xDest)) {
+              car.xDest = lanes[Math.floor(Math.random()*lanes.length)];
             }
           }
           car.update();

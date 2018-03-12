@@ -1,32 +1,10 @@
-/**
- * Credit the source:
- *
- *  Title: <Fire Rate>
- *  Author: <photonstorm>
- *  Date: <3 Jun 2016>
- *  Code version: <2.10.0>
- *  Availability: <http://phaser.io/examples/v2/weapon/fire-rate>
- *
- *  Title: <Starstruck>
- *  Author: <photonstorm>
- *  Date: <9 Apr 2014>
- *  Code version: <2.10.0>
- *  Availability: <http://phaser.io/examples/v2/games/starstruck>
- *
- *  Title: <Defender>
- *  Author: <photonstorm>
- *  Date: <15 Apr 2016>
- *  Code version: <2.10.0>
- *  Availability: <http://phaser.io/examples/v2/games/defender>
- *
- */
 
-var k = 0;
-
+var k = 0; // k and m: Use counting instead of timing where the larger makes it rarely move
+var m =0;
 var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
-var m =0;
+
 
 var playState = {
 		// Global variables declaration
@@ -53,13 +31,15 @@ var playState = {
       this.layer = map.createLayer('Tile Layer 1');
       game.world.setBounds(0, 0, 480, 3200);
 
+
       // Sound
       sound = game.add.audio('gmusic');
-      //sound.play();
+      sound.play();
       epsound = game.add.audio('boom');
       gsound = game.add.audio('gunshot');
 
       this.player = new Player(playerX, playerY);
+
       game.camera.x = game.world.centerX;
       game.camera.y = game.world.centerY;
       game.physics.enable(this.player, Phaser.Physics.ARCADE);
@@ -67,14 +47,8 @@ var playState = {
       this.player.healthText = game.add.text(0, 10, "Health " + this.player.health, { font: "20px", fill: "#ffffff", align: "center" });
       this.player.healthText.fixedToCamera = true;
 
-      this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
-      this.player.scoreText.fixedToCamera = true;
-
-      // fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-      //this.player.body.collideWorldBounds = true;
-
+      //Player weapon: hand gun
       this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
-
       this.handgun.bulletAngleOffset = 90;
       this.handgun.bulletSpeed = 400;
       this.handgun.fireRate =2000;
@@ -83,6 +57,8 @@ var playState = {
       this.handgun.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
+
+      // Player weapon: utlskill
       this.ultskill = game.add.weapon(1, 'ultskill');    // ammo 1
       this.ultskill.bulletAngleOffset = 90;
       this.ultskill.bulletSpeed = 400;
@@ -97,13 +73,24 @@ var playState = {
       this.addhealth = game.add.sprite(game.world.centerX+100, game.world.centerY+100, 'addhealth');
       game.physics.enable(this.addhealth, Phaser.Physics.ARCADE);
 
+      //Instantiate score to 0
+      var myJSON = localStorage.getItem("highScore");
+      var p = JSON.parse(myJSON);
+      p.push("0");
+      localStorage.setItem("highScore", JSON.stringify(p));
+      this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
+      this.player.scoreText.fixedToCamera = true;
+
+
       // Enemy
       this.enemies = game.add.group();
       this.enemies.add(Enemy(200, 23800));
+
       this.enemies.add(Enemy(200, 23950));
       this.enemies.add(Enemy(200, 23700));
       this.enemies.add(Enemy(170, 23600));
       this.enemies.add(Enemy(180, 23500));
+
 
 
       this.enemies.forEach(function(enemy, index){
@@ -137,6 +124,9 @@ var playState = {
     // Anything that needs to be checked
     // Collisions, user input etc...
     update: function () {
+
+      updateScore(this.player);
+
       // Keyboard controls
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x - 30, this.player.y - 30);
@@ -168,7 +158,7 @@ var playState = {
         //gsound.play();
         }
 
-        // Mouse contorls
+      // Mouse contorls
       if (game.input.activePointer.isDown) {
         this.player.setDest(game.input.x, game.input.y);
       }
@@ -199,7 +189,8 @@ var playState = {
       k++;
 
 
-	        if (m==60) {         // Use counting instead of timing where the larger makes it rarely move
+
+	    if (m==60) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
@@ -242,22 +233,20 @@ var playState = {
         this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
 
-        game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
-            console.log("hit! Bullet + Enemy");
-            e.stop();
-            //this.enemies.kill();
-            this.player.score = this.player.score + 5;
-            this.player.scoreText.setText("Score " + this.player.score);
-        }, null, this);
+      game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
+        console.log("hit! Bullet + Enemy");
+        e.stop();
+        this.player.score = this.player.score + 5;
+        this.player.scoreText.setText("Score " + this.player.score);
+      }, null, this);
 
 
-        game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
-            console.log("hit! Bullet + Civil");
-            c.kill();
-
-            this.player.score = this.player.score - 5;
-            this.player.scoreText.setText("Score " + this.player.score);
-        }, null, this);
+      game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
+        console.log("hit! Bullet + Civil");
+        c.kill();
+        this.player.score = this.player.score - 5;
+        this.player.scoreText.setText("Score " + this.player.score);
+      }, null, this);
 
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
@@ -278,6 +267,10 @@ var playState = {
         p.stop();
         console.log("side of road");
       });
+
+      // Updates score every times user hits a multiple of 100
+      if ((this.player.score % 18) == 0)
+        updateScore(this.player);
     }
 };
 
@@ -374,4 +367,15 @@ function playerFrame(numB) {
   var bar = document.getElementsByClassName("nBullet");
   var barWidth = (numB / 1000) * 100;
   bar.css('width', barWidth + "%");
+}
+
+function updateScore(b) {
+  //console.log("UPDATES__________________+++++++++")
+  var myJSON = localStorage.getItem("highScore");
+  var p = JSON.parse(myJSON);
+
+  p.pop();
+  p.push(b.score);
+
+  localStorage.setItem("highScore", JSON.stringify(p));
 }

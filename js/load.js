@@ -5,6 +5,9 @@ var loadState={
   preload: function() {
     var loadingLabel = game.add.text(80, 150, 'loading...', {font: '30px Courier', fill: '#ffffff'})
 
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.setMinMax(400, 300, 800, 600);
+
     game.stage.backgroundColor = '#000000';
 
     game.load.image('player1', 'assets/player.png');
@@ -19,6 +22,9 @@ var loadState={
 
     game.load.tilemap('level', 'assets/map/Level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tiles', 'assets/map/TilesetRoad1.png');
+
+    game.load.tilemap('levelT', 'assets/map/LevelT.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('tilesT', 'assets/map/[TILESET]Dirt-City.png');
 
     game.load.image('title', 'assets/TitleScreen.png');
 

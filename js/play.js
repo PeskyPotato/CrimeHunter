@@ -12,23 +12,34 @@ var playState = {
     enemies: null,
     enemy: null,
     addhealth:null,
+    
 		// Instantiate and assign game objects
     create: function () {
+      // World variables
+
+      var playerX = 300;
+      var playerY = 3150;
+      var civY = 3100;
+      var lane1 = 180;
+      var lane2 = 275;
+      var civNumber = 100;
 
       // Tilemap
-      var map = game.add.tilemap('level');
-      map.addTilesetImage('TilesetRoad', 'tiles');
+      var map = game.add.tilemap('levelT');
+      map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
       map.setCollision([10, 8]);
       this.layer = map.createLayer('Tile Layer 1');
-      game.world.setBounds(0, 0, 480, 24000);
+      game.world.setBounds(0, 0, 480, 3200);
 
-      // Sound: Music and explosions
+
+      // Sound
       sound = game.add.audio('gmusic');
       sound.play();
       epsound = game.add.audio('boom');
       gsound = game.add.audio('gunshot');
 
-      this.player = new Player(300, 24000);
+      this.player = new Player(playerX, playerY);
+
       game.camera.x = game.world.centerX;
       game.camera.y = game.world.centerY;
       game.physics.enable(this.player, Phaser.Physics.ARCADE);
@@ -45,6 +56,7 @@ var playState = {
       this.handgun.trackSprite(this.player, -2, -80);
       this.handgun.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+
 
       // Player weapon: utlskill
       this.ultskill = game.add.weapon(1, 'ultskill');    // ammo 1
@@ -69,13 +81,16 @@ var playState = {
       this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
 
+
       // Enemy
       this.enemies = game.add.group();
       this.enemies.add(Enemy(200, 23800));
-	    this.enemies.add(Enemy(200, 23950));
-	    this.enemies.add(Enemy(200, 23700));
+
+      this.enemies.add(Enemy(200, 23950));
+      this.enemies.add(Enemy(200, 23700));
       this.enemies.add(Enemy(170, 23600));
-	    this.enemies.add(Enemy(180, 23500));
+      this.enemies.add(Enemy(180, 23500));
+
 
 
       this.enemies.forEach(function(enemy, index){
@@ -88,9 +103,9 @@ var playState = {
       this.civils = game.add.group();
 
     	this.civils.enableBody = true;
-    	var y = 23700;     // Y Axis for the first car location; X Axis is defined randomly below
-    	var numberOfRandomCars = 600;  // Number of random cars
-      var lanes = [185, 265];// 185 middle left, 265 middle right
+    	var y = civY;
+    	var numberOfRandomCars = civNumber;
+      var lanes = [lane1, lane2];
     	for (var i=0; i < numberOfRandomCars; i++) {
         var x = lanes[Math.floor(Math.random()*lanes.length)];
     		var car = this.civils.create(x, y, 'characters');
@@ -134,15 +149,14 @@ var playState = {
 
       if (fireButton.isDown){
         this.handgun.fire();
-          this.player.animations.play('runningShoot');
-          gsound.play();
+        this.player.animations.play('runningShoot');
+        //gsound.play();
       }
-        if (ultskillButton.isDown){
-            this.ultskill.fire();
-            this.player.animations.play('runningShoot');
-            gsound.play();
+      if (ultskillButton.isDown){
+        this.ultskill.fire();
+        this.player.animations.play('runningShoot');
+        //gsound.play();
         }
-
 
       // Mouse contorls
       if (game.input.activePointer.isDown) {
@@ -175,6 +189,7 @@ var playState = {
       k++;
 
 
+
 	    if (m==60) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
@@ -201,7 +216,7 @@ var playState = {
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         console.log("hit! Bullet + Enemy");
-        epsound.play();
+        //epsound.play();
         e.stop();
         b.kill();
         //this.enemies.kill();
@@ -211,7 +226,7 @@ var playState = {
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
         console.log("hit! Bullet + Civil");
-        epsound.play();
+        //epsound.play();
         c.kill();
         b.kill();
         this.player.score = this.player.score - 5;
@@ -236,13 +251,13 @@ var playState = {
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         console.log("crash! Enemy + Civil");
-        epsound.play();
+        //epsound.play();
         c.kill();
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
         console.log("crash! Enemy + Civil");
-        epsound.play();
+        //epsound.play();
         c.kill();
         p.health = p.health - 5;
         p.healthText.setText("Health " + p.health);

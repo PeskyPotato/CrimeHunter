@@ -25,7 +25,8 @@ var playState = {
       var lane3 = 275;
       var lane4 = 335;
       var civNumber = 100;
-
+	  var enemyNumber =30;
+	  
       // Tilemap
       var map = game.add.tilemap('levelT');
       map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
@@ -86,12 +87,32 @@ var playState = {
 
       // Enemy
       this.enemies = game.add.group();
-      this.enemies.add(Enemy(200, 23800));
 
-      this.enemies.add(Enemy(200, 23950));
-      this.enemies.add(Enemy(200, 23700));
-      this.enemies.add(Enemy(170, 23600));
-      this.enemies.add(Enemy(180, 23500));
+	  
+	
+		var y = civY;
+    	var numberOfRandomCars = enemyNumber;
+        var lanes = [lane1, lane2, lane3, lane4];
+    	for (var i=0; i < numberOfRandomCars; i++) {
+			var x = lanes[Math.floor(Math.random()*lanes.length)];
+			this.enemies.add(Enemy(x,y));
+			y -=150;
+		}
+			
+			
+		
+    	//	var car = this.enemies.create(x, y, 'characters');
+      //  car.xDest = x;
+      //  car.yDest = -200;
+     //   car.update = function() {
+       //   this.speed = 50;
+        //  move(this);
+      //  };
+    		//car.frame = 16;
+    	//	y -= 150;
+    
+
+    
 
 
 
@@ -101,7 +122,8 @@ var playState = {
       });
       this.enemies.enableBody = true;
 
-      // Civil Cars (Random Cars)
+      
+	  // Civil Cars (Random Cars)
       this.civils = game.add.group();
 
     	this.civils.enableBody = true;
@@ -191,17 +213,17 @@ var playState = {
 
 
 
-	    if (m==60) {         // Use counting instead of timing where the larger makes it rarely move
+	    if (m==20) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
+		  
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
           if (moveEnemy == true) {
-            if (enemy.xDest==200) {
-              enemy.xDest = 265;
-            } else {
-              enemy.xDest = 200;
+			    var lanes = [110, 180, 275, 325];
+				if (lanes.includes(enemy.xDest)) {
+              enemy.xDest = lanes[Math.floor(Math.random()*lanes.length)];
             }
-          }
+		  }
           enemy.update();
         });
         m = 0;
@@ -332,8 +354,8 @@ function Enemy(x, y){
 	}
 
 	enemy.update= function(){
-		this.speed = 180;
-		this.goToXY(this.x, this.y - 100);
+		this.speed = 50;
+		// this.goToXY(this.x, this.y - 100);
 
 		//enemy.body.velocity.y=-50;
 		move(this);

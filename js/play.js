@@ -1,6 +1,6 @@
 
 var k = 0; // k and m: Use counting instead of timing where the larger makes it rarely move
-var m =0;
+var m = 0;
 var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
@@ -15,24 +15,37 @@ var playState = {
 
 		// Instantiate and assign game objects
     create: function () {
+      var level0 = [300, 3150, 3100, 110, 180, 275, 335, 100, 2, 3000, 'levelT', 'Tile Layer 1', [2, 6], 480, 3200];
+      var level1 = [300, 3150, 3100, 110, 180, 275, 335, 100, 2, 3000, 'level1', 'Tile Layer 1', [12, 16], 480, 8000];
       // World variables
+      var playerX = level0[0];
+      var playerY = level0[1];
+      var civY = level0[2];
+      var lane1 = level0[3];
+      var lane2 = level0[4];
+      var lane3 = level0[5];
+      var lane4 = level0[6];
+      var civNumber = level0[7];
+      var enemyNumber = level0[8];
+      var enemyY = level0[9];
+      var levelName = level0[10];
+      var layerName = level0[11];
+      var collision = level0[12];
+      var boundsX = level0[13];
+      var boundsY = level0[14];
 
-      var playerX = 300;
-      var playerY = 3150;
-      var civY = 3100;
-      var lane1 = 110;
-      var lane2 = 180;
-      var lane3 = 275;
-      var lane4 = 335;
-      var civNumber = 100;
-	  var enemyNumber =30;
-	  
-      // Tilemap
-      var map = game.add.tilemap('levelT');
+      //Tilemap
+      var map = game.add.tilemap(levelName);
       map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
-      map.setCollision([10, 8]);
-      this.layer = map.createLayer('Tile Layer 1');
+      map.setCollision([2, 6]);
+      this.layer = map.createLayer(layerName);
       game.world.setBounds(0, 0, 480, 3200);
+
+      // var map = game.add.tilemap('level1');
+      // map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
+      // map.setCollision([12, 16]);
+      // this.layer = map.createLayer('Tile Layer 1');
+      // game.world.setBounds(0, 0, 480, 8000);
 
 
       // Sound
@@ -88,9 +101,9 @@ var playState = {
       // Enemy
       this.enemies = game.add.group();
 
-	  
-	
-		var y = civY;
+
+
+		var y = enemyY;
     	var numberOfRandomCars = enemyNumber;
         var lanes = [lane1, lane2, lane3, lane4];
     	for (var i=0; i < numberOfRandomCars; i++) {
@@ -98,9 +111,9 @@ var playState = {
 			this.enemies.add(Enemy(x,y));
 			y -=150;
 		}
-			
-			
-		
+
+
+
     	//	var car = this.enemies.create(x, y, 'characters');
       //  car.xDest = x;
       //  car.yDest = -200;
@@ -110,9 +123,9 @@ var playState = {
       //  };
     		//car.frame = 16;
     	//	y -= 150;
-    
 
-    
+
+
 
 
 
@@ -122,7 +135,7 @@ var playState = {
       });
       this.enemies.enableBody = true;
 
-      
+
 	  // Civil Cars (Random Cars)
       this.civils = game.add.group();
 
@@ -216,7 +229,7 @@ var playState = {
 	    if (m==20) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
-		  
+
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
           if (moveEnemy == true) {
 			    var lanes = [110, 180, 275, 325];
@@ -354,7 +367,7 @@ function Enemy(x, y){
 	}
 
 	enemy.update= function(){
-		this.speed = 50;
+		this.speed = 180;
 		// this.goToXY(this.x, this.y - 100);
 
 		//enemy.body.velocity.y=-50;

@@ -4,53 +4,59 @@ var m = 0;
 var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
-
+var level0 = [300, 3150, 3100, 110, 180, 275, 335, 100, 1, 3000, 'levelT', 'Tile Layer 1', [2, 6], 480, 3200];
+var level1 = [300, 3150, 3100, 110, 180, 275, 335, 100, 2, 3000, 'level1', 'Tile Layer 1', [12, 16], 480, 8000];
 
 var playState = {
 		// Global variables declaration
     player: null,
     enemies: null,
     enemy: null,
-    addhealth:null,
+    addhealth: null,
+    curLevel: null,
+    curLevelInt: null,
+    noKills: null,
 
 		// Instantiate and assign game objects
     create: function () {
-      var level0 = [300, 3150, 3100, 110, 180, 275, 335, 100, 2, 3000, 'levelT', 'Tile Layer 1', [2, 6], 480, 3200];
-      var level1 = [300, 3150, 3100, 110, 180, 275, 335, 100, 2, 3000, 'level1', 'Tile Layer 1', [12, 16], 480, 8000];
+      console.log("creating");
+      this.curLevelInt = localStorage.getItem("level");
+      console.log(localStorage.getItem("level"));
+      if (this.curLevelInt == 0){
+        this.curLevel = level0;
+        this.curLevelInt = 0;
+      } else if (this.curLevelInt == 1) {
+        this.curLevel = level1;
+        this.curLevelInt = 1;
+      }
+
       // World variables
-      var playerX = level0[0];
-      var playerY = level0[1];
-      var civY = level0[2];
-      var lane1 = level0[3];
-      var lane2 = level0[4];
-      var lane3 = level0[5];
-      var lane4 = level0[6];
-      var civNumber = level0[7];
-      var enemyNumber = level0[8];
-      var enemyY = level0[9];
-      var levelName = level0[10];
-      var layerName = level0[11];
-      var collision = level0[12];
-      var boundsX = level0[13];
-      var boundsY = level0[14];
+      var playerX = this.curLevel[0];
+      var playerY = this.curLevel[1];
+      var civY = this.curLevel[2];
+      var lane1 = this.curLevel[3];
+      var lane2 = this.curLevel[4];
+      var lane3 = this.curLevel[5];
+      var lane4 = this.curLevel[6];
+      var civNumber = this.curLevel[7];
+      var enemyNumber = this.curLevel[8];
+      var enemyY = this.curLevel[9];
+      var levelName = this.curLevel[10];
+      var layerName = this.curLevel[11];
+      var collision = this.curLevel[12];
+      var boundsX = this.curLevel[13];
+      var boundsY = this.curLevel[14];
 
       //Tilemap
       var map = game.add.tilemap(levelName);
       map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
       map.setCollision([2, 6]);
       this.layer = map.createLayer(layerName);
-      game.world.setBounds(0, 0, 480, 3200);
-
-      // var map = game.add.tilemap('level1');
-      // map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
-      // map.setCollision([12, 16]);
-      // this.layer = map.createLayer('Tile Layer 1');
-      // game.world.setBounds(0, 0, 480, 8000);
-
+      game.world.setBounds(0, 0, boundsX, boundsY);
 
       // Sound
       sound = game.add.audio('gmusic');
-      sound.play();
+      //sound.play();
       epsound = game.add.audio('boom');
       gsound = game.add.audio('gunshot');
 
@@ -66,7 +72,7 @@ var playState = {
       //Player weapon: hand gun
       this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
       this.handgun.bulletAngleOffset = 90;
-      this.handgun.bulletSpeed = 400;
+      this.handgun.bulletSpeed = 600;
       this.handgun.fireRate =2000;
       game.physics.arcade.enable(this.player);
       this.handgun.trackSprite(this.player, -2, -80);
@@ -112,23 +118,6 @@ var playState = {
 			y -=150;
 		}
 
-
-
-    	//	var car = this.enemies.create(x, y, 'characters');
-      //  car.xDest = x;
-      //  car.yDest = -200;
-     //   car.update = function() {
-       //   this.speed = 50;
-        //  move(this);
-      //  };
-    		//car.frame = 16;
-    	//	y -= 150;
-
-
-
-
-
-
       this.enemies.forEach(function(enemy, index){
         game.physics.enable(enemy,Phaser.Physics.ARCADE);
         enemy.body.immovable = true;
@@ -161,9 +150,6 @@ var playState = {
     // Anything that needs to be checked
     // Collisions, user input etc...
     update: function () {
-
-      updateScore(this.player);
-
       // Keyboard controls
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x - 30, this.player.y - 30);
@@ -243,6 +229,8 @@ var playState = {
       }
       m++;
 
+      this.player.healthText.setText("Health " + this.player.y);
+
 
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
         console.log("crash! Player + Enemy");
@@ -253,7 +241,7 @@ var playState = {
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         console.log("hit! Bullet + Enemy");
         //epsound.play();
-        e.stop();
+        e.stop(this.player);
         b.kill();
         //this.enemies.kill();
         this.player.score = this.player.score + 5;
@@ -271,7 +259,7 @@ var playState = {
 
       game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
         console.log("hit! Bullet + Enemy");
-        e.stop();
+        e.stop(this.player);
         this.player.score = this.player.score + 5;
         this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
@@ -292,7 +280,7 @@ var playState = {
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
-        console.log("crash! Enemy + Civil");
+        console.log("crash! Player + Civil");
         //epsound.play();
         c.kill();
         p.health = p.health - 5;
@@ -307,6 +295,11 @@ var playState = {
       // Updates score every times user hits a multiple of 100
       if ((this.player.score % 18) == 0)
         updateScore(this.player);
+
+      if (this.player.y < 100){
+        console.log(this.curLevelInt + " here")
+        nextLevel(this.player, this.curLevel[8], this.curLevelInt);
+      }
     }
 };
 
@@ -334,6 +327,8 @@ function Player(x, y) {
   player.score = 0;
   player.scoreText = null;
 
+  player.kills= 0;
+
   player.setDest = function (x, y) {
     player.xDest = x;
     player.yDest = y;
@@ -344,19 +339,20 @@ function Player(x, y) {
     game.camera.x = this.x - 150;
     game.camera.y = this.y - 300;
     this.animations.play('runningShoot');
+    if (player.health < 0){
+      player.kill();
+    }
   };
 
   player.stop = function() {
     this.xDest = this.x;
-    this.yDest = this.y;
   };
 
   return player;
 };
 
 function Enemy(x, y){
-	var enemy = game.add.sprite(x, y, 'characters'); //x=480 y=360
-	//enemy.speed= 7000;
+	var enemy = game.add.sprite(x, y, 'characters');
 	enemy.frame = 8;
 
 	enemy.xDest = x;
@@ -373,8 +369,10 @@ function Enemy(x, y){
 		//enemy.body.velocity.y=-50;
 		move(this);
 	}
-	enemy.stop = function(){
+	enemy.stop = function(p){
 		this.kill();
+    p.kills = p.kills + 1;
+    console.log(p.kills);
 	}
 
 	return enemy;
@@ -414,4 +412,20 @@ function updateScore(b) {
   p.push(b.score);
 
   localStorage.setItem("highScore", JSON.stringify(p));
+}
+
+
+function nextLevel(player, noOfKills, curLevelInt){
+  if (player.kills === noOfKills) {
+    localStorage.setItem("level", parseInt(curLevelInt + 1));
+    game.state.start("play");
+  } else {
+    game.state.start("play");
+  }
+}
+
+function youLose(){
+  var loseText = game.add.text(10, 10, "You lose", { font: "20px", fill: "#ffffff", align: "center" });
+  loseText = fixedToCamera = true;
+
 }

@@ -5,26 +5,12 @@ var scoreBoard;
 var titleText;
 
 titleState = {
-  // Start menu to be implemented
   create: function() {
-
-    // console.log(localStorage.getItem("highScore") + " :");
-    //
-    // if (localStorage.getItem("highScore") === null){
-    //   console.log("here");
-    //   var score = [];
-    //   var myJSON = JSON.stringify(score);
-    //   localStorage.setItem("highScore", myJSON);
-    // }
-    //
-    // console.log(localStorage.getItem("highScore"));
-    //
-    // titleAction();
-
     var s = localStorage.getItem("highScore");
+    var l = localStorage.getItem("level");
+    console.log("l: " + l)
 
     if (!s) {
-      console.log("1");
       var score = [];
       var myJSON = JSON.stringify(score);
       localStorage.setItem("highScore", myJSON);
@@ -32,6 +18,12 @@ titleState = {
     } else {
       titleAction();
     }
+
+    if (!l) {
+      console.log("here");
+      localStorage.setItem("level", 0);
+    }
+    console.log("title: " + localStorage.getItem("level"));
 
   },
   // Input listener for menu

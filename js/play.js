@@ -4,7 +4,7 @@ var m =0;
 var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
-
+var lane = [];
 
 var playState = {
 		// Global variables declaration
@@ -12,7 +12,6 @@ var playState = {
     enemies: null,
     enemy: null,
     addhealth:null,
-
 		// Instantiate and assign game objects
     create: function () {
       // World variables
@@ -25,8 +24,8 @@ var playState = {
       var lane3 = 275;
       var lane4 = 335;
       var civNumber = 100;
-	  var enemyNumber =30;
-	  
+	    var enemyNumber =30;
+
       // Tilemap
       var map = game.add.tilemap('levelT');
       map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
@@ -88,8 +87,8 @@ var playState = {
       // Enemy
       this.enemies = game.add.group();
 
-	  
-	
+
+
 		var y = civY;
     	var numberOfRandomCars = enemyNumber;
         var lanes = [lane1, lane2, lane3, lane4];
@@ -98,9 +97,9 @@ var playState = {
 			this.enemies.add(Enemy(x,y));
 			y -=150;
 		}
-			
-			
-		
+
+
+
     	//	var car = this.enemies.create(x, y, 'characters');
       //  car.xDest = x;
       //  car.yDest = -200;
@@ -110,9 +109,9 @@ var playState = {
       //  };
     		//car.frame = 16;
     	//	y -= 150;
-    
 
-    
+
+
 
 
 
@@ -122,28 +121,26 @@ var playState = {
       });
       this.enemies.enableBody = true;
 
-      
+
+
+
 	  // Civil Cars (Random Cars)
       this.civils = game.add.group();
-
+      addLanes([lane1, lane2, lane3, lane4]);     // Add an array of lanes to lane
     	this.civils.enableBody = true;
-    	var y = civY;
-    	var numberOfRandomCars = civNumber;
-      var lanes = [lane1, lane2, lane3, lane4];
-    	for (var i=0; i < numberOfRandomCars; i++) {
-        var x = lanes[Math.floor(Math.random()*lanes.length)];
-    		var car = this.civils.create(x, y, 'characters');
-        car.xDest = x;
-        car.yDest = -200;
-        car.update = function() {
-          this.speed = 50;
-          move(this);
-        };
-    		car.frame = 16;
-    		y -= 150;
-    	}
+      var numberOfRandomCars = 100;
+      var startingYAxis = 3100;
+      this.civils = addRandomCars(this.civils,numberOfRandomCars,startingYAxis);
+      /* If you want to reset the random cars for every level, one suggestion is
+      to use the following code in update: function() {}:
 
+      addLanes([ list of lanes you want to set ]);
+      this.civils = addRandomCars(this.civils, number Of RandomCars you want , starting Y-Axis of the first random car);
+
+      */
     },
+
+
 
     // Anything that needs to be checked
     // Collisions, user input etc...
@@ -194,15 +191,16 @@ var playState = {
 
       this.player.update();
 
+
+
       // Civil's Car Movement Update
       if (k==300) {         // Use counting instead of timing where the larger makes it rarely move
         this.civils.forEach(function(car){
           var moveOrNot = [false, true];
           var moveCar = moveOrNot[Math.floor(Math.random()*moveOrNot.length)];
           if (moveCar == true) {
-            var lanes = [110, 180, 275, 325];
-            if (lanes.includes(car.xDest)) {
-              car.xDest = lanes[Math.floor(Math.random()*lanes.length)];
+            if ((lane).includes(car.xDest)) {
+              car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
             }
           }
           car.update();
@@ -216,7 +214,7 @@ var playState = {
 	    if (m==20) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
-		  
+
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
           if (moveEnemy == true) {
 			    var lanes = [110, 180, 275, 325];
@@ -401,4 +399,31 @@ function updateScore(b) {
   p.push(b.score);
 
   localStorage.setItem("highScore", JSON.stringify(p));
+}
+
+function addLanes(listOfLanes) {
+  if (lane == []) {         // if no lane has been assigned, assign listOfLanes to it
+    lane = listOfLanes;
+  } else {
+    for (var i=0; i<listOfLanes.length; i++) {
+      if (!(lane.includes(listOfLanes[i]))) {   // add only the non-assigned element to lane
+        lane.push(listOfLanes[i]);
+      }
+    }
+  }
+}
+ function addRandomCars(civils, numberOfRandomCars, y) {
+  for (var i=0; i < numberOfRandomCars; i++) {
+    var x = (lane)[Math.floor(Math.random()*(lane).length)];
+    var car = civils.create(x, y, 'characters');
+    car.xDest = x;
+    car.yDest = -200;
+    car.update = function() {
+      this.speed = 50;
+      move(this);
+    };
+    car.frame = 16;
+    y -= 150;
+  }
+  return civils;
 }

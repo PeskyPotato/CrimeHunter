@@ -4,8 +4,12 @@ var m = 0;
 var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
-var level0 = [300, 3150, 3100, 110, 180, 275, 335, 100, 1, 3000, 'levelT', 'Tile Layer 1', [2, 6], 480, 3200];
-var level1 = [300, 3150, 3100, 110, 180, 275, 335, 100, 2, 3000, 'level1', 'Tile Layer 1', [12, 16], 480, 8000];
+// levels playerX, player Y, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
+var level0 = [300, 3150, 3100, 110, 180, 275, 335, 100, 1, 3000, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
+var level1 = [300, 3600, 3550, 110, 180, 275, 335, 200, 2, 3500, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
+var level2 = [300, 3950, 3900, 110, 180, 275, 335, 250, 3, 3750, 'level2', 'Tile Layer 1', [25], 480, 4000];
+
+var levelText;
 
 var playState = {
 		// Global variables declaration
@@ -19,15 +23,17 @@ var playState = {
 
 		// Instantiate and assign game objects
     create: function () {
-      console.log("creating");
       this.curLevelInt = localStorage.getItem("level");
-      console.log(localStorage.getItem("level"));
+
       if (this.curLevelInt == 0){
         this.curLevel = level0;
         this.curLevelInt = 0;
       } else if (this.curLevelInt == 1) {
         this.curLevel = level1;
         this.curLevelInt = 1;
+      } else if (this.curLevelInt == 2) {
+        this.curLevel = level2;
+        this.curLevelInt = 2;
       }
 
       // World variables
@@ -49,8 +55,9 @@ var playState = {
 
       //Tilemap
       var map = game.add.tilemap(levelName);
-      map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
-      map.setCollision([2, 6]);
+      //map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
+      map.addTilesetImage('Tileset_Master', 'tile_master')
+      map.setCollision(collision);
       this.layer = map.createLayer(layerName);
       game.world.setBounds(0, 0, boundsX, boundsY);
 
@@ -72,7 +79,7 @@ var playState = {
       //Player weapon: hand gun
       this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
       this.handgun.bulletAngleOffset = 90;
-      this.handgun.bulletSpeed = 600;
+      this.handgun.bulletSpeed = 650;
       this.handgun.fireRate =2000;
       game.physics.arcade.enable(this.player);
       this.handgun.trackSprite(this.player, -2, -80);
@@ -83,17 +90,17 @@ var playState = {
       // Player weapon: utlskill
       this.ultskill = game.add.weapon(1, 'ultskill');    // ammo 1
       this.ultskill.bulletAngleOffset = 90;
-      this.ultskill.bulletSpeed = 400;
+      this.ultskill.bulletSpeed = 500;
       this.ultskill.fireRate =8000;
       this.ultskill.trackSprite(this.player, -2, -80);
       this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       ultskillButton = this.input.keyboard.addKey(Phaser.KeyCode.Z);
       //ultskill cooldown shows
-      this.player.skillText = game.add.text(0, 50, "Unique skill : 1 hit / 8 sec  (press z)", { font: "20px", fill: "#ffffff", align: "centre" });
-      this.player.skillText.fixedToCamera = true;
+      //this.player.skillText = game.add.text(0, 50, "Unique skill : 1 hit / 8 sec  (press z)", { font: "20px", fill: "#ffffff", align: "centre" });
+      //this.player.skillText.fixedToCamera = true;
 
-      this.addhealth = game.add.sprite(game.world.centerX+100, game.world.centerY+100, 'addhealth');
-      game.physics.enable(this.addhealth, Phaser.Physics.ARCADE);
+      // this.addhealth = game.add.sprite(game.world.centerX+100, game.world.centerY+100, 'addhealth');
+      // game.physics.enable(this.addhealth, Phaser.Physics.ARCADE);
 
       //Instantiate score to 0
       var myJSON = localStorage.getItem("highScore");
@@ -141,7 +148,7 @@ var playState = {
           this.speed = 50;
           move(this);
         };
-    		car.frame = 16;
+    		car.frame = 6;
     		y -= 150;
     	}
 
@@ -229,9 +236,6 @@ var playState = {
       }
       m++;
 
-      this.player.healthText.setText("Health " + this.player.y);
-
-
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
         console.log("crash! Player + Enemy");
         p.health = p.health - 1;
@@ -260,6 +264,7 @@ var playState = {
       game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
         console.log("hit! Bullet + Enemy");
         e.stop(this.player);
+        b.kill();
         this.player.score = this.player.score + 5;
         this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
@@ -292,9 +297,7 @@ var playState = {
         console.log("side of road");
       });
 
-      // Updates score every times user hits a multiple of 100
-      if ((this.player.score % 18) == 0)
-        updateScore(this.player);
+      updateScore(this.player);
 
       if (this.player.y < 100){
         console.log(this.curLevelInt + " here")
@@ -314,9 +317,8 @@ function Player(x, y) {
   var player = game.add.sprite(x, y, 'characters');
 
   player.frame = 0;
-  player.animations.add('running', [0, 1, 2, 3], 4);
-  player.animations.add('runningShoot', [4, 5, 6, 7], 4);
-  player.speed = 200; //80
+  player.animations.add('runningShoot', [0, 1, 2, 3], 4);
+  player.speed = 280;
   player.xDest = x;
   player.yDest = y;
   player.anchor.setTo(.5, 1);
@@ -353,7 +355,7 @@ function Player(x, y) {
 
 function Enemy(x, y){
 	var enemy = game.add.sprite(x, y, 'characters');
-	enemy.frame = 8;
+	enemy.frame = 4;
 
 	enemy.xDest = x;
 	enemy.yDest = 0;
@@ -363,7 +365,7 @@ function Enemy(x, y){
 	}
 
 	enemy.update= function(){
-		this.speed = 180;
+		this.speed = 260;
 		// this.goToXY(this.x, this.y - 100);
 
 		//enemy.body.velocity.y=-50;
@@ -416,12 +418,18 @@ function updateScore(b) {
 
 
 function nextLevel(player, noOfKills, curLevelInt){
-  if (player.kills === noOfKills) {
-    localStorage.setItem("level", parseInt(curLevelInt + 1));
-    game.state.start("play");
+  var level = 0;
+  if (player.kills === noOfKills && curLevelInt <= 3) {
+    level = curLevelInt + 1;
+    localStorage.setItem("level", parseInt(level));
+  } else if (level > 2) {
+    localStorage.setItem("level", 0);
   } else {
-    game.state.start("play");
+    localStorage.setItem("level", curLevelInt);
   }
+  console.log(localStorage.getItem("level"));
+  game.state.start("preLevel");
+
 }
 
 function youLose(){

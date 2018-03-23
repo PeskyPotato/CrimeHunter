@@ -8,9 +8,10 @@ titleState = {
   create: function() {
     var s = localStorage.getItem("highScore");
     var l = localStorage.getItem("level");
-    console.log("l: " + l)
+    console.log("highs " + s);
 
     if (!s) {
+      console.log("in here");
       var score = [];
       var myJSON = JSON.stringify(score);
       localStorage.setItem("highScore", myJSON);
@@ -20,10 +21,10 @@ titleState = {
     }
 
     if (!l) {
-      console.log("here");
+      localStorage.setItem("level", 0);
+    } else if (l > 2) {
       localStorage.setItem("level", 0);
     }
-    console.log("title: " + localStorage.getItem("level"));
 
   },
   // Input listener for menu
@@ -59,7 +60,8 @@ function scoreAction() {
   var scores = JSON.parse(localStorage.getItem("highScore"));
 
   if (scores.length > 5) {
-    scores.shift();
+    //scores.shift();
+    scores = scores.splice(0, 5);
     localStorage.setItem("highScore", JSON.stringify(scores));
   }
 
@@ -71,5 +73,5 @@ function scoreAction() {
 }
 
 function playAction() {
-  game.state.start('play');
+  game.state.start('preLevel');
 }

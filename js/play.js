@@ -38,6 +38,7 @@ var playState = {
       } else if (this.curLevelInt == 2) {
         this.curLevel = level2;
         this.curLevelInt = 2;
+		
       }
 
 
@@ -209,6 +210,7 @@ var playState = {
 
 
       // Civil's Car Movement Update
+	  // the smaller k equal to , the higher frequency NPC movement can be 
       if (k==300) {         // Use counting instead of timing where the larger makes it rarely move
         this.civils.forEach(function(car){
           var moveOrNot = [false, true];
@@ -225,6 +227,8 @@ var playState = {
       k++;
 
 
+		// enemy's Car Movement Update
+		// the smaller m equal to , the higher frequency enemy movement can be 
 
 	    if (m==20) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
@@ -365,7 +369,7 @@ function Enemy(x, y){
 	enemy.frame = 4;
 
 	enemy.xDest = x;
-	enemy.yDest = 0;
+	enemy.yDest = -200;
 
 	enemy.goToXY = function(x){
 		enemy.xDest = x;

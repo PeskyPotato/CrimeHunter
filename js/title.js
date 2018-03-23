@@ -5,32 +5,25 @@ var scoreBoard;
 var titleText;
 
 titleState = {
-  // Start menu to be implemented
   create: function() {
-
-    // console.log(localStorage.getItem("highScore") + " :");
-    //
-    // if (localStorage.getItem("highScore") === null){
-    //   console.log("here");
-    //   var score = [];
-    //   var myJSON = JSON.stringify(score);
-    //   localStorage.setItem("highScore", myJSON);
-    // }
-    //
-    // console.log(localStorage.getItem("highScore"));
-    //
-    // titleAction();
-
     var s = localStorage.getItem("highScore");
+    var l = localStorage.getItem("level");
+    console.log("highs " + s);
 
     if (!s) {
-      console.log("1");
+      console.log("in here");
       var score = [];
       var myJSON = JSON.stringify(score);
       localStorage.setItem("highScore", myJSON);
       titleAction();
     } else {
       titleAction();
+    }
+
+    if (!l) {
+      localStorage.setItem("level", 0);
+    } else if (l > 2) {
+      localStorage.setItem("level", 0);
     }
 
   },
@@ -67,7 +60,8 @@ function scoreAction() {
   var scores = JSON.parse(localStorage.getItem("highScore"));
 
   if (scores.length > 5) {
-    scores.shift();
+    //scores.shift();
+    scores = scores.splice(0, 5);
     localStorage.setItem("highScore", JSON.stringify(scores));
   }
 
@@ -79,5 +73,5 @@ function scoreAction() {
 }
 
 function playAction() {
-  game.state.start('play');
+  game.state.start('preLevel');
 }

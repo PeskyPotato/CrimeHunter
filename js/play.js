@@ -439,9 +439,6 @@ function nextLevel(player, noOfKills, curLevelInt){
 
 }
 
-function youLose(){
-  var loseText = game.add.text(10, 10, "You lose", { font: "20px", fill: "#ffffff", align: "center" });
-  loseText = fixedToCamera = true;
 
 
 function addLanes(listOfLanes) {
@@ -455,7 +452,7 @@ function addLanes(listOfLanes) {
     }
   }
 }
-  
+
 function addRandomCars(civils, numberOfRandomCars, y) {
   for (var i=0; i < numberOfRandomCars; i++) {
     var x = (lane)[Math.floor(Math.random()*(lane).length)];

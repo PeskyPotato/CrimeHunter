@@ -8,10 +8,8 @@ titleState = {
   create: function() {
     var s = localStorage.getItem("highScore");
     var l = localStorage.getItem("level");
-    console.log("highs " + s);
 
     if (!s) {
-      console.log("in here");
       var score = [];
       var myJSON = JSON.stringify(score);
       localStorage.setItem("highScore", myJSON);

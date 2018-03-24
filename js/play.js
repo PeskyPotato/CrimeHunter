@@ -5,10 +5,10 @@ var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
 
-// levels: playerX, player Y, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
+// levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
 var level0 = [300, 3150, 3000, 110, 180, 275, 335, 100, 1, 3000, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
 var level1 = [300, 3600, 3450, 110, 180, 275, 335, 200, 2, 3500, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
-var level2 = [300, 3950, 3800, 110, 180, 275, 335, 250, 3, 3750, 'level2', 'Tile Layer 1', [25], 480, 4000];
+var level2 = [300, 3950, 3800, 110, 180, 275, 335, 300, 3, 3850, 'level2', 'Tile Layer 1', [25], 480, 4000];
 
 var lane = [];
 
@@ -233,12 +233,12 @@ var playState = {
       m++;
 
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
-        console.log("crash! Player + Enemy");
+        //console.log("crash! Player + Enemy");
         p.health = p.health - 5;
       });
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
-        console.log("hit! Bullet + Enemy");
+        //console.log("hit! Bullet + Enemy");
         //epsound.play();
         e.stop(this.player);
         b.kill();
@@ -248,7 +248,7 @@ var playState = {
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
-        console.log("hit! Bullet + Civil");
+        //console.log("hit! Bullet + Civil");
         //epsound.play();
         c.kill();
         b.kill();
@@ -266,7 +266,7 @@ var playState = {
 
 
       game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
-        console.log("hit! Bullet + Civil");
+        //console.log("hit! Bullet + Civil");
         c.kill();
         this.player.score = this.player.score - 5;
         this.player.scoreText.setText("Score " + this.player.score);
@@ -274,13 +274,13 @@ var playState = {
 
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
-        console.log("crash! Enemy + Civil");
+        //console.log("crash! Enemy + Civil");
         //epsound.play();
         c.kill();
       }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
-        console.log("crash! Player + Civil");
+        //console.log("crash! Player + Civil");
         //epsound.play();
         c.kill();
         p.health = p.health - 10;
@@ -288,14 +288,13 @@ var playState = {
 
       game.physics.arcade.collide(this.player, this.layer, function(p, l){
         p.stop();
-        console.log("side of road");
+        //console.log("side of road");
       });
 
       updateScore(this.player);
       this.myHealthBar.setPercent(this.player.health)
 
       if (this.player.y < 100){
-        console.log(this.curLevelInt + " here")
         nextLevel(this.player, this.curLevel[8], this.curLevelInt);
       }
     } // update

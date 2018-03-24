@@ -5,7 +5,7 @@ var preLevelState = {
   create: function() {
     game.stage.backgroundColor = "#eeeee";
     l = localStorage.getItem("level");
-    console.log(typeof l )
+    console.log("l "+ l )
     var enemies = 5;
     if (l == "0") {
       enemies = 1;
@@ -48,8 +48,9 @@ var preLevelState = {
       game.time.events.add(Phaser.Timer.SECOND * 5, fadePicture, this);
 
     } else {
-      levelText2 = game.add.text(game.world.centerX, game.world.centerY, "You won! Restarting...", { font: "30px", fill: "#ffffff", align: "centre"});
-      levelText2.anchor.setTo(.5, .5);
+      levelText = game.add.text(game.world.centerX, 110, "You won! Restarting...", { font: "30px", fill: "#ffffff", align: "centre"});
+      levelText.anchor.setTo(.5, .5);
+      localStorage.setItem("level", 0);
       game.time.events.add(Phaser.Timer.SECOND * 5, fadePicture, this);
 
     }

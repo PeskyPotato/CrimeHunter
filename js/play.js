@@ -5,12 +5,10 @@ var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
 
-// levels playerX, player Y, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
-var level0 = [300, 3150, 3100, 110, 180, 275, 335, 100, 1, 3000, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
-var level1 = [300, 3600, 3550, 110, 180, 275, 335, 200, 2, 3500, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
-var level2 = [300, 3950, 3900, 110, 180, 275, 335, 250, 3, 3750, 'level2', 'Tile Layer 1', [25], 480, 4000];
-
-var levelText;
+// levels: playerX, player Y, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
+var level0 = [300, 3150, 3000, 110, 180, 275, 335, 100, 1, 3000, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
+var level1 = [300, 3600, 3450, 110, 180, 275, 335, 200, 2, 3500, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
+var level2 = [300, 3950, 3800, 110, 180, 275, 335, 250, 3, 3750, 'level2', 'Tile Layer 1', [25], 480, 4000];
 
 var lane = [];
 
@@ -19,7 +17,6 @@ var playState = {
     player: null,
     enemies: null,
     enemy: null,
-
     addhealth: null,
     curLevel: null,
     curLevelInt: null,
@@ -38,9 +35,7 @@ var playState = {
       } else if (this.curLevelInt == 2) {
         this.curLevel = level2;
         this.curLevelInt = 2;
-		
       }
-
 
       // World variables
       var playerX = this.curLevel[0];
@@ -61,7 +56,6 @@ var playState = {
 
       //Tilemap
       var map = game.add.tilemap(levelName);
-      //map.addTilesetImage('[TILESET]Dirt-City', 'tilesT');
       map.addTilesetImage('Tileset_Master', 'tile_master')
       map.setCollision(collision);
       this.layer = map.createLayer(layerName);
@@ -79,14 +73,15 @@ var playState = {
       game.camera.y = game.world.centerY;
       game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-      this.player.healthText = game.add.text(0, 10, "Health " + this.player.health, { font: "20px", fill: "#ffffff", align: "center" });
-      this.player.healthText.fixedToCamera = true;
+       this.myHealthBar = new HealthBar(this.game, {x: 45, y: 20, height: 10, width: 80});
+       this.myHealthBar.setBarColor('#ff1c1c');
+       this.myHealthBar.setFixedToCamera(true);
 
       //Player weapon: hand gun
       this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
       this.handgun.bulletAngleOffset = 90;
-      this.handgun.bulletSpeed = 650;
-      this.handgun.fireRate =2000;
+      this.handgun.bulletSpeed = 750;
+      this.handgun.fireRate = 800;
       game.physics.arcade.enable(this.player);
       this.handgun.trackSprite(this.player, -2, -80);
       this.handgun.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
@@ -113,25 +108,21 @@ var playState = {
       var p = JSON.parse(myJSON);
       p.push("0");
       localStorage.setItem("highScore", JSON.stringify(p));
-      this.player.scoreText = game.add.text(0, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
+      this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
 
 
       // Enemy
       this.enemies = game.add.group();
-
-
-
-
-		var y = enemyY;
+      var y = enemyY;
 
     	var numberOfRandomCars = enemyNumber;
         var lanes = [lane1, lane2, lane3, lane4];
     	for (var i=0; i < numberOfRandomCars; i++) {
-			var x = lanes[Math.floor(Math.random()*lanes.length)];
-			this.enemies.add(Enemy(x,y));
-			y -=150;
-		}
+        var x = lanes[Math.floor(Math.random()*lanes.length)];
+        this.enemies.add(Enemy(x,y));
+        y -=150;
+      }
 
       this.enemies.forEach(function(enemy, index){
         game.physics.enable(enemy,Phaser.Physics.ARCADE);
@@ -139,8 +130,7 @@ var playState = {
       });
       this.enemies.enableBody = true;
 
-
-	  // Civil Cars (Random Cars)
+	    // Civil Cars (Random Cars)
       this.civils = game.add.group();
       addLanes([lane1, lane2, lane3, lane4]);     // Add an array of lanes to lane
     	this.civils.enableBody = true;
@@ -154,15 +144,10 @@ var playState = {
 
       addLanes([ list of lanes you want to set ]);
       this.civils = addRandomCars(this.civils, number Of RandomCars you want , starting Y-Axis of the first random car);
-
-
       */
-    },
+    },  // create
 
-
-
-    // Anything that needs to be checked
-    // Collisions, user input etc...
+    // Anything that needs to be checked, collisions, user input etc...
     update: function () {
       // Keyboard controls
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
@@ -210,7 +195,7 @@ var playState = {
 
 
       // Civil's Car Movement Update
-	  // the smaller k equal to , the higher frequency NPC movement can be 
+	  // the smaller k equal to , the higher frequency NPC movement can be
       if (k==300) {         // Use counting instead of timing where the larger makes it rarely move
         this.civils.forEach(function(car){
           var moveOrNot = [false, true];
@@ -228,9 +213,9 @@ var playState = {
 
 
 		// enemy's Car Movement Update
-		// the smaller m equal to , the higher frequency enemy movement can be 
+		// the smaller m equal to , the higher frequency enemy movement can be
 
-	    if (m==20) {         // Use counting instead of timing where the larger makes it rarely move
+	    if (m==15) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
 
@@ -249,8 +234,7 @@ var playState = {
 
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
         console.log("crash! Player + Enemy");
-        p.health = p.health - 1;
-        p.healthText.setText("Health " + p.health);
+        p.health = p.health - 5;
       });
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
@@ -299,8 +283,7 @@ var playState = {
         console.log("crash! Player + Civil");
         //epsound.play();
         c.kill();
-        p.health = p.health - 5;
-        p.healthText.setText("Health " + p.health);
+        p.health = p.health - 10;
       }, null, this);
 
       game.physics.arcade.collide(this.player, this.layer, function(p, l){
@@ -309,18 +292,18 @@ var playState = {
       });
 
       updateScore(this.player);
+      this.myHealthBar.setPercent(this.player.health)
 
       if (this.player.y < 100){
         console.log(this.curLevelInt + " here")
         nextLevel(this.player, this.curLevel[8], this.curLevelInt);
       }
-    }
-};
+    } // update
+}; // playState
 
 function render() {
   game.debug.spriteInfo(player, 20, 32);
   this.handgun.debug();
-
 }
 
 // Helper functions go below
@@ -334,7 +317,7 @@ function Player(x, y) {
   player.yDest = y;
   player.anchor.setTo(.5, 1);
 
-  player.health = 50;
+  player.health = 100;
   player.healthText = null;
 
   player.score = 0;
@@ -354,6 +337,8 @@ function Player(x, y) {
     this.animations.play('runningShoot');
     if (player.health < 0){
       player.kill();
+      condition = 2;
+      game.state.start("preLevel");
     }
   };
 
@@ -433,9 +418,12 @@ function nextLevel(player, noOfKills, curLevelInt){
   if (player.kills === noOfKills && curLevelInt <= 3) {
     level = curLevelInt + 1;
     localStorage.setItem("level", parseInt(level));
+    condition = 1;
   } else if (level > 2) {
+    condition = 0;
     localStorage.setItem("level", 0);
   } else {
+    condition = 3;
     localStorage.setItem("level", curLevelInt);
   }
   console.log(localStorage.getItem("level"));

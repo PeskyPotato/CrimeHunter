@@ -257,7 +257,7 @@ var playState = {
       }, null, this);
 
       game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
-        console.log("hit! Bullet + Enemy");
+        //console.log("hit! Bullet + Enemy");
         e.stop(this.player);
         b.kill();
         this.player.score = this.player.score + 5;
@@ -375,7 +375,6 @@ function Enemy(x, y){
 	enemy.stop = function(p){
 		this.kill();
     p.kills = p.kills + 1;
-    console.log(p.kills);
 	}
 
 	return enemy;
@@ -431,7 +430,7 @@ function nextLevel(player, noOfKills, curLevelInt){
     condition = 3;
     localStorage.setItem("level", curLevelInt);
   }
-  console.log(localStorage.getItem("level"));
+  //console.log(localStorage.getItem("level"));
   game.state.start("preLevel");
 
 }

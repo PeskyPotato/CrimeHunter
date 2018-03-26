@@ -296,6 +296,8 @@ var playState = {
 
       if (this.player.y < 100){
         nextLevel(this.player, this.curLevel[8], this.curLevelInt);
+      } else if ((this.player.y > this.curLevel[14]) && (game.input.keyboard.isDown(Phaser.Keyboard.DOWN))) {
+        this.player.stopY();
       }
     } // update
 }; // playState
@@ -343,6 +345,10 @@ function Player(x, y) {
 
   player.stop = function() {
     this.xDest = this.x;
+  };
+
+  player.stopY = function() {
+    this.yDest = this.y;
   };
 
   return player;

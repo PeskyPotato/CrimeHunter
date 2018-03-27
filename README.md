@@ -1,22 +1,12 @@
 # CodeFarmer
 [![Join the chat at https://gitter.im/_CodeFarmer/Lobby](https://badges.gitter.im/_CodeFarmer/Lobby.svg)](https://gitter.im/_CodeFarmer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Prototype
-[YouTube Demo](https://www.youtube.com/watch?v=Vm7XSoXGqyI)
+## Alpha Release
+[YouTube Demo](https://www.youtube.com/watch?v=SzG-o6luphw)
 
-### Running the game
-To run the game a local host must be created, one of the ways to do this is through python.
+The game is live on [crime-hunter.herokuapp.com](http://crime-hunter.herokuapp.com/).
 
-Clone the repository using:
-`git clone https://github.com/LameLemon/CodeFarmer.git`
-
-For Python2 run the following command in the CodeFarmer folder:
-`python -m SimpleHTTPServer`
-For Python3 run the following command in the CodeFarmer folder:
-`python3 -m http.server`
-
-Both of these commands create a simple webserver in the CodeFarmer directory using the loopback IP on port 8000.
-To play the game open your browser and type in `127.0.0.1:8000`.
+Developer documentation to contribute to the project is available in the [wiki](https://github.com/LameLemon/CrimeHunter/wiki/Developer-Documentation) including instructions to the game locally under the [setup heading](https://github.com/LameLemon/CrimeHunter/wiki/Developer-Documentation#setup). The Prototype Release information can be found under [Releases](https://github.com/LameLemon/CrimeHunter/releases/tag/v0.1.0).
 
 ## Project Description
 
@@ -44,7 +34,7 @@ To play the game open your browser and type in `127.0.0.1:8000`.
 * [Darasy Reth](https://github.com/darasy) - Game Objects Movements / Code Review
 * [Yizhou](https://github.com/sunyizhou) - Game Environment / Game Objects
 * [Gary Dos Santos](https://github.com/LameLemon) - In-Game Physics / Code Review / Graphics, Animation and Sound
-* [Lin](https://github.com/linlinlin3) - Game Environment/Graphics, Animation and Sound
-* [Jiayi Zheng](https://github.com/JiayiZheng) - In-Game Physics / Game Objects / Game Environment
+* [Lin](https://github.com/linlinlin3) - Game Objects Movements
+* [Jiayi Zheng](https://github.com/JiayiZheng) - Game Objects / Game Environment
 
-More information on the team roles can be found on the [Wiki](https://github.com/LameLemon/CodeFarmer/wiki/Team-Roles)
+More information on the team roles can be found on the [Wiki](https://github.com/LameLemon/CodeFarmer/wiki/Team-Roles).

@@ -5,7 +5,7 @@ var preLevelState = {
   create: function() {
     game.stage.backgroundColor = "#eeeee";
     l = localStorage.getItem("level");
-    console.log("l "+ l )
+    //console.log("l "+ l )
     var enemies = 5;
     if (l == "0") {
       enemies = 1;

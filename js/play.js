@@ -91,7 +91,7 @@ var playState = {
       // Player weapon: utlskill
       this.ultskill = game.add.weapon(1, 'ultskill');    // ammo 1
       this.ultskill.bulletAngleOffset = 90;
-      this.ultskill.bulletSpeed = 500;
+      this.ultskill.bulletSpeed = 1200;
       this.ultskill.fireRate =8000;
       this.ultskill.trackSprite(this.player, -2, -80);
       this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;

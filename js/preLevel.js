@@ -52,7 +52,15 @@ var preLevelState = {
       levelText.anchor.setTo(.5, .5);
       localStorage.setItem("level", 0);
       game.time.events.add(Phaser.Timer.SECOND * 5, fadePicture, this);
-
+      localStorage.setItem("returning", null);
+      // Reset score to 0 after winning, new spot on score boar
+      var myJSON = localStorage.getItem("highScore");
+      console.log(myJSON);
+      var p = JSON.parse(myJSON);
+      p.unshift(0);
+      localStorage.setItem("highScore", JSON.stringify(p));
+      console.log(localStorage.getItem("highScore"));
+      localStorage.setItem("returning", 1);
     }
   }
 }

@@ -6,10 +6,12 @@ var titleText;
 
 titleState = {
   create: function() {
-    var s = localStorage.getItem("highScore");
-    var l = localStorage.getItem("level");
+    var s = localStorage.getItem("highScore"); // list of scores from the player
+    var l = localStorage.getItem("level"); // current level player left on
+    var r = localStorage.getItem("returning"); // is the player returning from an old game?
 
     if (!s) {
+      console.log("here");
       var score = [];
       var myJSON = JSON.stringify(score);
       localStorage.setItem("highScore", myJSON);
@@ -22,6 +24,19 @@ titleState = {
       localStorage.setItem("level", 0);
     } else if (l > 2) {
       localStorage.setItem("level", 0);
+    }
+
+    if (!r) {
+      //Intantiate score to 0, if not returning
+      var myJSON = localStorage.getItem("highScore");
+      console.log(myJSON);
+      var p = JSON.parse(myJSON);
+      p.unshift(0);
+      localStorage.setItem("highScore", JSON.stringify(p));
+      console.log(localStorage.getItem("highScore"));
+      localStorage.setItem("returning", 1);
+    } else {
+      // do nothing, use latest score
     }
 
   },

@@ -6,9 +6,9 @@ var epsound; // Explosion sound
 var gsound; // Shotgun sound
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
-var level0 = [300, 3150, 3000, 110, 180, 275, 335, 100, 1, 3000, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
-var level1 = [300, 3600, 3450, 110, 180, 275, 335, 200, 2, 3500, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
-var level2 = [300, 3950, 3800, 110, 180, 275, 335, 300, 3, 3850, 'level2', 'Tile Layer 1', [25], 480, 4000];
+var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
+var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
+var level2 = [300, 3950, 3700, 110, 180, 275, 335, 300, 3, 3750, 'level2', 'Tile Layer 1', [25], 480, 4000];
 
 var lane = [];
 
@@ -73,26 +73,25 @@ var playState = {
       game.camera.y = game.world.centerY;
       game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-       this.myHealthBar = new HealthBar(this.game, {x: 45, y: 20, height: 10, width: 80});
-       this.myHealthBar.setBarColor('#ff1c1c');
-       this.myHealthBar.setFixedToCamera(true);
+      this.myHealthBar = new HealthBar(this.game, {x: 45, y: 20, height: 10, width: 80});
+      this.myHealthBar.setBarColor('#ff1c1c');
+      this.myHealthBar.setFixedToCamera(true);
 
       //Player weapon: hand gun
       this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
       this.handgun.bulletAngleOffset = 90;
       this.handgun.bulletSpeed = 750;
-      this.handgun.fireRate = 800;
+      this.handgun.fireRate = 600;
       game.physics.arcade.enable(this.player);
       this.handgun.trackSprite(this.player, -2, -80);
       this.handgun.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
-
       // Player weapon: utlskill
-      this.ultskill = game.add.weapon(1, 'ultskill');    // ammo 1
+      this.ultskill = game.add.weapon(7, 'ultskill');
       this.ultskill.bulletAngleOffset = 90;
       this.ultskill.bulletSpeed = 500;
-      this.ultskill.fireRate =8000;
+      this.ultskill.fireRate = 5000;
       this.ultskill.trackSprite(this.player, -2, -80);
       this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       ultskillButton = this.input.keyboard.addKey(Phaser.KeyCode.Z);
@@ -103,11 +102,14 @@ var playState = {
       // this.addhealth = game.add.sprite(game.world.centerX+100, game.world.centerY+100, 'addhealth');
       // game.physics.enable(this.addhealth, Phaser.Physics.ARCADE);
 
-      //Instantiate score to 0
+      // Set player score to the latest score in array
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
-      p.push("0");
-      localStorage.setItem("highScore", JSON.stringify(p));
+      var curScore = p.shift();
+      this.player.score = curScore;
+      p.unshift(curScore);
+
+      // Display player scor eon screen
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
 
@@ -291,7 +293,7 @@ var playState = {
         //console.log("side of road");
       });
 
-      updateScore(this.player);
+      //updateScore(this.player);
       this.myHealthBar.setPercent(this.player.health)
 
       if (this.player.y < 100){
@@ -406,20 +408,36 @@ function playerFrame(numB) {
 }
 
 function updateScore(b) {
-  //console.log("UPDATES__________________+++++++++")
+  console.log("UpdateScore");
   var myJSON = localStorage.getItem("highScore");
   var p = JSON.parse(myJSON);
-
-  p.pop();
-  p.push(b.score);
-
+  console.log("p " , p);
+  // var sc = p.pop();
+  // console.log(sc)
+  p.shift();
+  p.unshift(b.score);
+  console.log(b.score);
   localStorage.setItem("highScore", JSON.stringify(p));
+  console.log(localStorage.getItem("highScore"))
 }
 
 
 function nextLevel(player, noOfKills, curLevelInt){
   var level = 0;
   if (player.kills === noOfKills && curLevelInt <= 3) {
+
+    console.log("UpdateScore");
+    var myJSON = localStorage.getItem("highScore");
+    var p = JSON.parse(myJSON);
+    console.log("p " , p);
+    // var sc = p.pop();
+    // console.log(sc)
+    p.shift();
+    p.unshift(player.score);
+    console.log(player.score);
+    localStorage.setItem("highScore", JSON.stringify(p));
+    console.log(localStorage.getItem("highScore"))
+
     level = curLevelInt + 1;
     localStorage.setItem("level", parseInt(level));
     condition = 1;
@@ -431,6 +449,19 @@ function nextLevel(player, noOfKills, curLevelInt){
     localStorage.setItem("level", curLevelInt);
   }
   //console.log(localStorage.getItem("level"));
+  //updateScore(player);
+
+  // console.log("UpdateScore");
+  // var myJSON = localStorage.getItem("highScore");
+  // var p = JSON.parse(myJSON);
+  // console.log("p " , p);
+  // // var sc = p.pop();
+  // // console.log(sc)
+  // p.pop();
+  // p.push(b.score);
+  // console.log(b.score);
+  // localStorage.setItem("highScore", JSON.stringify(p));
+  // console.log(localStorage.getItem("highScore"))
   game.state.start("preLevel");
 
 }

@@ -31,7 +31,7 @@ titleState = {
       var myJSON = localStorage.getItem("highScore");
       console.log(myJSON);
       var p = JSON.parse(myJSON);
-      p.push(0);
+      p.unshift(0);
       localStorage.setItem("highScore", JSON.stringify(p));
       console.log(localStorage.getItem("highScore"));
       localStorage.setItem("returning", 1);

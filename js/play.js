@@ -105,9 +105,9 @@ var playState = {
       // Set player score to the latest score in array
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
-      var curScore = p.pop();
+      var curScore = p.shift();
       this.player.score = curScore;
-      p.push(curScore);
+      p.unshift(curScore);
 
       // Display player scor eon screen
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
@@ -414,8 +414,8 @@ function updateScore(b) {
   console.log("p " , p);
   // var sc = p.pop();
   // console.log(sc)
-  p.pop();
-  p.push(b.score);
+  p.shift();
+  p.unshift(b.score);
   console.log(b.score);
   localStorage.setItem("highScore", JSON.stringify(p));
   console.log(localStorage.getItem("highScore"))
@@ -432,8 +432,8 @@ function nextLevel(player, noOfKills, curLevelInt){
     console.log("p " , p);
     // var sc = p.pop();
     // console.log(sc)
-    p.pop();
-    p.push(player.score);
+    p.shift();
+    p.unshift(player.score);
     console.log(player.score);
     localStorage.setItem("highScore", JSON.stringify(p));
     console.log(localStorage.getItem("highScore"))

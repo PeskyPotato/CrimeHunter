@@ -195,23 +195,76 @@ var playState = {
       this.player.update();
 
 
+      /*
+       1. Civil's Car Movement Update
+	        the smaller k equal to, the higher frequency NPC movement can be
 
-      // Civil's Car Movement Update
-	  // the smaller k equal to , the higher frequency NPC movement can be
-      if (k==300) {         // Use counting instead of timing where the larger makes it rarely move
+       2. If the player is within the range of NPC cars, the NPC cars need move away from the player.
+          2.1 The player is inside range is when the player is (plyer.Y-Axis - 200 Y-Axis) away behind the NPC cars
+              or (player.Y-Axis + 200 Y-Axis) in front of the NPC cars, and
+              within X-Axis ranges of NPC cars in which the range of each NPC car is [car.x-30, car.x+30].
+          2.2 Another condition of range is when the player is (plyer.Y-Axis - 100 Y-Axis) away behind the NPC cars
+              or (player.Y-Axis + 100 Y-Axis) in front of the NPC cars,
+              and the NPC cars need to switch lanes, if it needs to, on the X-Axis where if its X-Axis > player.x,
+              it needs to switch lanes to the one where X-Axis is larger than player.x, and vice versa to avoid collision.
+      */
+      var temY = this.player.body.y;
+      var temX = this.player.body.x;
+
+      /* Random Lanes Assignment After the Time Interval
+         We use 'k' counting as the timer where it assigns random lanes to each cars
+         once k value is reached. Since update function() occurs approximately 60 times per second
+         we can consider the time to be equal to k/60.
+         So if k==300, it takes around 5 seconds to assign random lanes each time.
+      */
+      if (k==300) {
         this.civils.forEach(function(car){
           var moveOrNot = [false, true];
           var moveCar = moveOrNot[Math.floor(Math.random()*moveOrNot.length)];
           if (moveCar == true) {
-            if ((lane).includes(car.xDest)) {
               car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
-            }
           }
-          car.update();
         });
         k = 0;
       }
+
+      // The function that is implemented after Alpha Release
+      // Described in 2. above
+      this.civils.forEach(function(car){
+        if (((car.y < temY) && (car.y >= temY-200)) || ((car.y >= temY) && (car.y <= temY+200))) {
+          /* The NPC car need to move away if the player moves along the X-Axis of range [temX-30, temX+30]
+             In this case, the player is either behind or in front of NPC car.
+          */
+          if ((car.xDest <= temX+30) && (car.xDest >= temX-30)) {
+            while ((car.xDest <= temX+30) && (car.xDest >= temX-30)) {
+              car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+            }
+          }
+          /* The NPC car need to stay on the right side if the player moves along the left side of its X-Axis,
+              and it plans to move to the left.
+          */
+          else if (((car.y < temY) && (car.y >= temY-100)) || ((car.y >= temY) && (car.y <= temY+100))) {
+            if ((car.xDest <= temX) && (car.body.x > temX)) {
+              while ((car.xDest <= temX) && (car.body.x > temX)) {
+                car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+            }
+            /* The NPC car need to stay on the left side if the player moves along the right side of its X-Axis,
+                and it plans to move to the right.
+            */
+            else if ((car.xDest > temX) && (car.body.x <= temX)) {
+              while ((car.xDest > temX) && (car.body.x <= temX)) {
+                car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+            }
+          }
+        }
+
+        car.update();
+      });
+
       k++;
+
 
 
 		// enemy's Car Movement Update

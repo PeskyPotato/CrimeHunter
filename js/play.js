@@ -132,7 +132,6 @@ var playState = {
          this.healthbag.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y-500))+1000 , 'addhealth');
 
         }
-
         //Trap can damage player
         this.trap = game.add.group();
 
@@ -148,7 +147,6 @@ var playState = {
             this.trap.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y))+1000 , 'addtrap');
 
         }
-
 
 
       // Enemy
@@ -339,12 +337,14 @@ var playState = {
 
         }, null, this);
 
+
         game.physics.arcade.overlap(this.trap,this.player,  function(b,e){
 
             // b.kill();
             this.player.health = this.player.health - 1;
 
         }, null, this);
+
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         //console.log("hit! Bullet + Enemy");

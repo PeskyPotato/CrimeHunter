@@ -1,0 +1,18 @@
+.numBullet {
+  border-radius: 15px;
+  width: 170px;
+  height: 10px;
+  padding: 5px;
+  background: #DCDCDC;
+  margin-left: 20px;
+  position: relative;
+  display: inline-block;
+}
+.nBullet {
+  background: #DAA520;
+  border-radius: 3px;
+  width: 100%;
+  height: 10px;
+  position: relative;
+
+}

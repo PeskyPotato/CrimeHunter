@@ -60,11 +60,24 @@ function titleAction() {
 
   playBut = game.add.button(200, 100, 'playButton', playAction, this, 2, 1, 0);
   scoreBut = game.add.button(200, 140, 'scoreButton', scoreAction, this, 2, 1, 0);
+  helpBut = game.add.button(200, 180, 'helpButton', helpAction, this, 2, 1, 0);
+}
+
+function helpAction() {
+  playBut.kill();
+  scoreBut.kill();
+  helpBut.kill();
+  titleText.destroy();
+  
+  backBut = game.add.button(200, 200, 'backButton', titleAction, this, 2, 1, 0);
+
+  game.stage.backgroundColor = '#004141';
 }
 
 function scoreAction() {
   playBut.kill();
   scoreBut.kill();
+  helpBut.kill();
   titleText.destroy();
 
   scoreBoard = new ScoreBoard(this.game);

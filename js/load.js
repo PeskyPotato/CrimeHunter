@@ -16,6 +16,7 @@ var loadState={
     game.load.spritesheet('characters', 'assets/[SPRITE].png', 32, 64);
     game.load.image('playButton', 'assets/buttons/play.png');
     game.load.image('scoreButton', 'assets/buttons/score.png');
+    game.load.image('helpButton', 'assets/buttons/help.png');
     game.load.image('backButton', 'assets/buttons/back.png');
 
     // Maps

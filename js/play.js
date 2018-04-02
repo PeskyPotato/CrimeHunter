@@ -129,7 +129,7 @@ var playState = {
         for (var i = 0; i < this.curLevelInt+1; i++)
         {
             // add health bag (left to right, start point to end point, bag picture)
-           this.healthbag.create(Math.floor(Math.random()*285)+85 ,Math.floor(Math.random()*(this.player.y-1000))+1000 , 'addhealth');
+           this.healthbag.create(Math.floor(Math.random()*285)+75 ,Math.floor(Math.random()*(this.player.y-1000))+1000 , 'addhealth');
 
         }
 

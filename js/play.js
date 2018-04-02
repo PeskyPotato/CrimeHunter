@@ -132,7 +132,21 @@ var playState = {
          this.healthbag.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y-500))+1000 , 'addhealth');
 
         }
+        //Trap can damage player
+        this.trap = game.add.group();
 
+        this.trap.enableBody = true;
+
+        this.trap.physicsBodyType = Phaser.Physics.ARCADE;
+
+
+        // add 5 health bag per level
+        for (var i = 0; i < this.curLevelInt+5; i++)
+        {
+            // add health bag (left to right, start point to end point, bag picture)
+            this.trap.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y))+1000 , 'addtrap');
+
+        }
 
 
       // Enemy
@@ -322,6 +336,15 @@ var playState = {
             this.player.health = 100;
 
         }, null, this);
+
+
+        game.physics.arcade.overlap(this.trap,this.player,  function(b,e){
+
+            // b.kill();
+            this.player.health = this.player.health - 1;
+
+        }, null, this);
+
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         //console.log("hit! Bullet + Enemy");

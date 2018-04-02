@@ -21,6 +21,7 @@ var playState = {
     curLevel: null,
     curLevelInt: null,
     noKills: null,
+    healthbag: null,
 
 		// Instantiate and assign game objects
     create: function () {
@@ -90,7 +91,7 @@ var playState = {
       // Player weapon: utlskill
       this.ultskill = game.add.weapon(7, 'ultskill');
       this.ultskill.bulletAngleOffset = 90;
-      this.ultskill.bulletSpeed = 500;
+      this.ultskill.bulletSpeed = 2000;
       this.ultskill.fireRate = 5000;
       this.ultskill.trackSprite(this.player, -2, -80);
       this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
@@ -112,6 +113,26 @@ var playState = {
       // Display player scor eon screen
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
+
+
+      //HealthBag allow player recover health
+        this.healthbag = game.add.group();
+
+        this.healthbag.enableBody = true;
+
+        this.healthbag.physicsBodyType = Phaser.Physics.ARCADE;
+
+        var mx = game.width - game.cache.getImage('addhealth').width;
+        var my = game.height - game.cache.getImage('addhealth').height;
+
+        // add 1 health bag per level
+        for (var i = 0; i < this.curLevelInt+1; i++)
+        {
+            // add health bag (left to right, start point to end point, bag picture)
+           this.healthbag.create(Math.floor(Math.random()*285)+85 ,Math.floor(Math.random()*(this.player.y-1000))+1000 , 'addhealth');
+
+        }
+
 
 
       // Enemy
@@ -181,6 +202,8 @@ var playState = {
         this.player.animations.play('runningShoot');
         //gsound.play();
         }
+
+
 
       // Mouse contorls
       if (game.input.activePointer.isDown) {
@@ -291,6 +314,14 @@ var playState = {
         //console.log("crash! Player + Enemy");
         p.health = p.health - 5;
       });
+
+
+        game.physics.arcade.overlap(this.healthbag,this.player,  function(b,e){
+
+           // b.kill();
+            this.player.health = 100;
+
+        }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         //console.log("hit! Bullet + Enemy");

@@ -4,6 +4,9 @@ var m = 0;
 var sound;  // Game music
 var epsound; // Explosion sound
 var gsound; // Shotgun sound
+var eBullets; // Enemies' Bullets
+var remainingEnemies = [] ; // Remaining Enemies
+var attackTiming = 0; // Time when enemies attack the player
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
 var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
@@ -95,6 +98,17 @@ var playState = {
       this.ultskill.trackSprite(this.player, -2, -80);
       this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       ultskillButton = this.input.keyboard.addKey(Phaser.KeyCode.Z);
+
+      // Enemy Weapon
+      eBullets = game.add.group();
+      eBullets.enableBody = true;
+      eBullets.physicsBodyType = Phaser.Physics.ARCADE;
+      eBullets.createMultiple(30, 'bullet');
+      eBullets.setAll('anchor.x', 0.5);
+      eBullets.setAll('anchor.y', 1);
+      eBullets.setAll('outOfBoundsKill', true);
+      eBullets.setAll('checkWorldBounds', true);
+
       //ultskill cooldown shows
       //this.player.skillText = game.add.text(0, 50, "Unique skill : 1 hit / 8 sec  (press z)", { font: "20px", fill: "#ffffff", align: "centre" });
       //this.player.skillText.fixedToCamera = true;
@@ -116,6 +130,8 @@ var playState = {
 
       // Enemy
       this.enemies = game.add.group();
+      this.enemies.enableBody = true;
+      this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
       var y = enemyY;
 
     	var numberOfRandomCars = enemyNumber;
@@ -187,13 +203,36 @@ var playState = {
         this.player.setDest(game.input.x, game.input.y);
       }
 
+      var temY = this.player.body.y;
+      var temX = this.player.body.x;
+
 	    //Enemy update
       this.enemies.forEach(function(enemy, index){
         enemy.update();
       });
-
+      // The Tutorial from Phaser.io:
+      // https://phaser.io/examples/v2/games/invaders
+      // Set Attack Time to be 100
+      if (attackTiming == 60) {
+          enemyBullet = eBullets.getFirstExists(false);
+          remainingEnemies.length=0;
+          this.enemies.forEachAlive(function(enemy){  // Check for remaining enemies
+            remainingEnemies.push(enemy);
+          });
+          if (enemyBullet && remainingEnemies.length > 0) {
+              // Choose one enemy randomly to shoot
+              var b = remainingEnemies[game.rnd.integerInRange(0,remainingEnemies.length-1)];
+              // Also, that enemy only shoot if the distant is around 300 away from player
+              if (((temY > b.body.y) && (temY - b.body.y < 300))
+              ||  ((temY < b.body.y) && (b.body.y - temY < 300))) {
+                enemyBullet.reset(b.body.x, b.body.y);
+                game.physics.arcade.moveToObject(enemyBullet,this.player,120);
+              }
+          }
+          attackTiming = 0;
+        }
+      attackTiming++;
       this.player.update();
-
 
       /*
        1. Civil's Car Movement Update
@@ -208,8 +247,8 @@ var playState = {
               and the NPC cars need to switch lanes, if it needs to, on the X-Axis where if its X-Axis > player.x,
               it needs to switch lanes to the one where X-Axis is larger than player.x, and vice versa to avoid collision.
       */
-      var temY = this.player.body.y;
-      var temX = this.player.body.x;
+//      var temY = this.player.body.y; Use above
+//      var temX = this.player.body.x; Use above
 
       /* Random Lanes Assignment After the Time Interval
          We use 'k' counting as the timer where it assigns random lanes to each cars
@@ -327,6 +366,15 @@ var playState = {
         this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
 
+      game.physics.arcade.overlap(eBullets, this.player, function(p,b){
+        b.kill();
+        p.health = p.health - 10;
+      }, null, this);
+
+      game.physics.arcade.overlap(eBullets, this.civils, function(b,c){
+        b.kill();
+        c.kill();
+      }, null, this);
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         //console.log("crash! Enemy + Civil");

@@ -17,6 +17,7 @@ var loadState={
     game.load.image('playButton', 'assets/buttons/play.png');
     game.load.image('scoreButton', 'assets/buttons/score.png');
     game.load.image('helpButton', 'assets/buttons/help.png');
+    game.load.image('instructions', 'assets/instructions.png');
     game.load.image('backButton', 'assets/buttons/back.png');
 
     // Maps

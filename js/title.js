@@ -3,6 +3,8 @@ var scoreBut;
 var backBut;
 var scoreBoard;
 var titleText;
+var instruction;
+var helpText;
 
 titleState = {
   create: function() {
@@ -47,12 +49,21 @@ titleState = {
 
 
 function titleAction() {
+
   if (backBut !== undefined){
       backBut.kill();
   }
 
   if (scoreBoard !== undefined){
     scoreBoard.destroy();
+  }
+
+  if (instruction !== undefined){
+      instruction.destroy();
+  }
+
+  if (helpText !== undefined){
+      helpText.destroy();
   }
 
   titleText = game.add.text(60, 20, "Crime Hunter!", { font: "50px", fill: "#ffffff", align: "centre" });
@@ -68,8 +79,13 @@ function helpAction() {
   scoreBut.kill();
   helpBut.kill();
   titleText.destroy();
-  
-  backBut = game.add.button(200, 200, 'backButton', titleAction, this, 2, 1, 0);
+
+  helpText = game.add.text(150, 2, "Help Here!", { font: "40px", fill: "#ffffff", align: "centre" });
+  instruction = game.add.image(50, 50, 'instructions');
+  instruction.scale.set(0.42,0.42);
+
+  backBut = game.add.button(220, 340, 'backButton', titleAction, this, 2, 1, 0);
+  backBut.scale.set(0.5,0.5);
 
   game.stage.backgroundColor = '#004141';
 }

@@ -297,12 +297,22 @@ var playState = {
         this.civils.forEach(function(car){
           var moveOrNot = [false, true];
           var moveCar = moveOrNot[Math.floor(Math.random()*moveOrNot.length)];
+          var changeSpeedOrNot = [false, true];
+          var changeSpeed = changeSpeedOrNot[Math.floor(Math.random()*changeSpeedOrNot.length)];
+          var newSpeed = 25;
           if (moveCar == true) {
               car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
           }
+          if (changeSpeed == true) {
+            newSpeed =  Math.floor(Math.random() * 96) + 25;
+            car.update = function() {
+              this.speed = newSpeed;
+              move(this);
+            };
+          }
         });
         k = 0;
-      }
+      }      
 
       // The function that is implemented after Alpha Release
       // Described in 2. above

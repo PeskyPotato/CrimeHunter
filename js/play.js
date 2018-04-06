@@ -8,6 +8,7 @@ var eBullets; // Enemies' Bullets
 var remainingEnemies = [] ; // Remaining Enemies
 var attackTiming = 0; // Time when enemies attack the player
 var back_layer;
+var middle_layer;
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
 var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
@@ -63,8 +64,9 @@ var playState = {
       var boundsY = this.curLevel[14];
 
       //Tilemap
-      back_layer = game.add.group();
-      var front_layer = game.add.group();
+      back_layer = game.add.group(); // maps + power ups + traps
+      middle_layer = game.add.group(); // NPCS, Enemy, Player
+      var front_layer = game.add.group(); // Bridges
       var map = game.add.tilemap(levelName);
       map.addTilesetImage('Tileset_Master', 'tile_master')
       map.setCollision(collision);
@@ -122,13 +124,6 @@ var playState = {
       eBullets.setAll('outOfBoundsKill', true);
       eBullets.setAll('checkWorldBounds', true);
 
-      //ultskill cooldown shows
-      //this.player.skillText = game.add.text(0, 50, "Unique skill : 1 hit / 8 sec  (press z)", { font: "20px", fill: "#ffffff", align: "centre" });
-      //this.player.skillText.fixedToCamera = true;
-
-      // this.addhealth = game.add.sprite(game.world.centerX+100, game.world.centerY+100, 'addhealth');
-      // game.physics.enable(this.addhealth, Phaser.Physics.ARCADE);
-
       // Set player score to the latest score in array
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
@@ -142,6 +137,7 @@ var playState = {
 
       //HealthBag allow player recover health
       this.healthbag = game.add.group();
+      back_layer.add(this.healthbag);
       this.healthbag.enableBody = true;
       this.healthbag.physicsBodyType = Phaser.Physics.ARCADE;
       var mx = game.width - game.cache.getImage('addhealth').width;
@@ -154,17 +150,19 @@ var playState = {
       }
       //Trap can damage player
       this.trap = game.add.group();
+      back_layer.add(this.trap);
       this.trap.enableBody = true;
       this.trap.physicsBodyType = Phaser.Physics.ARCADE;
 
-      // add 5 health bag per level
-      for (var i = 0; i < this.curLevelInt+5; i++) {
+      // add 1 health bag per level
+      for (var i = 0; i < this.curLevelInt+1; i++) {
         // add health bag (left to right, start point to end point, bag picture)
-        this.trap.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y))+1000 , 'addtrap');
+        this.trap.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y))+1000 , 'pothole');
       }
 
       // Enemy
       this.enemies = game.add.group();
+      middle_layer.add(this.enemies);
       this.enemies.enableBody = true;
       this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
       var y = enemyY;
@@ -185,6 +183,7 @@ var playState = {
 
 	    // Civil Cars (Random Cars)
       this.civils = game.add.group();
+      middle_layer.add(this.civils);
       addLanes([lane1, lane2, lane3, lane4]);     // Add an array of lanes to lane
     	this.civils.enableBody = true;
       var numberOfRandomCars = civNumber;
@@ -370,7 +369,7 @@ var playState = {
       }, null, this);
 
       game.physics.arcade.overlap(this.trap, this.player,  function(p,t){
-        this.player.health = this.player.health - 5;
+        this.player.health = this.player.health - 1;
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
@@ -450,7 +449,7 @@ function render() {
 // Helper functions go below
 function Player(x, y) {
   var player = game.add.sprite(x, y, 'characters');
-  back_layer.add(player);
+  middle_layer.add(player);
 
   player.frame = 0;
   player.animations.add('runningShoot', [0, 1, 2, 3], 4);

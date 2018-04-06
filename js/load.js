@@ -3,10 +3,12 @@ var loadState={
   // Include loading screen when over network
   // Load game and assets
   preload: function() {
-    var loadingLabel = game.add.text(80, 150, 'loading...', {font: '30px Courier', fill: '#ffffff'})
-
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.setMinMax(400, 300, 800, 600);
+    game.scale.setMinMax(480, 360, 720, 540);
+
+    var loadingLabel = game.add.text(game.world.centerX, 150, 'loading...', {font: '30px', fill: '#ffffff', align:'centre'})
+    loadingLabel.anchor.setTo(.5, .5);
+
 
     game.stage.backgroundColor = '#000000';
 

@@ -203,6 +203,11 @@ var playState = {
     // Anything that needs to be checked, collisions, user input etc...
     update: function () {
       // Keyboard controls
+      if(game.input.keyboard.isDown(Phaser.Keyboard.X)) {
+        this.player.speed = 400;
+      } else {
+        this.player.speed = 280;
+      }
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x - 30, this.player.y - 30);
       }
@@ -231,7 +236,7 @@ var playState = {
         this.ultskill.fire();
         this.player.animations.play('runningShoot');
         //gsound.play();
-        }
+      }
 
 
 
@@ -312,7 +317,7 @@ var playState = {
           }
         });
         k = 0;
-      }      
+      }
 
       // The function that is implemented after Alpha Release
       // Described in 2. above

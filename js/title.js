@@ -66,7 +66,8 @@ function titleAction() {
       helpText.destroy();
   }
 
-  titleText = game.add.text(100, 20, "Crime Hunter!", { font: "50px", fill: "#ffffff", align: "centre" });
+  titleText = game.add.text(game.world.centerX, 40, "Crime Hunter!", { font: "50px", fill: "#ffffff", align: "center" });
+  titleText.anchor.setTo(.5, .5);
   game.stage.backgroundColor = '#004141';
 
   playBut = game.add.button(200, 100, 'playButton', playAction, this, 2, 1, 0);

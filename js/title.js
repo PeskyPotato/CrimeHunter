@@ -13,7 +13,6 @@ titleState = {
     var r = localStorage.getItem("returning"); // is the player returning from an old game?
 
     if (!s) {
-      console.log("here");
       var score = [];
       var myJSON = JSON.stringify(score);
       localStorage.setItem("highScore", myJSON);
@@ -24,7 +23,7 @@ titleState = {
 
     if (!l) {
       localStorage.setItem("level", 0);
-    } else if (l > 2) {
+    } else if (l > 3) {                   // Change for more levels
       localStorage.setItem("level", 0);
     }
 

@@ -7,11 +7,14 @@ var gsound; // Shotgun sound
 var eBullets; // Enemies' Bullets
 var remainingEnemies = [] ; // Remaining Enemies
 var attackTiming = 0; // Time when enemies attack the player
+var back_layer;
+var middle_layer;
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
 var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
 var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
-var level2 = [300, 3950, 3700, 110, 180, 275, 335, 300, 3, 3750, 'level2', 'Tile Layer 1', [25], 480, 4000];
+var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 1, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120];
+var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040];
 
 var lane = [];
 
@@ -29,7 +32,6 @@ var playState = {
 		// Instantiate and assign game objects
     create: function () {
       this.curLevelInt = localStorage.getItem("level");
-
       if (this.curLevelInt == 0){
         this.curLevel = level0;
         this.curLevelInt = 0;
@@ -39,6 +41,9 @@ var playState = {
       } else if (this.curLevelInt == 2) {
         this.curLevel = level2;
         this.curLevelInt = 2;
+      } else if (this.curLevelInt == 3) {
+         this.curLevel = level3;
+         this.curLevelInt= 3;
       }
 
       // World variables
@@ -59,10 +64,19 @@ var playState = {
       var boundsY = this.curLevel[14];
 
       //Tilemap
+      back_layer = game.add.group(); // maps + power ups + traps
+      middle_layer = game.add.group(); // NPCS, Enemy, Player
+      var front_layer = game.add.group(); // Bridges
       var map = game.add.tilemap(levelName);
       map.addTilesetImage('Tileset_Master', 'tile_master')
       map.setCollision(collision);
       this.layer = map.createLayer(layerName);
+      // TODO Add Tile Layer 2 to all levls to avoid this 'if'
+      if (this.curLevelInt > 2) {
+        this.layer1 = map.createLayer('Tile Layer 2');
+        front_layer.add(this.layer1);
+      }
+      back_layer.add(this.layer);
       game.world.setBounds(0, 0, boundsX, boundsY);
 
       // Sound
@@ -110,13 +124,6 @@ var playState = {
       eBullets.setAll('outOfBoundsKill', true);
       eBullets.setAll('checkWorldBounds', true);
 
-      //ultskill cooldown shows
-      //this.player.skillText = game.add.text(0, 50, "Unique skill : 1 hit / 8 sec  (press z)", { font: "20px", fill: "#ffffff", align: "centre" });
-      //this.player.skillText.fixedToCamera = true;
-
-      // this.addhealth = game.add.sprite(game.world.centerX+100, game.world.centerY+100, 'addhealth');
-      // game.physics.enable(this.addhealth, Phaser.Physics.ARCADE);
-
       // Set player score to the latest score in array
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
@@ -128,49 +135,40 @@ var playState = {
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
 
-
       //HealthBag allow player recover health
-        this.healthbag = game.add.group();
+      this.healthbag = game.add.group();
+      back_layer.add(this.healthbag);
+      this.healthbag.enableBody = true;
+      this.healthbag.physicsBodyType = Phaser.Physics.ARCADE;
+      var mx = game.width - game.cache.getImage('addhealth').width;
+      var my = game.height - game.cache.getImage('addhealth').height;
 
-        this.healthbag.enableBody = true;
+      // add 1 health bag per level
+      for (var i = 0; i < this.curLevelInt+1; i++) {
+        // add health bag (left to right, start point to end point, bag picture)
+        this.healthbag.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y-500))+1000 , 'addhealth');
+      }
+      //Trap can damage player
+      this.trap = game.add.group();
+      back_layer.add(this.trap);
+      this.trap.enableBody = true;
+      this.trap.physicsBodyType = Phaser.Physics.ARCADE;
 
-        this.healthbag.physicsBodyType = Phaser.Physics.ARCADE;
-
-        var mx = game.width - game.cache.getImage('addhealth').width;
-        var my = game.height - game.cache.getImage('addhealth').height;
-
-        // add 1 health bag per level
-        for (var i = 0; i < this.curLevelInt+1; i++)
-        {
-            // add health bag (left to right, start point to end point, bag picture)
-         this.healthbag.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y-500))+1000 , 'addhealth');
-
-        }
-        //Trap can damage player
-        this.trap = game.add.group();
-
-        this.trap.enableBody = true;
-
-        this.trap.physicsBodyType = Phaser.Physics.ARCADE;
-
-
-        // add 5 health bag per level
-        for (var i = 0; i < this.curLevelInt+5; i++)
-        {
-            // add health bag (left to right, start point to end point, bag picture)
-            this.trap.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y))+1000 , 'addtrap');
-
-        }
-
+      // add 1 health bag per level
+      for (var i = 0; i < this.curLevelInt+1; i++) {
+        // add health bag (left to right, start point to end point, bag picture)
+        this.trap.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y))+1000 , 'pothole');
+      }
 
       // Enemy
       this.enemies = game.add.group();
+      middle_layer.add(this.enemies);
       this.enemies.enableBody = true;
       this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
       var y = enemyY;
 
     	var numberOfRandomCars = enemyNumber;
-        var lanes = [lane1, lane2, lane3, lane4];
+      var lanes = [lane1, lane2, lane3, lane4];
     	for (var i=0; i < numberOfRandomCars; i++) {
         var x = lanes[Math.floor(Math.random()*lanes.length)];
         this.enemies.add(Enemy(x,y));
@@ -185,10 +183,9 @@ var playState = {
 
 	    // Civil Cars (Random Cars)
       this.civils = game.add.group();
+      middle_layer.add(this.civils);
       addLanes([lane1, lane2, lane3, lane4]);     // Add an array of lanes to lane
     	this.civils.enableBody = true;
-
-
       var numberOfRandomCars = civNumber;
       var startingYAxis = civY;
       this.civils = addRandomCars(this.civils,numberOfRandomCars,startingYAxis);
@@ -198,6 +195,7 @@ var playState = {
       addLanes([ list of lanes you want to set ]);
       this.civils = addRandomCars(this.civils, number Of RandomCars you want , starting Y-Axis of the first random car);
       */
+
     },  // create
 
     // Anything that needs to be checked, collisions, user input etc...
@@ -231,8 +229,7 @@ var playState = {
         this.ultskill.fire();
         this.player.animations.play('runningShoot');
         //gsound.play();
-        }
-
+      }
 
 
       // Mouse contorls
@@ -247,9 +244,7 @@ var playState = {
       this.enemies.forEach(function(enemy, index){
         enemy.update();
       });
-      // The Tutorial from Phaser.io:
-      // https://phaser.io/examples/v2/games/invaders
-      // Set Attack Time to be 100
+
       if (attackTiming == 60) {
           enemyBullet = eBullets.getFirstExists(false);
           remainingEnemies.length=0;
@@ -373,41 +368,28 @@ var playState = {
       }
       m++;
 
+      // Collisions
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
-        //console.log("crash! Player + Enemy");
         p.health = p.health - 5;
       });
 
+      game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
+        h.kill();
+        this.player.health = this.player.health + 25;
+      }, null, this);
 
-        game.physics.arcade.overlap(this.healthbag,this.player,  function(b,e){
-
-           // b.kill();
-            this.player.health = 100;
-
-        }, null, this);
-
-
-        game.physics.arcade.overlap(this.trap,this.player,  function(b,e){
-
-            // b.kill();
-            this.player.health = this.player.health - 1;
-
-        }, null, this);
-
+      game.physics.arcade.overlap(this.trap, this.player,  function(p,t){
+        this.player.health = this.player.health - 1;
+      }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
-        //console.log("hit! Bullet + Enemy");
-        //epsound.play();
         e.stop(this.player);
         b.kill();
-        //this.enemies.kill();
         this.player.score = this.player.score + 5;
         this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
-        //console.log("hit! Bullet + Civil");
-        //epsound.play();
         c.kill();
         b.kill();
         this.player.score = this.player.score - 5;
@@ -415,16 +397,13 @@ var playState = {
       }, null, this);
 
       game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
-        //console.log("hit! Bullet + Enemy");
         e.stop(this.player);
         b.kill();
         this.player.score = this.player.score + 5;
         this.player.scoreText.setText("Score " + this.player.score);
       }, null, this);
 
-
       game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
-        //console.log("hit! Bullet + Civil");
         c.kill();
         this.player.score = this.player.score - 5;
         this.player.scoreText.setText("Score " + this.player.score);
@@ -461,11 +440,14 @@ var playState = {
       //updateScore(this.player);
       this.myHealthBar.setPercent(this.player.health)
 
+      // Checks if player is at the end of map
       if (this.player.y < 100){
         nextLevel(this.player, this.curLevel[8], this.curLevelInt);
       } else if ((this.player.y > this.curLevel[14]) && (game.input.keyboard.isDown(Phaser.Keyboard.DOWN))) {
         this.player.stopY();
       }
+
+
     } // update
 }; // playState
 
@@ -477,6 +459,7 @@ function render() {
 // Helper functions go below
 function Player(x, y) {
   var player = game.add.sprite(x, y, 'characters');
+  middle_layer.add(player);
 
   player.frame = 0;
   player.animations.add('runningShoot', [0, 1, 2, 3], 4);
@@ -573,60 +556,33 @@ function playerFrame(numB) {
 }
 
 function updateScore(b) {
-  console.log("UpdateScore");
   var myJSON = localStorage.getItem("highScore");
   var p = JSON.parse(myJSON);
-  console.log("p " , p);
-  // var sc = p.pop();
-  // console.log(sc)
   p.shift();
   p.unshift(b.score);
-  console.log(b.score);
   localStorage.setItem("highScore", JSON.stringify(p));
-  console.log(localStorage.getItem("highScore"))
 }
 
 
 function nextLevel(player, noOfKills, curLevelInt){
   var level = 0;
-  if (player.kills === noOfKills && curLevelInt <= 3) {
-
-    console.log("UpdateScore");
+  if (player.kills === noOfKills && curLevelInt <= 4) {
     var myJSON = localStorage.getItem("highScore");
     var p = JSON.parse(myJSON);
-    console.log("p " , p);
-    // var sc = p.pop();
-    // console.log(sc)
     p.shift();
     p.unshift(player.score);
-    console.log(player.score);
     localStorage.setItem("highScore", JSON.stringify(p));
-    console.log(localStorage.getItem("highScore"))
-
     level = curLevelInt + 1;
     localStorage.setItem("level", parseInt(level));
-    condition = 1;
-  } else if (level > 2) {
-    condition = 0;
+    condition = 1; // Player won, level up
+  } else if (level > 3) {
+    condition = 0; // Player won game, finished all levels
     localStorage.setItem("level", 0);
   } else {
-    condition = 3;
+    condition = 3; // Player lost, reset level
     localStorage.setItem("level", curLevelInt);
   }
-  //console.log(localStorage.getItem("level"));
-  //updateScore(player);
 
-  // console.log("UpdateScore");
-  // var myJSON = localStorage.getItem("highScore");
-  // var p = JSON.parse(myJSON);
-  // console.log("p " , p);
-  // // var sc = p.pop();
-  // // console.log(sc)
-  // p.pop();
-  // p.push(b.score);
-  // console.log(b.score);
-  // localStorage.setItem("highScore", JSON.stringify(p));
-  // console.log(localStorage.getItem("highScore"))
   game.state.start("preLevel");
 
 }

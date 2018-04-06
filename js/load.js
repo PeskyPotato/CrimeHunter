@@ -21,12 +21,11 @@ var loadState={
     game.load.image('backButton', 'assets/buttons/back.png');
 
     // Maps
-    //game.load.tilemap('levelT', 'assets/map/LevelT.json', null, Phaser.Tilemap.TILED_JSON);
-    //game.load.image('tilesT', 'assets/map/[TILESET]Dirt-City.png');
-    //game.load.tilemap('level1', 'assets/map/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level0', 'assets/map/Level0.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('levelN', 'assets/map/LevelN.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level1', 'assets/map/Level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level2', 'assets/map/Level2.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level3', 'assets/map/Level3.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tile_master', 'assets/map/Tileset_Master.png');
 
 

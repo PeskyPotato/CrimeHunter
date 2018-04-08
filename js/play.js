@@ -13,7 +13,7 @@ var middle_layer;
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
 var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
 var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
-var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 1, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120];
+var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120];
 var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040];
 
 var lane = [];
@@ -236,10 +236,14 @@ var playState = {
         //gsound.play();
       }
 
-      // Mouse contorls
-      if (game.input.activePointer.isDown) {
-        this.player.setDest(game.input.x, game.input.y);
-      }
+      // // Mouse contorls
+      // if (game.input.activePointer.isDown && (game.input.y < this.player.y)) {
+      //   this.player.setDest(game.input.x, game.input.y);
+      //   this.handgun.fire();
+      //
+      // } else if (game.input.activePointer.isDown && (game.input.y > this.player.y)){
+      //   this.player.setDest(game.input.x, this.player.y + 20);
+      // }
 
       var temY = this.player.body.y;
       var temX = this.player.body.x;

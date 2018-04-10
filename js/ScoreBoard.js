@@ -32,7 +32,7 @@ var ScoreBoard = function(game, conf) {
         width: 210,
         height: 16,
         color: {
-            border: 0x000000,
+            border: 0x0f6afc,
             rect: 0xff0000
         },
         scale: 1,

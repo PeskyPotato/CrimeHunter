@@ -22,6 +22,7 @@ var loadState={
     game.load.image('instructions', 'assets/instructions.png');
     game.load.image('backButton', 'assets/buttons/back.png');
     game.load.image('pothole', 'assets/Pothole32.png')
+    game.load.image('newButton','assets/buttons/new-game.png');
 
     // Maps
     game.load.tilemap('level2', 'assets/map/Level2.json', null, Phaser.Tilemap.TILED_JSON);

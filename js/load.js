@@ -23,6 +23,7 @@ var loadState={
     game.load.image('backButton', 'assets/buttons/back.png');
     game.load.image('pothole', 'assets/Pothole32.png')
     game.load.image('newButton','assets/buttons/new-game.png');
+    game.load.image('title-header', 'assets/buttons/title-header.png');
     game.load.image('Boss', 'assets/Boss.png')
 
 

@@ -65,15 +65,19 @@ function titleAction() {
   if (helpText !== undefined){
       helpText.destroy();
   }
+  //
+  // titleText = game.add.text(game.world.centerX, 40, "Crime Hunter!", { font: "50px", fill: "#ffffff", align: "center" });
+  // titleText.anchor.setTo(.5, .5);
+  game.stage.backgroundColor = '#0';
 
-  titleText = game.add.text(game.world.centerX, 40, "Crime Hunter!", { font: "50px", fill: "#ffffff", align: "center" });
+  titleText = game.add.image(game.world.centerX, 45, 'title-header');
   titleText.anchor.setTo(.5, .5);
-  game.stage.backgroundColor = '#004141';
 
-  playBut = game.add.button(game.world.centerX, 100, 'playButton', playAction, this, 2, 1, 0);
-  scoreBut = game.add.button(game.world.centerX, 140, 'scoreButton', scoreAction, this, 2, 1, 0);
-  helpBut = game.add.button(game.world.centerX, 180, 'helpButton', helpAction, this, 2, 1, 0);
-  newBut = game.add.button(game.world.centerX, 220, 'newButton', newAction, this, 2, 1, 0);
+
+  newBut = game.add.button(game.world.centerX, 110, 'newButton', newAction, this, 2, 1, 0);
+  playBut = game.add.button(game.world.centerX, 150, 'playButton', playAction, this, 2, 1, 0);
+  helpBut = game.add.button(game.world.centerX, 190, 'helpButton', helpAction, this, 2, 1, 0);
+  scoreBut = game.add.button(game.world.centerX, 230, 'scoreButton', scoreAction, this, 2, 1, 0);
   playBut.anchor.setTo(.5, .5);
   scoreBut.anchor.setTo(.5, .5)
   helpBut.anchor.setTo(.5, .5)
@@ -87,14 +91,17 @@ function helpAction() {
   titleText.destroy();
   newBut.kill();
 
-  helpText = game.add.text(150, 2, "Help Here!", { font: "40px", fill: "#ffffff", align: "centre" });
-  instruction = game.add.image(50, 50, 'instructions');
+  helpText = game.add.text(game.world.centerX, 20, "Help Here!", { font: "40px", fill: "#ffffff", align: "centre" });
+  instruction = game.add.image(game.world.centerX, game.world.centerY, 'instructions');
+  helpText.anchor.setTo(.5, .5);
   instruction.scale.set(0.42,0.42);
+  instruction.anchor.setTo(.5, .5);
 
-  backBut = game.add.button(220, 340, 'backButton', titleAction, this, 2, 1, 0);
-  backBut.scale.set(0.5,0.5);
+  backBut = game.add.button(game.world.centerX, 340, 'backButton', titleAction, this, 2, 1, 0);
+  backBut.anchor.setTo(.5, .5);
+  backBut.scale.set(0.6, 0.6);
 
-  game.stage.backgroundColor = '#004141';
+  game.stage.backgroundColor = '#0';
 }
 
 function scoreAction() {
@@ -117,9 +124,9 @@ function scoreAction() {
 
   scoreBoard.draw(scores);
 
-  backBut = game.add.button(200, 200, 'backButton', titleAction, this, 2, 1, 0);
-
-  game.stage.backgroundColor = '#004141';
+  backBut = game.add.button(game.world.centerX, 200, 'backButton', titleAction, this, 2, 1, 0);
+  backBut.anchor.setTo(.5, .5);
+  game.stage.backgroundColor = '#0';
 }
 
 function playAction() {

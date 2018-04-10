@@ -331,12 +331,12 @@ var playState = {
           var moveCar = moveOrNot[Math.floor(Math.random()*moveOrNot.length)];
           var changeSpeedOrNot = [false, true];
           var changeSpeed = changeSpeedOrNot[Math.floor(Math.random()*changeSpeedOrNot.length)];
-          var newSpeed = 25;
+          var newSpeed = 50;
           if (moveCar == true) {
               car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
           }
           if (changeSpeed == true) {
-            newSpeed =  Math.floor(Math.random() * 96) + 25;
+            newSpeed =  Math.floor(Math.random() * 96) + 50;
             car.update = function() {
               this.speed = newSpeed;
               move(this);
@@ -345,6 +345,40 @@ var playState = {
         });
         k = 0;
       }
+
+      var otherCars = this.civils;
+      // The function to avoid the NPC from overlapping each other.
+      this.civils.forEach(function(car){
+        otherCars.forEach(function(othercar){
+          if (((car.body.y - 100 < othercar.body.y) && (car.body.y > othercar.body.y))
+          ||  ((car.body.y + 100 > othercar.body.y) && (car.body.y < othercar.body.y))  ) {
+            // If there is a car at thr front around 1 car away, slow down to speed 50,
+            // as 50 is considered at the minimum speed for now.
+            if ((car.body.x == othercar.body.x)
+            || ((car.body.x <= othercar.body.x+30) && (car.body.x > othercar.body.x-30))) {
+              car.update = function() {
+                this.speed = 50;
+                move(this);
+              };
+            }
+            // Check for other cars before to avoid collision on either left or right.
+            // Check before moving to the left.
+           else if  ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
+              while ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
+                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+              car.update();
+            }
+            // Check before moving to the right.
+            else if ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
+              while ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
+                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+              car.update();
+            }
+          }
+        });
+      });
 
       // The function that is implemented after Alpha Release
       // Described in 2. above
@@ -458,6 +492,12 @@ var playState = {
       game.physics.arcade.overlap(eBullets, this.civils, function(b,c){
         b.kill();
         c.kill();
+      }, null, this);
+
+
+      game.physics.arcade.overlap(this.civils, this.civils, function(car1,car2){
+        car1.kill();
+        car2.kill();
       }, null, this);
 
         //

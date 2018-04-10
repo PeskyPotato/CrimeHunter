@@ -5,6 +5,7 @@ var scoreBoard;
 var titleText;
 var instruction;
 var helpText;
+var newBut;
 
 titleState = {
   create: function() {
@@ -69,9 +70,14 @@ function titleAction() {
   titleText.anchor.setTo(.5, .5);
   game.stage.backgroundColor = '#004141';
 
-  playBut = game.add.button(200, 100, 'playButton', playAction, this, 2, 1, 0);
-  scoreBut = game.add.button(200, 140, 'scoreButton', scoreAction, this, 2, 1, 0);
-  helpBut = game.add.button(200, 180, 'helpButton', helpAction, this, 2, 1, 0);
+  playBut = game.add.button(game.world.centerX, 100, 'playButton', playAction, this, 2, 1, 0);
+  scoreBut = game.add.button(game.world.centerX, 140, 'scoreButton', scoreAction, this, 2, 1, 0);
+  helpBut = game.add.button(game.world.centerX, 180, 'helpButton', helpAction, this, 2, 1, 0);
+  newBut = game.add.button(game.world.centerX, 220, 'newButton', newAction, this, 2, 1, 0);
+  playBut.anchor.setTo(.5, .5);
+  scoreBut.anchor.setTo(.5, .5)
+  helpBut.anchor.setTo(.5, .5)
+  newBut.anchor.setTo(.5, .5)
 }
 
 function helpAction() {
@@ -79,6 +85,7 @@ function helpAction() {
   scoreBut.kill();
   helpBut.kill();
   titleText.destroy();
+  newBut.kill();
 
   helpText = game.add.text(150, 2, "Help Here!", { font: "40px", fill: "#ffffff", align: "centre" });
   instruction = game.add.image(50, 50, 'instructions');
@@ -95,6 +102,7 @@ function scoreAction() {
   scoreBut.kill();
   helpBut.kill();
   titleText.destroy();
+  newBut.kill();
 
   scoreBoard = new ScoreBoard(this.game);
 
@@ -115,5 +123,17 @@ function scoreAction() {
 }
 
 function playAction() {
+  game.state.start('preLevel');
+}
+
+function newAction() {
+  localStorage.setItem("level", 0); // Set level to 0
+  var myJSON = localStorage.getItem("highScore");
+  console.log(myJSON);
+  var p = JSON.parse(myJSON);
+  p.unshift(0);
+  localStorage.setItem("highScore", JSON.stringify(p));
+  console.log(localStorage.getItem("highScore"));
+  localStorage.setItem("returning", 1);
   game.state.start('preLevel');
 }

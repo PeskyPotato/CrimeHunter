@@ -234,11 +234,11 @@ var playState = {
     // Anything that needs to be checked, collisions, user input etc...
     update: function () {
       // Keyboard controls
-      if(game.input.keyboard.isDown(Phaser.Keyboard.X)) {
-        this.player.speed = 400;
-      } else if (this.plyrMving == false) {
-        this.player.speed = 280;
-      }
+      // if(game.input.keyboard.isDown(Phaser.Keyboard.X)) {
+      //   this.player.speed = 400;
+      // } else if (this.plyrMving == false) {
+      //   this.player.speed = 280;
+      // }
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x - 30, this.player.y - 30);
         setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));

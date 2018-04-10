@@ -28,6 +28,8 @@ var playState = {
     curLevelInt: null,
     noKills: null,
     healthbag: null,
+    plyrMving: null,
+    plyrMvingCount:null,
     //Boss: null,
 
 		// Instantiate and assign game objects
@@ -87,6 +89,8 @@ var playState = {
       gsound = game.add.audio('gunshot');
 
       this.player = new Player(playerX, playerY);
+      this.plyrMving = false;
+      this.plyrMvingCount = 0;
 
       game.camera.x = game.world.centerX;
       game.camera.y = game.world.centerY;
@@ -230,28 +234,41 @@ var playState = {
     // Anything that needs to be checked, collisions, user input etc...
     update: function () {
       // Keyboard controls
-      if(game.input.keyboard.isDown(Phaser.Keyboard.X)) {
-        this.player.speed = 400;
-      } else {
-        this.player.speed = 280;
-      }
+      // if(game.input.keyboard.isDown(Phaser.Keyboard.X)) {
+      //   this.player.speed = 400;
+      // } else if (this.plyrMving == false) {
+      //   this.player.speed = 280;
+      // }
       if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x - 30, this.player.y - 30);
+        setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+        this.plyrMving = true;
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) && game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x + 30, this.player.y - 30);
+        setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+        this.plyrMving = true;
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x, this.player.y - 38);
+        setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+        this.plyrMving = true;
       }
-      else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-        this.player.setDest(this.player.x - 25, this.player.y + 25);
-      }
-      else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-        this.player.setDest(this.player.x + 25, this.player.y + 25);
-      }
-      else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)){
-        this.player.setDest(this.player.x, this.player.y + 23);
+      else if (this.plyrMving == true){
+        this.player.setDest(this.player.x, this.player.y - 10);
+        if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
+          this.player.speed = this.player.speed - 50;
+        } else {
+          this.player.speed = this.player.speed - 5;
+        }
+        //this.player.speed = this.player.speed - 5;
+        this.plyrMvingCount = this.plyrMvingCount + 1;
+        if (this.player.speed <= 0){
+          this.player.setDest(this.player.x, this.player.y);
+          this.player.speed = 280;
+          this.plyrMving = false;
+        }
+
       }
 
       if (fireButton.isDown){
@@ -264,15 +281,6 @@ var playState = {
         this.player.animations.play('runningShoot');
         //gsound.play();
       }
-
-      // // Mouse contorls
-      // if (game.input.activePointer.isDown && (game.input.y < this.player.y)) {
-      //   this.player.setDest(game.input.x, game.input.y);
-      //   this.handgun.fire();
-      //
-      // } else if (game.input.activePointer.isDown && (game.input.y > this.player.y)){
-      //   this.player.setDest(game.input.x, this.player.y + 20);
-      // }
 
       var temY = this.player.body.y;
       var temX = this.player.body.x;
@@ -651,23 +659,6 @@ function move(b){
   }
 }
 
-function playerFrame(numB) {
-  // control bullet bar
-  var bulletBar = document.getElementsByClassName("numBullet");
-  var bar = document.getElementsByClassName("nBullet");
-  var barWidth = (numB / 1000) * 100;
-  bar.css('width', barWidth + "%");
-}
-
-function updateScore(b) {
-  var myJSON = localStorage.getItem("highScore");
-  var p = JSON.parse(myJSON);
-  p.shift();
-  p.unshift(b.score);
-  localStorage.setItem("highScore", JSON.stringify(p));
-}
-
-
 function nextLevel(player, noOfKills, curLevelInt){
   var level = 0;
   if (player.kills === noOfKills && curLevelInt <= 4) {
@@ -719,4 +710,12 @@ function addRandomCars(civils, numberOfRandomCars, y) {
     y -= 150;
   }
   return civils;
+}
+
+function setSpeed(player, speedUp) {
+  if (speedUp){
+    player.speed = 400;
+  } else {
+    player.speed = 280;
+  }
 }

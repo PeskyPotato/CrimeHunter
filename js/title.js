@@ -124,7 +124,7 @@ function scoreAction() {
 
   scoreBoard.draw(scores);
 
-  backBut = game.add.button(game.world.centerX, 200, 'backButton', titleAction, this, 2, 1, 0);
+  backBut = game.add.button(game.world.centerX, 220, 'backButton', titleAction, this, 2, 1, 0);
   backBut.anchor.setTo(.5, .5);
   game.stage.backgroundColor = '#0';
 }

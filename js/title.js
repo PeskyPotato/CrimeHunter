@@ -94,7 +94,7 @@ function helpAction() {
   helpText = game.add.text(game.world.centerX, 20, "Help Here!", { font: "40px", fill: "#ffffff", align: "centre" });
   instruction = game.add.image(game.world.centerX, game.world.centerY, 'help_Screen');
   helpText.anchor.setTo(.5, .5);
-  //instruction.scale.set(0.42,0.42);
+  //instruction.scale.set(1,1);
   instruction.anchor.setTo(.5, .5);
 
   backBut = game.add.button(game.world.centerX, 340, 'backButton', titleAction, this, 2, 1, 0);

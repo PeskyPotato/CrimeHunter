@@ -1,12 +1,12 @@
 # CodeFarmer
 [![Join the chat at https://gitter.im/_CodeFarmer/Lobby](https://badges.gitter.im/_CodeFarmer/Lobby.svg)](https://gitter.im/_CodeFarmer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Alpha Release
-[YouTube Demo](https://www.youtube.com/watch?v=SzG-o6luphw)
+## Beta Release
+[YouTube Demo](https://www.youtube.com/watch?v=MVxeNLh7GZM)
 
 The game is live on [crime-hunter.herokuapp.com](http://crime-hunter.herokuapp.com/).
 
-Developer documentation to contribute to the project is available in the [wiki](https://github.com/LameLemon/CrimeHunter/wiki/Developer-Documentation) including instructions to the game locally under the [setup heading](https://github.com/LameLemon/CrimeHunter/wiki/Developer-Documentation#setup). The Prototype Release information can be found under [Releases](https://github.com/LameLemon/CrimeHunter/releases/tag/v0.1.0).
+Beta testing information such as use and test cases is available in the [wiki](https://github.com/LameLemon/CrimeHunter/wiki/Beta-Testing). The Prototype and Alpha release information can be found under [Releases](https://github.com/LameLemon/CrimeHunter/releases).
 
 ## Project Description
 

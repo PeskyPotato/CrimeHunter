@@ -149,20 +149,23 @@ var playState = {
       var my = game.height - game.cache.getImage('addhealth').height;
 
       // add 1 health bag per level
-      for (var i = 0; i < this.curLevelInt+1; i++) {
-        // add health bag (left to right, start point to end point, bag picture)
-        this.healthbag.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y-500))+1000 , 'addhealth');
-      }
+      var hXaxis = Math.floor(Math.random()*(350 - 99) + 100); // Choose X-Axis randomly to place health
+      var hYaxis = Math.floor(Math.random()*((playerY/2) - (playerY/5) + 1) + (playerY/5)); // Choose Y-Axis randomly to place health
+      this.healthbag.create(hXaxis, hYaxis, 'addhealth');
       //Trap can damage player
       this.trap = game.add.group();
       back_layer.add(this.trap);
       this.trap.enableBody = true;
       this.trap.physicsBodyType = Phaser.Physics.ARCADE;
 
-      // add 1 health bag per level
-      for (var i = 0; i < this.curLevelInt+1; i++) {
-        // add health bag (left to right, start point to end point, bag picture)
-        this.trap.create(Math.floor(Math.random()*lane2)+lane1 ,Math.floor(Math.random()*(this.player.y))+1000 , 'pothole');
+      var hYaxis = playerY - 500; // Choose Y-Axis randomly to potholes
+      var numberOfPoles = 25; // Set the fixed number for now, later will be depended on level
+      var poleGap = 300;  // gap between potholes
+      // add potholes per level
+      for (var i = 0; i < numberOfPoles; i++) {
+        var hXaxis = Math.floor(Math.random()*(350 - 99) + 100); // Choose X-Axis randomly to potholes
+        this.trap.create(hXaxis, hYaxis, 'pothole');
+        hYaxis -= poleGap ;
       }
 
       //   //Boss
@@ -433,7 +436,6 @@ var playState = {
 	    if (m==15) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
-
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
           if (moveEnemy == true) {
 			    var lanes = [110, 180, 275, 325];

@@ -5,17 +5,19 @@ var preLevelState = {
   create: function() {
     game.stage.backgroundColor = "#eeeee";
     l = localStorage.getItem("level");
-    //console.log("l "+ l )
+    //TODO access curLevel to get enemy count
     var enemies = 5;
     if (l == "0") {
       enemies = 1;
     } else if (l === "1") {
         enemies = 2;
-    } else if (l === "2"){
+    } else if (l === "2") {
       enemies = 3;
+    } else if (l === "3") {
+      enemies = 4;
     }
 
-    if ( l <= 2) {
+    if ( l <= 3) {  // Checks for condition 0
       if (condition == 2) {         // Player had died, restart level
         levelText = game.add.text(game.world.centerX, 110, "Level " + l, { font: "50px", fill: "#ffffff", align: "centre" });
         levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies", { font: "30px", fill: "#ffffff", align: "centre" });
@@ -45,7 +47,7 @@ var preLevelState = {
         levelText1 = game.add.text(130, 180, "Kill " + enemies + " enemies", { font: "30px", fill: "#ffffff", align: "centre" });
       }
 
-      game.time.events.add(Phaser.Timer.SECOND * 5, fadePicture, this);
+      game.time.events.add(Phaser.Timer.SECOND * 2, fadePicture, this);
 
     } else {
       levelText = game.add.text(game.world.centerX, 110, "You won! Restarting...", { font: "30px", fill: "#ffffff", align: "centre"});

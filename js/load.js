@@ -3,10 +3,12 @@ var loadState={
   // Include loading screen when over network
   // Load game and assets
   preload: function() {
-    var loadingLabel = game.add.text(80, 150, 'loading...', {font: '30px Courier', fill: '#ffffff'})
-
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.setMinMax(400, 300, 800, 600);
+    game.scale.setMinMax(480, 360, 720, 540);
+
+    var loadingLabel = game.add.text(game.world.centerX, 150, 'loading...', {font: '30px', fill: '#ffffff', align:'centre'})
+    loadingLabel.anchor.setTo(.5, .5);
+
 
     game.stage.backgroundColor = '#000000';
 
@@ -16,15 +18,20 @@ var loadState={
     game.load.spritesheet('characters', 'assets/[SPRITE].png', 32, 64);
     game.load.image('playButton', 'assets/buttons/play.png');
     game.load.image('scoreButton', 'assets/buttons/score.png');
+    game.load.image('helpButton', 'assets/buttons/help.png');
+    game.load.image('help_Screen', 'assets/Help-Screen.png');
     game.load.image('backButton', 'assets/buttons/back.png');
+    game.load.image('pothole', 'assets/Pothole32.png')
+    game.load.image('newButton','assets/buttons/new-game.png');
+    game.load.image('title-header', 'assets/buttons/title-header.png');
+    game.load.image('Boss', 'assets/Boss.png')
+
 
     // Maps
-    //game.load.tilemap('levelT', 'assets/map/LevelT.json', null, Phaser.Tilemap.TILED_JSON);
-    //game.load.image('tilesT', 'assets/map/[TILESET]Dirt-City.png');
-    //game.load.tilemap('level1', 'assets/map/level1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level2', 'assets/map/Level2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level0', 'assets/map/Level0.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level1', 'assets/map/Level1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.tilemap('level2', 'assets/map/Level2.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level3', 'assets/map/Level3.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tile_master', 'assets/map/Tileset_Master.png');
 
 

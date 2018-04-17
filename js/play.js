@@ -9,6 +9,10 @@ var remainingEnemies = [] ; // Remaining Enemies
 var attackTiming = 0; // Time when enemies attack the player
 var back_layer;
 var middle_layer;
+var motorbikeAttackTime = 0;
+var motorbikeAttackStop = 0;
+var delayOperation = 0;
+var delayMotorShoot = 0;
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
 var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
@@ -123,7 +127,7 @@ var playState = {
       eBullets = game.add.group();
       eBullets.enableBody = true;
       eBullets.physicsBodyType = Phaser.Physics.ARCADE;
-      eBullets.createMultiple(30, 'bullet');
+      eBullets.createMultiple(100, 'bullet');
       eBullets.setAll('anchor.x', 0.5);
       eBullets.setAll('anchor.y', 1);
       eBullets.setAll('outOfBoundsKill', true);
@@ -136,7 +140,7 @@ var playState = {
       this.player.score = curScore;
       p.unshift(curScore);
 
-      // Display player scor eon screen
+      // Display player score on screen
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
 
@@ -232,6 +236,21 @@ var playState = {
       this.civils = addRandomCars(this.civils, number Of RandomCars you want , starting Y-Axis of the first random car);
       */
 
+      // Enemie's Motorbike
+      if (this.curLevelInt == 2) {
+        this.motorbikes = game.add.group();
+        middle_layer.add(this.motorbikes);
+        var numberOfMotorbikes = 6;          // Number of motorbikes
+        var startingMotorYAxis = civY + 1000;  // Have it offscreen for its initial location
+        this.motorbikes = addMotorbikes(this.motorbikes,numberOfMotorbikes,startingMotorYAxis);
+        this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
+
+        this.motorbikes.forEach(function(motor){
+          game.physics.enable(motor,Phaser.Physics.ARCADE);
+          motor.body.immovable = true;
+        });
+        this.motorbikes.enableBody = true;
+      }
     },  // create
 
     // Anything that needs to be checked, collisions, user input etc...
@@ -428,8 +447,6 @@ var playState = {
 
       k++;
 
-
-
 		// enemy's Car Movement Update
 		// the smaller m equal to , the higher frequency enemy movement can be
 
@@ -449,6 +466,57 @@ var playState = {
       }
       m++;
 
+      if (this.curLevelInt == 2) {
+        // Motorbike only available on level beyond 1
+        // Motorbike Update
+        if (motorbikeAttackTime == 100) {          // Timer for the motor bike to start moving
+          this.motorbikes.forEach(function(motor){
+            motor.update = function() {
+              this.speed = 500;
+              move(this);
+            };
+          });
+        }
+        motorbikeAttackTime++;
+
+        // If the motor reach the range of Y-Axis where the player is, they start to attack
+        if (delayOperation == 0) {
+          // Delay is used to let the motorbike has enough time to move on after attacking the player
+          // after a short period of time.
+          var pl = this.player;
+          if (delayMotorShoot != 0) { delayMotorShoot--; }
+          this.motorbikes.forEach(function(motor){
+            if ((motor.y < temY - 200) && ( temY < motor.y + 400)){
+              motor.update = function() {
+                this.speed = 250;
+                move(this);
+              };
+              enemyBullet = eBullets.getFirstExists(false);
+              if (enemyBullet && delayMotorShoot == 0) {
+                enemyBullet.reset(motor.body.x+5, motor.body.y+30);
+                game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
+                delayMotorShoot = 200;
+              }
+            }
+          });
+        }
+        if (delayOperation != 0) { delayOperation--;}
+
+        // The motorbike move on after staying in similar speed to the player's car for a short time.
+        if (motorbikeAttackStop == 200) {
+          this.motorbikes.forEach(function(motor){
+              motor.update = function() {
+                if (this.speed == 250) {
+                  this.speed = 800;
+                  move(this);
+                  delayOperation = 100; // Set delay to give the motorbike enough time to move on
+                }
+              };
+          });
+          motorbikeAttackStop = 0;
+        }
+        motorbikeAttackStop++;
+    }
       // Collisions
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
         p.health = p.health - 5;
@@ -760,4 +828,21 @@ function setSpeed(player, speedUp) {
   } else {
     player.speed = 280;
   }
+}
+
+function addMotorbikes(motorbikes, numberOfMotorbikes, y) {
+  for (var i=0; i < numberOfMotorbikes; i++) {
+    var motorLanes = [10,435];
+    var x = (motorLanes)[Math.floor(Math.random()*(motorLanes).length)];
+    var motor = motorbikes.create(x, y, 'motorbike');
+    motor.xDest = x;
+    motor.yDest = -1000;
+    motor.update = function() {
+      this.speed = 0;
+      move(this);
+    };
+    motor.frame = 6;
+    y += 1500;
+  }
+  return motorbikes;
 }

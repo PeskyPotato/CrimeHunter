@@ -32,6 +32,8 @@ var playState = {
     curLevelInt: null,
     noKills: null,
     healthbag: null,
+	megahealth: null,
+	megabullet: null,
     plyrMving: null,
     plyrMvingCount:null,
     //Boss: null,
@@ -156,6 +158,39 @@ var playState = {
       var hXaxis = Math.floor(Math.random()*(350 - 99) + 100); // Choose X-Axis randomly to place health
       var hYaxis = Math.floor(Math.random()*((playerY/2) - (playerY/5) + 1) + (playerY/5)); // Choose Y-Axis randomly to place health
       this.healthbag.create(hXaxis, hYaxis, 'addhealth');
+
+
+	  //Random chance to spawn a mega health pack, which gives + 50
+	  //Chance = 1 in 10
+	  var rand = Math.floor((Math.random() * 10) + 1);
+	  if(rand == 5) {
+      this.megahealth = game.add.group();
+      back_layer.add(this.megahealth);
+      this.megahealth.enableBody = true;
+      this.megahealth.physicsBodyType = Phaser.Physics.ARCADE;
+      var mx = game.width - game.cache.getImage('megahealth').width;
+      var my = game.height - game.cache.getImage('megahealth').height;
+      var hXaxis = Math.floor(Math.random()*(350 - 99) + 100); // Choose X-Axis randomly to place health
+      var hYaxis = Math.floor(Math.random()*((playerY/2) - (playerY/5) + 1) + (playerY/5)); // Choose Y-Axis randomly to place health
+      this.megahealth.create(hXaxis, hYaxis, 'megahealth');
+	  }
+
+	  //1 in 15 chance to get the mega bullet upgrade
+	  //Increased bullet speed, slightly better fire rate
+	  rand = Math.floor((Math.random() * 15) + 1);
+	  if(rand == 5) {
+      this.megabullet = game.add.group();
+      back_layer.add(this.megabullet);
+      this.megabullet.enableBody = true;
+      this.megabullet.physicsBodyType = Phaser.Physics.ARCADE;
+      var mx = game.width - game.cache.getImage('megabullet').width;
+      var my = game.height - game.cache.getImage('megabullet').height;
+      var hXaxis = Math.floor(Math.random()*(350 - 99) + 100); // Choose X-Axis randomly to place health
+      var hYaxis = Math.floor(Math.random()*((playerY/2) - (playerY/5) + 1) + (playerY/5)); // Choose Y-Axis randomly to place health
+      this.megabullet.create(hXaxis, hYaxis, 'megabullet');
+	  }
+
+
       //Trap can damage player
       this.trap = game.add.group();
       back_layer.add(this.trap);
@@ -529,6 +564,25 @@ var playState = {
       game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
         h.kill();
         this.player.health = this.player.health + 25;
+      }, null, this);
+
+	  game.physics.arcade.overlap(this.megahealth, this.player,  function(p,h){
+        h.kill();
+        this.player.health = this.player.health + 50;
+      }, null, this);
+
+
+	  //The mega bullet comes with increased bullet speed, slightly better fire rate
+	  game.physics.arcade.overlap(this.megabullet, this.player,  function(p,h){
+        h.kill();
+        this.handgun = game.add.weapon(7, 'megabullet');
+      this.handgun.bulletSpeed = 1000;
+      this.handgun.fireRate = 700;
+	  this.handgun.bulletAngleOffset = 90;
+      this.handgun.trackSprite(this.player, -2, -80);
+      this.handgun.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
+
+
       }, null, this);
 
       game.physics.arcade.overlap(this.trap, this.player,  function(p,t){

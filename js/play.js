@@ -14,11 +14,11 @@ var motorbikeAttackStop = 0;
 var delayOperation = 0;
 var delayMotorShoot = 0;
 
-// levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
-var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
-var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680];
-var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120];
-var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040];
+// levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY, enemyMove
+var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30];
+var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25];
+var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20];
+var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15];
 
 var lane = [];
 
@@ -71,6 +71,7 @@ var playState = {
       var collision = this.curLevel[12];
       var boundsX = this.curLevel[13];
       var boundsY = this.curLevel[14];
+      var enemyMove = this.curLevel[15];
 
       //Tilemap
       back_layer = game.add.group(); // maps + power ups + traps
@@ -485,7 +486,7 @@ var playState = {
 		// enemy's Car Movement Update
 		// the smaller m equal to , the higher frequency enemy movement can be
 
-	    if (m==15) {         // Use counting instead of timing where the larger makes it rarely move
+	    if (m==this.curLevel[15]) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];

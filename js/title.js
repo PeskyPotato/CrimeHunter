@@ -151,7 +151,10 @@ function playAction() {
 			modal.style.display = "none";
 		}
 	}
+	//YOU NEED TO CHANGE THIS TO MEET YOUR SPECIFICATION
+	var MAX_BULLET_SPEED =1000;
 	var enemy_slider = document.getElementById("enemy_range");
+	document.getElementById("enemy_range").setAttribute("max", MAX_BULLET_SPEED);
 	var enemy_slider_val = document.getElementById("valEnemy");
 	enemy_slider_val.innerHTML = enemy_slider.value;
 
@@ -161,6 +164,9 @@ function playAction() {
 		enemy_slider_val.innerHTML = bullets_speed;
 	}
 	var player_slider = document.getElementById("player_range");
+	
+	document.getElementById("player_range").setAttribute("max", MAX_BULLET_SPEED);
+
 	var player_slider_val = document.getElementById("valPlayer");
 	player_slider_val.innerHTML = player_slider.value;
 
@@ -181,7 +187,7 @@ function myFunction() {
 		 IF THERE IS A FUNCTION THAT HOLD ALL THE APPEARANCE YOU CAN JUST CALL THAT FROM HERE.
 		 */
 		var vehicle_appearance_options = "<br/><label>" + c + " </label><select> <option>green</option><ption>red</option><option>blue</option><option>white</option><option>green</option><option>gray</option> </select>";
-		
+
 		document.getElementById("vehicleColor").innerHTML = vehicle_appearance_options;
 	}
 }

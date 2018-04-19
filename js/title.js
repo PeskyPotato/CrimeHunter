@@ -151,6 +151,9 @@ function playAction() {
 			modal.style.display = "none";
 		}
 	}
+	var vehicles = "<option selected='selected'></option><option>Vehicle1</option>	<option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option>";
+	document.getElementById("vehicle").innerHTML = vehicles;
+	
 	//YOU NEED TO CHANGE THIS TO MEET YOUR SPECIFICATION
 	var MAX_BULLET_SPEED =1000;
 	var enemy_slider = document.getElementById("enemy_range");
@@ -160,8 +163,8 @@ function playAction() {
 
 	enemy_slider.oninput = function() {
 		//enemy's bullet speed. YOU MIGHT WANT TO MODIFY THIS TO MAKE IT GLOBALLY ACCESSIBLE
-		var bullets_speed = this.value;
-		enemy_slider_val.innerHTML = bullets_speed;
+		var bullets_speed_enemy = this.value;
+		enemy_slider_val.innerHTML = bullets_speed_enemy;
 	}
 	var player_slider = document.getElementById("player_range");
 	
@@ -172,8 +175,8 @@ function playAction() {
 
 	player_slider.oninput = function() {
 		//player's bullet speed. YOU MIGHT WANT TO MODIFY THIS TO GLOBALLY ACCESSIBLE
-		var bullets_speed = this.value;
-		player_slider_val.innerHTML = bullets_speed;
+		var bullets_speed_player = this.value;
+		player_slider_val.innerHTML = bullets_speed_player;
 	}
 }
 

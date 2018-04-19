@@ -135,26 +135,17 @@ function scoreAction() {
 }
 
 function playAction() {
-	// Get the modal
 	var modal = document.getElementById('myModal');
 
-	// Get the button that opens the modal
-	//var btn = document.getElementById("displayModal");
+	var close_modal = document.getElementsByClassName("close")[0];
 
-	// Get the <span> element that closes the modal
-	var span = document.getElementsByClassName("close")[0];
-
-	// When the user clicks the button, open the modal
-	//btn.onclick = function() {
 	modal.style.display = "block";
-	//}
-	// When the user clicks on <span> (x), close the modal
-	span.onclick = function() {
+	close_modal.onclick = function() {
 		modal.style.display = "none";
 		game.state.start('preLevel');
 
 	}
-	// When the user clicks anywhere outside of the modal, close it
+	// when anyhwere else in the window is clicked
 	window.onclick = function(event) {
 		if (event.target == modal) {
 			modal.style.display = "none";
@@ -163,31 +154,35 @@ function playAction() {
 	var enemy_slider = document.getElementById("enemy_range");
 	var enemy_slider_val = document.getElementById("valEnemy");
 	enemy_slider_val.innerHTML = enemy_slider.value;
-	// Display the default slider value
 
-	// Update the current slider value (each time you drag the slider handle)
 	enemy_slider.oninput = function() {
-		enemy_slider_val.innerHTML = this.value;
+		//enemy's bullet speed. YOU MIGHT WANT TO MODIFY THIS TO MAKE IT GLOBALLY ACCESSIBLE
+		var bullets_speed = this.value;
+		enemy_slider_val.innerHTML = bullets_speed;
 	}
-	
 	var player_slider = document.getElementById("player_range");
 	var player_slider_val = document.getElementById("valPlayer");
 	player_slider_val.innerHTML = player_slider.value;
 
 	player_slider.oninput = function() {
-		player_slider_val.innerHTML = this.value;
+		//player's bullet speed. YOU MIGHT WANT TO MODIFY THIS TO GLOBALLY ACCESSIBLE
+		var bullets_speed = this.value;
+		player_slider_val.innerHTML = bullets_speed;
 	}
-	
-	
-	
 }
-function myFunction(){
+
+function myFunction() {
 	var selectedVehicle = document.getElementById("vehicle");
-	
 
 	if (selectedVehicle != null) {
-		var c= selectedVehicle.value +" color: ";
-		document.getElementById("vehicleColor").innerHTML="<br/><label>"+ c+" </label><select> <option>green</option><ption>red</option><option>blue</option><option>white</option><option>green</option><option>gray</option> </select>";
+		var c = selectedVehicle.value + " color: ";
+
+		/* YOU NEED TO MODIFY THIS TO MATCHES YOUR SPECIFICATION.
+		 IF THERE IS A FUNCTION THAT HOLD ALL THE APPEARANCE YOU CAN JUST CALL THAT FROM HERE.
+		 */
+		var vehicle_appearance_options = "<br/><label>" + c + " </label><select> <option>green</option><ption>red</option><option>blue</option><option>white</option><option>green</option><option>gray</option> </select>";
+		
+		document.getElementById("vehicleColor").innerHTML = vehicle_appearance_options;
 	}
 }
 

@@ -13,6 +13,8 @@ var motorbikeAttackTime = 0;
 var motorbikeAttackStop = 0;
 var delayOperation = 0;
 var delayMotorShoot = 0;
+var isMusicStarted = false; //Boolean variable to hold whether or not music has started.
+
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY
 var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200];
@@ -38,6 +40,8 @@ var playState = {
 
 		// Instantiate and assign game objects
     create: function () {
+      sound = game.add.audio('gmusic');
+      sound.loop = true;
       this.curLevelInt = localStorage.getItem("level");
       if (this.curLevelInt == 0){
         this.curLevel = level0;
@@ -54,6 +58,7 @@ var playState = {
       }
 
       // World variables
+      
       var playerX = this.curLevel[0];
       var playerY = this.curLevel[1];
       var civY = this.curLevel[2];
@@ -87,11 +92,12 @@ var playState = {
       game.world.setBounds(0, 0, boundsX, boundsY);
 
       // Sound
-      sound = game.add.audio('gmusic');
-      //sound.play();
       epsound = game.add.audio('boom');
       gsound = game.add.audio('gunshot');
-
+      if (isMusicStarted == false) {
+        sound.play();
+        isMusicStarted = true;
+      }
       this.player = new Player(playerX, playerY);
       this.plyrMving = false;
       this.plyrMvingCount = 0;

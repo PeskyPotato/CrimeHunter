@@ -36,7 +36,7 @@ var loadState={
 
 
     // Music
-    //game.load.audio('gmusic', 'assets/Chinese Dream.mp3');
+    game.load.audio('gmusic', 'assets/Title Song v1.0.mp3');
     game.load.audio('boom', 'assets/explode1.wav');
     game.load.audio('gunshot', 'assets/shotgun.wav');
   },

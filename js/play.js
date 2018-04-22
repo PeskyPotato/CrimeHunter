@@ -38,6 +38,8 @@ var playState = {
 	megabullet: null,
     plyrMving: null,
     plyrMvingCount:null,
+	enemiesKilled: null,
+	enemiesNum: null,
     //Boss: null,
 
 		// Instantiate and assign game objects
@@ -152,7 +154,15 @@ var playState = {
       // Display player score on screen
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
-
+	  
+	  // Display enemies number
+	  
+	  this.enemiesNum = this.curLevel[8];
+	  
+	  this.enemiesKilled = game.add.text(395,20, "Enemies " + this.enemiesNum, {font: "20px", fill: "#ffffff", align: "centre" })
+	  this.enemiesKilled.fixedToCamera = true;
+	  
+	  
       //HealthBag allow player recover health
       this.healthbag = game.add.group();
       back_layer.add(this.healthbag);
@@ -601,6 +611,9 @@ var playState = {
         b.kill();
         this.player.score = this.player.score + 5;
         this.player.scoreText.setText("Score " + this.player.score);
+		this.enemiesNum = this.enemiesNum -1;
+		this.enemiesKilled.setText("Enemies " + this.enemiesNum)
+		
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
@@ -615,6 +628,8 @@ var playState = {
         b.kill();
         this.player.score = this.player.score + 5;
         this.player.scoreText.setText("Score " + this.player.score);
+		this.enemiesNum = this.enemiesNum -1;
+		this.enemiesKilled.setText("Enemies " + this.enemiesNum)
       }, null, this);
 
       game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
@@ -705,6 +720,8 @@ var playState = {
       } else if ((this.player.y > this.curLevel[14]) && (game.input.keyboard.isDown(Phaser.Keyboard.DOWN))) {
         this.player.stopY();
       }
+	  
+	  
 
 
     } // update

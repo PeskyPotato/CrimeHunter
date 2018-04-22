@@ -17,7 +17,7 @@ var isMusicStarted = false; //Boolean variable to hold whether or not music has 
 
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY, enemyMove
-var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30];
+var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30, [300, 2150]];
 var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25];
 var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20];
 var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15];
@@ -34,33 +34,38 @@ var playState = {
     curLevelInt: null,
     noKills: null,
     healthbag: null,
-	megahealth: null,
-	megabullet: null,
+	  megahealth: null,
+	  megabullet: null,
     plyrMving: null,
+    plyrMvingBack: null,
     plyrMvingCount:null,
+    con: null,
     //Boss: null,
 
 		// Instantiate and assign game objects
     create: function () {
       sound = game.add.audio('gmusic');
       sound.loop = true;
+
       this.curLevelInt = localStorage.getItem("level");
       if (this.curLevelInt == 0){
         this.curLevel = level0;
         this.curLevelInt = 0;
+
       } else if (this.curLevelInt == 1) {
         this.curLevel = level1;
         this.curLevelInt = 1;
+
       } else if (this.curLevelInt == 2) {
         this.curLevel = level2;
         this.curLevelInt = 2;
+
       } else if (this.curLevelInt == 3) {
          this.curLevel = level3;
          this.curLevelInt= 3;
       }
 
       // World variables
-      
       var playerX = this.curLevel[0];
       var playerY = this.curLevel[1];
       var civY = this.curLevel[2];
@@ -101,10 +106,23 @@ var playState = {
         sound.play();
         isMusicStarted = true;
       }
+
+      // Create player
       this.player = new Player(playerX, playerY);
       this.plyrMving = false;
+      this.plyrMvingBack = false;
       this.plyrMvingCount = 0;
 
+      // Add contruction site
+      this.con = game.add.sprite(this.curLevel[16][0], this.curLevel[16][1], 'construct');
+      middle_layer.add(this.con);
+      this.con.frame = 1;
+      this.con.animations.add('running', [0, 1, 2, 3], 4);
+      game.physics.enable(this.con, Phaser.Physics.ARCADE);
+      this.con.body.immovable = true;
+
+
+      // Create camera to follow player
       game.camera.x = game.world.centerX;
       game.camera.y = game.world.centerY;
       game.physics.enable(this.player, Phaser.Physics.ARCADE);
@@ -313,12 +331,22 @@ var playState = {
         setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
         this.plyrMving = true;
       }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+        this.player.setDest(this.player.x + 30, this.player.y);
+        //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+        this.plyrMving = true;
+      }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+        this.player.setDest(this.player.x - 30, this.player.y);
+        //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+        this.plyrMving = true;
+      }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x, this.player.y - 38);
         setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
         this.plyrMving = true;
       }
-      else if (this.plyrMving == true){
+      else if (this.plyrMving == true && this.plyrMvingBack == false){
         this.player.setDest(this.player.x, this.player.y - 10);
         if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
           this.player.speed = this.player.speed - 50;
@@ -332,8 +360,8 @@ var playState = {
           this.player.speed = 280;
           this.plyrMving = false;
         }
-
       }
+
 
       if (fireButton.isDown){
         this.handgun.fire();
@@ -564,20 +592,21 @@ var playState = {
         p.health = p.health - 5;
       });
 
-        // game.physics.arcade.collide(this.player, this.Boss, function(p,e){
-        //     p.health = p.health - 5;
-        // });
+      game.physics.arcade.collide(this.player, this.con, function(p,e){
+           p.health = p.health - 5;
+      });
 
       game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
         h.kill();
         this.player.health = this.player.health + 25;
       }, null, this);
 
-	  game.physics.arcade.overlap(this.megahealth, this.player,  function(p,h){
+      game.physics.arcade.overlap(this.megahealth, this.player,  function(p,h){
         h.kill();
         this.player.health = this.player.health + 50;
       }, null, this);
 
+      this.con.animations.play('running');
 
 	  //The mega bullet comes with increased bullet speed, slightly better fire rate
 	  game.physics.arcade.overlap(this.megabullet, this.player,  function(p,h){

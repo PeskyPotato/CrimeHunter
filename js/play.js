@@ -18,9 +18,9 @@ var isMusicStarted = false; //Boolean variable to hold whether or not music has 
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY, enemyMove
 var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30, [300, 2150]];
-var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25];
-var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20];
-var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15];
+var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25, [300, 1000]];
+var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20, [100, 800]];
+var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15, [110, 4000]];
 
 var lane = [];
 
@@ -332,14 +332,14 @@ var playState = {
         this.plyrMving = true;
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-        this.player.setDest(this.player.x + 30, this.player.y);
+        this.player.setDest(this.player.x + 50, this.player.y);
         //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
-        this.plyrMving = true;
+        //this.plyrMving = true;
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-        this.player.setDest(this.player.x - 30, this.player.y);
+        this.player.setDest(this.player.x - 50, this.player.y);
         //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
-        this.plyrMving = true;
+        //this.plyrMving = true;
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x, this.player.y - 38);

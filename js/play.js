@@ -39,6 +39,9 @@ var playState = {
     plyrMving: null,
     plyrMvingBack: null,
     plyrMvingCount:null,
+	enemiesKilled: null,
+	enemiesNum: null,
+    // Boss: null,
     con: null,
     enemiesKilled: null,
 	  enemiesNum: null,
@@ -242,32 +245,32 @@ var playState = {
         hYaxis -= poleGap ;
       }
 
-      //   //Boss
-      //   this.Boss = game.add.group();
-      //   middle_layer.add(this.Boss);
-      //   this.Boss.enableBody = true;
-      //   this.Boss.physicsBodyType = Phaser.Physics.ARCADE;
-      //
-      // //  this.Boss.health = 100;
-      //
-      //   var y = enemyY - 20;
-      //
-      //  // var numberOfRandomCars = enemyNumber;
-      //   var lanes = [lane1, lane2, lane3, lane4];
-      //
-      //       var x = lanes[Math.floor(Math.random()*lanes.length)];
-      //       this.Boss.add(boss(x,y));
-      //       y -=150;
-      //
-      //
-      //   this.Boss.forEach(function(enemy, index){
-      //       game.physics.enable(enemy,Phaser.Physics.ARCADE);
-      //       enemy.body.immovable = true;
-      //   });
-      //   this.Boss.enableBody = true;
-      //
-      //
-      //
+        //Boss
+        this.Boss = game.add.group();
+        middle_layer.add(this.Boss);
+        this.Boss.enableBody = true;
+        this.Boss.physicsBodyType = Phaser.Physics.ARCADE;
+
+      //  this.Boss.health = 100;
+
+        var y = enemyY - 20;
+
+       // var numberOfRandomCars = enemyNumber;
+        var lanes = [lane1, lane2, lane3, lane4];
+
+            var x = lanes[Math.floor(Math.random()*lanes.length)];
+            this.Boss.add(boss(x,y));
+            y -=150;
+
+
+        this.Boss.forEach(function(enemy, index){
+            game.physics.enable(enemy,Phaser.Physics.ARCADE);
+            enemy.body.immovable = true;
+        });
+        this.Boss.enableBody = true;
+
+
+
 
 
         // Enemy
@@ -602,9 +605,14 @@ var playState = {
         p.health = p.health - 5;
       });
 
+
+        game.physics.arcade.collide(this.player, this.Boss, function(p,e){
+            p.health = p.health - 5;
+        });
       game.physics.arcade.collide(this.player, this.con, function(p,e){
            p.health = p.health - 5;
       });
+
 
       game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
         h.kill();
@@ -683,33 +691,39 @@ var playState = {
         car2.kill();
       }, null, this);
 
-        //
-        // game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(b,e){
-        //
-        //     b.kill();
-        //    e.health = e.health - 20;
-        //    if(e.health <= 0){
-        //      e.kill();
-        //    }
-        // }, null, this);
-        //
-        //
-        // game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(b,e){
-        //
-        //     b.kill();
-        //     e.health = e.health - 50;
-        //     if(e.health <= 0){
-        //         e.kill();
-        //     }
-        // }, null, this);
-        //
-        // game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
-        //     e.stop(this.player);
-        //     b.kill();
-        //     this.player.score = this.player.score + 5;
-        //     this.player.scoreText.setText("Score " + this.player.score);
-        // }, null, this);
-        //
+
+        game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(b,e){
+
+            b.kill();
+           e.health = e.health - 20;
+           if(e.health <= 0){
+               this.player.score = this.player.score + 100;
+               this.player.scoreText.setText("Score " + this.player.score);
+               this.player.kills = this.player.kills+ 1;
+             e.kill();
+           }
+        }, null, this);
+
+
+        game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(b,e){
+
+            b.kill();
+            e.health = e.health - 50;
+            if(e.health <= 0){
+                this.player.score = this.player.score + 100;
+                this.player.scoreText.setText("Score " + this.player.score);
+              this.player.kills = this.player.kills+ 1;
+                e.kill();
+            }
+        }, null, this);
+
+        game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
+            e.stop(this.player);
+            b.kill();
+            this.player.score = this.player.score + 5;
+            this.player.scoreText.setText("Score " + this.player.score);
+        }, null, this);
+
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         //console.log("crash! Enemy + Civil");
@@ -717,16 +731,16 @@ var playState = {
         c.kill();
       }, null, this);
 
-        // game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(e,c){
-        //     c.health  = c.health - 10;
-        //     e.kill();
-        // }, null, this);
-        //
-        // game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(e,c){
-        //     c.health  = c.health - 50;
-        //     e.kill();
-        //
-        // }, null, this);
+        game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(e,c){
+            c.health  = c.health - 10;
+            e.kill();
+        }, null, this);
+
+        game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(e,c){
+            c.health  = c.health - 50;
+            e.kill();
+
+        }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
         //console.log("crash! Player + Civil");
@@ -834,30 +848,30 @@ function Enemy(x, y){
 
 	return enemy;
 }
-//
-// //boss
-// function boss(x, y){
-//     var boss = game.add.sprite(x, y, 'Boss');
-//     boss.frame = 4;
-//     boss.health = 100;
-//     boss.xDest = x;
-//     boss.yDest = -200;
-//
-//     boss.goToXY = function(x){
-//         boss.xDest = x;
-//     }
-//
-//     boss.update= function(){
-//         this.speed = 260;
-//         // this.goToXY(this.x, this.y - 100);
-//
-//         //enemy.body.velocity.y=-50;
-//         move(this);
-//     }
-//
-//
-//     return boss;
-// }
+
+//boss
+function boss(x, y){
+    var boss = game.add.sprite(x, y, 'Boss');
+    boss.frame = 4;
+    boss.health = 100;
+    boss.xDest = x;
+    boss.yDest = -200;
+
+    boss.goToXY = function(x){
+        boss.xDest = x;
+    }
+
+    boss.update= function(){
+        this.speed = 260;
+        // this.goToXY(this.x, this.y - 100);
+
+        //enemy.body.velocity.y=-50;
+        move(this);
+    }
+
+
+    return boss;
+}
 
 function move(b){
   if (Math.floor(b.x / 10) == Math.floor(b.xDest / 10)) {
@@ -878,7 +892,7 @@ function move(b){
 
 function nextLevel(player, noOfKills, curLevelInt){
   var level = 0;
-  if (player.kills === noOfKills && curLevelInt <= 4) {
+  if (player.kills === (noOfKills + 1) && curLevelInt <= 4) {       // add 1 for Boss
     var myJSON = localStorage.getItem("highScore");
     var p = JSON.parse(myJSON);
     p.shift();

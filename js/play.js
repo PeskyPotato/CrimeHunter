@@ -570,6 +570,8 @@ var playState = {
                }
              }
           }
+          // If any of the enemy reach the end of map first, game restart
+          if (enemy.body.y < -100) game.state.start("preLevel");
           enemy.update();
         });
         m = 0;
@@ -653,7 +655,7 @@ var playState = {
 
       game.physics.arcade.collide(this.civils, this.con, function(p,e){
            e.kill();
-
+      });
 
       game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
         h.kill();
@@ -804,9 +806,6 @@ var playState = {
       } else if ((this.player.y > this.curLevel[14]) && (game.input.keyboard.isDown(Phaser.Keyboard.DOWN))) {
         this.player.stopY();
       }
-
-
-
 
     } // update
 }; // playState

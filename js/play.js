@@ -818,10 +818,8 @@ var playState = {
 
       // Control the timing
       if (second == -1) { condition = 3; game.state.start("preLevel");}
-      else if (second <= 6) {
-        if (beep == 55) { this.timing.setText("Time Left " + second); beep = 0; this.timing.addColor('#FF0000', 0);}
-        else { this.timing.setText("Time Left ") ; }
-        beep++;
+      else if (second <= 5) {
+        this.timing.setText("Time Left " + second); beep = 0; this.timing.addColor('#FF0000', 0);
       }
       else { this.timing.setText("Time Left " + second); }
 

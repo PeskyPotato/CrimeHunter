@@ -14,13 +14,15 @@ var motorbikeAttackStop = 0;
 var delayOperation = 0;
 var delayMotorShoot = 0;
 var isMusicStarted = false; //Boolean variable to hold whether or not music has started.
-
+var timer;
+var second;
+var beep = 0;
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY, enemyMove
-var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30];
-var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25];
-var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20];
-var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15];
+var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30, [300, 2150], 15];
+var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25, [300, 1000], 15];
+var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20, [100, 800], 25];
+var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15, [110, 4000], 30];
 
 var lane = [];
 
@@ -34,17 +36,17 @@ var playState = {
     curLevelInt: null,
     noKills: null,
     healthbag: null,
-	megahealth: null,
-	megabullet: null,
+	  megahealth: null,
+	  megabullet: null,
     plyrMving: null,
+    plyrMvingBack: null,
     plyrMvingCount:null,
-	enemiesKilled: null,
-	enemiesNum: null,
-	playerNPC: null,
-	reduceHealth: null,
-	crashBool: null,
-	numOfEnemies: null,
-    //Boss: null,
+  	enemiesKilled: null,
+  	enemiesNum: null,
+  	playerNPC: null,
+  	numOfEnemies: null,
+    con: null,
+
 
 		// Instantiate and assign game objects
     create: function () {
@@ -54,23 +56,26 @@ var playState = {
 	  //this.playerNPC.animations.add('boomm', [0, 1, 2, 3,4,5,6,7,8], 4);
       sound = game.add.audio('gmusic');
       sound.loop = true;
+
       this.curLevelInt = localStorage.getItem("level");
       if (this.curLevelInt == 0){
         this.curLevel = level0;
         this.curLevelInt = 0;
+
       } else if (this.curLevelInt == 1) {
         this.curLevel = level1;
         this.curLevelInt = 1;
+
       } else if (this.curLevelInt == 2) {
         this.curLevel = level2;
         this.curLevelInt = 2;
+
       } else if (this.curLevelInt == 3) {
          this.curLevel = level3;
          this.curLevelInt= 3;
       }
 
       // World variables
-      
       var playerX = this.curLevel[0];
       var playerY = this.curLevel[1];
       var civY = this.curLevel[2];
@@ -87,6 +92,8 @@ var playState = {
       var boundsX = this.curLevel[13];
       var boundsY = this.curLevel[14];
       var enemyMove = this.curLevel[15];
+      second = this.curLevel[17];
+      beep = 0;
 
       //Tilemap
       back_layer = game.add.group(); // maps + power ups + traps
@@ -111,10 +118,23 @@ var playState = {
         sound.play();
         isMusicStarted = true;
       }
+
+      // Create player
       this.player = new Player(playerX, playerY);
       this.plyrMving = false;
+      this.plyrMvingBack = false;
       this.plyrMvingCount = 0;
 
+      // Add contruction site
+      this.con = game.add.sprite(this.curLevel[16][0], this.curLevel[16][1], 'construct');
+      middle_layer.add(this.con);
+      this.con.frame = 1;
+      this.con.animations.add('running', [0, 1, 2, 3], 4);
+      game.physics.enable(this.con, Phaser.Physics.ARCADE);
+      this.con.body.immovable = true;
+
+
+      // Create camera to follow player
       game.camera.x = game.world.centerX;
       game.camera.y = game.world.centerY;
       game.physics.enable(this.player, Phaser.Physics.ARCADE);
@@ -162,9 +182,9 @@ var playState = {
       // Display player score on screen
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "15px", fill: "#ffffff", align: "center" });
       this.player.scoreText.fixedToCamera = true;
-	  
+
 	  // Display enemies number
-	  
+
 	  this.enemiesNum = this.curLevel[8];
 	  
 	  this.enemiesKilled = game.add.text(3,45, "Enemies " + this.enemiesNum, {font: "15px", fill: "#ffffff", align: "center" })
@@ -173,7 +193,14 @@ var playState = {
 	  this.enemiesKilled.fixedToCamera = true;
 	  //this.numOfEnemies.fixedToCamera = true;
 	  
-	  
+
+      // Timer for each level
+      timer = game.time.create(false);
+      timer.loop(1000, countDown, this);
+      timer.start();
+      this.timing = game.add.text(3,60, "Time Left " + second, {font: "15px", fill: "#ffffff", align: "centre" })
+      this.timing.fixedToCamera = true;
+
       //HealthBag allow player recover health
       this.healthbag = game.add.group();
       back_layer.add(this.healthbag);
@@ -235,33 +262,29 @@ var playState = {
         hYaxis -= poleGap ;
       }
 
-      //   //Boss
-      //   this.Boss = game.add.group();
-      //   middle_layer.add(this.Boss);
-      //   this.Boss.enableBody = true;
-      //   this.Boss.physicsBodyType = Phaser.Physics.ARCADE;
-      //
-      // //  this.Boss.health = 100;
-      //
-      //   var y = enemyY - 20;
-      //
-      //  // var numberOfRandomCars = enemyNumber;
-      //   var lanes = [lane1, lane2, lane3, lane4];
-      //
-      //       var x = lanes[Math.floor(Math.random()*lanes.length)];
-      //       this.Boss.add(boss(x,y));
-      //       y -=150;
-      //
-      //
-      //   this.Boss.forEach(function(enemy, index){
-      //       game.physics.enable(enemy,Phaser.Physics.ARCADE);
-      //       enemy.body.immovable = true;
-      //   });
-      //   this.Boss.enableBody = true;
-      //
-      //
-      //
+        //Boss
+        this.Boss = game.add.group();
+        middle_layer.add(this.Boss);
+        this.Boss.enableBody = true;
+        this.Boss.physicsBodyType = Phaser.Physics.ARCADE;
 
+      //  this.Boss.health = 100;
+
+        var y = enemyY - 20;
+
+       // var numberOfRandomCars = enemyNumber;
+        var lanes = [lane1, lane2, lane3, lane4];
+
+            var x = lanes[Math.floor(Math.random()*lanes.length)];
+            this.Boss.add(boss(x,y));
+            y -=150;
+
+
+        this.Boss.forEach(function(enemy, index){
+            game.physics.enable(enemy,Phaser.Physics.ARCADE);
+            enemy.body.immovable = true;
+        });
+        this.Boss.enableBody = true;
 
         // Enemy
       this.enemies = game.add.group();
@@ -303,7 +326,7 @@ var playState = {
       if (this.curLevelInt == 2) {
         this.motorbikes = game.add.group();
         middle_layer.add(this.motorbikes);
-        var numberOfMotorbikes = 6;          // Number of motorbikes
+        var numberOfMotorbikes = 3;          // Number of motorbikes
         var startingMotorYAxis = civY + 1000;  // Have it offscreen for its initial location
         this.motorbikes = addMotorbikes(this.motorbikes,numberOfMotorbikes,startingMotorYAxis);
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
@@ -335,12 +358,22 @@ var playState = {
         setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
         this.plyrMving = true;
       }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+        this.player.setDest(this.player.x + 50, this.player.y);
+        //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+        //this.plyrMving = true;
+      }
+      else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+        this.player.setDest(this.player.x - 50, this.player.y);
+        //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+        //this.plyrMving = true;
+      }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
         this.player.setDest(this.player.x, this.player.y - 38);
         setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
         this.plyrMving = true;
       }
-      else if (this.plyrMving == true){
+      else if (this.plyrMving == true && this.plyrMvingBack == false){
         this.player.setDest(this.player.x, this.player.y - 10);
         if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
           this.player.speed = this.player.speed - 50;
@@ -354,8 +387,8 @@ var playState = {
           this.player.speed = 280;
           this.plyrMving = false;
         }
-
       }
+
 
       if (fireButton.isDown){
         this.handgun.fire();
@@ -368,14 +401,11 @@ var playState = {
         //gsound.play();
       }
 
+      // Player's current X and Y axis
       var temY = this.player.body.y;
       var temX = this.player.body.x;
 
-	    //Enemy update
-      this.enemies.forEach(function(enemy, index){
-        enemy.update();
-      });
-
+      // Enemies check for player to attack if they are near the player
       if (attackTiming == 60) {
           enemyBullet = eBullets.getFirstExists(false);
           remainingEnemies.length=0;
@@ -440,41 +470,6 @@ var playState = {
         k = 0;
       }
 
-      var otherCars = this.civils;
-      // The function to avoid the NPC from overlapping each other.
-      this.civils.forEach(function(car){
-        otherCars.forEach(function(othercar){
-          if (((car.body.y - 100 < othercar.body.y) && (car.body.y > othercar.body.y))
-          ||  ((car.body.y + 100 > othercar.body.y) && (car.body.y < othercar.body.y))  ) {
-            // If there is a car at thr front around 1 car away, slow down to speed 50,
-            // as 50 is considered at the minimum speed for now.
-            if ((car.body.x == othercar.body.x)
-            || ((car.body.x <= othercar.body.x+30) && (car.body.x > othercar.body.x-30))) {
-              car.update = function() {
-                this.speed = 50;
-                move(this);
-              };
-            }
-            // Check for other cars before to avoid collision on either left or right.
-            // Check before moving to the left.
-           else if  ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
-              while ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
-                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
-              }
-              car.update();
-            }
-            // Check before moving to the right.
-            else if ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
-              while ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
-                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
-              }
-              car.update();
-            }
-          }
-        });
-      });
-
-      // The function that is implemented after Alpha Release
       // Described in 2. above
       this.civils.forEach(function(car){
         if (((car.y < temY) && (car.y >= temY-200)) || ((car.y >= temY) && (car.y <= temY+200))) {
@@ -505,25 +500,95 @@ var playState = {
             }
           }
         }
-
         car.update();
       });
-
       k++;
+
+      var otherCars = this.civils;
+      // The function to avoid the NPC from overlapping each other.
+      this.civils.forEach(function(car){
+        otherCars.forEach(function(othercar){
+          if (((car.body.y - 100 < othercar.body.y) && (car.body.y > othercar.body.y))
+          ||  ((car.body.y + 100 > othercar.body.y) && (car.body.y < othercar.body.y))  ) {
+            // 1. If there is a car at the front around 1 car away, slow down to speed
+            // the same as the car at the front.
+            if ((car.body.x == othercar.body.x)
+            || ((car.body.x <= othercar.body.x+30) && (car.body.x > othercar.body.x-30))) {
+              car.update = function() {
+                this.speed = othercar.speed;
+                move(this);
+              };
+            }
+            // 2. Check for other cars before to avoid collision on either left or right.
+            // 2.1. Check before moving to the left.
+           else if  ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
+              while ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
+                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+              car.update();
+            }
+            // 2.2. Check before moving to the right.
+            else if ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
+              while ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
+                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+              car.update();
+            }
+          }
+        });
+      });
+
+      // Set the NPC cars to stop when they see the construction site
+      var cstX = this.con.x;
+      var cstY = this.con.y;
+      this.civils.forEach(function(car){
+        if ((cstY < car.y) && (cstY > car.y - 250)) { // Before reaching construction site
+          if  ((car.xDest <= cstX + 10) && (car.x >= cstX)) {
+            car.update = function() {
+              this.speed = 0;
+              move(this);
+            };
+          }
+          else if ((car.xDest >= cstX + 35) && (car.x <= cstX + 35)) {
+            car.update = function() {
+              this.speed = 0;
+              move(this);
+            };
+          }
+          k = 100;
+        }
+      });
 
 		// enemy's Car Movement Update
 		// the smaller m equal to , the higher frequency enemy movement can be
-
 	    if (m==this.curLevel[15]) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
           if (moveEnemy == true) {
-			    var lanes = [110, 180, 275, 325];
-				if (lanes.includes(enemy.xDest)) {
+			    var lanes = [110, 180, 275, 335];
+				  if (lanes.includes(enemy.xDest)) {
               enemy.xDest = lanes[Math.floor(Math.random()*lanes.length)];
             }
-		  }
+		      }
+          if (((cstY < enemy.y) && (cstY > enemy.y - 500))    // Before reaching construction site
+          ||  ((cstY > enemy.y) && (cstY < enemy.y + 100))) { // After passing construction site
+            if  ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
+               while ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
+                   enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+               }
+             }
+            else if ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
+              while ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
+                   enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+               }
+             }
+          }
+          // If any of the enemy reach the end of map first, game restart
+          if (enemy.body.y < -100){
+            condition = 3;
+            game.state.start("preLevel");
+          }
           enemy.update();
         });
         m = 0;
@@ -531,75 +596,95 @@ var playState = {
       m++;
 
       if (this.curLevelInt == 2) {
-        // Motorbike only available on level beyond 1
-        // Motorbike Update
-        if (motorbikeAttackTime == 100) {          // Timer for the motor bike to start moving
+          // Motorbike only available on level 2
+          // Motorbike Update
           this.motorbikes.forEach(function(motor){
-            motor.update = function() {
-              this.speed = 500;
-              move(this);
-            };
+            if (motor.body.y + 200 < game.camera.y) motor.kill();
           });
-        }
-        motorbikeAttackTime++;
 
-        // If the motor reach the range of Y-Axis where the player is, they start to attack
-        if (delayOperation == 0) {
-          // Delay is used to let the motorbike has enough time to move on after attacking the player
-          // after a short period of time.
-          var pl = this.player;
-          if (delayMotorShoot != 0) { delayMotorShoot--; }
-          this.motorbikes.forEach(function(motor){
-            if ((motor.y < temY - 200) && ( temY < motor.y + 400)){
+          if (motorbikeAttackTime == 100) {          // Timer for the motor bike to start moving
+            this.motorbikes.forEach(function(motor){
               motor.update = function() {
-                this.speed = 250;
+                this.speed = 500;
                 move(this);
               };
-              enemyBullet = eBullets.getFirstExists(false);
-              if (enemyBullet && delayMotorShoot == 0) {
-                enemyBullet.reset(motor.body.x+5, motor.body.y+30);
-                game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
-                delayMotorShoot = 200;
-              }
-            }
-          });
-        }
-        if (delayOperation != 0) { delayOperation--;}
+            });
+          }
+          motorbikeAttackTime++;
 
-        // The motorbike move on after staying in similar speed to the player's car for a short time.
-        if (motorbikeAttackStop == 200) {
-          this.motorbikes.forEach(function(motor){
-              motor.update = function() {
-                if (this.speed == 250) {
-                  this.speed = 800;
+          // If the motor reach the range of Y-Axis where the player is, they start to attack
+          if (delayOperation == 0) {
+            // Delay is used to let the motorbike has enough time to move on after attacking the player
+            // after a short period of time.
+            var pl = this.player;
+            if (delayMotorShoot != 0) { delayMotorShoot--; }
+            this.motorbikes.forEach(function(motor){
+              if ((motor.y < temY - 200) && ( temY < motor.y + 400)){
+                motor.update = function() {
+                  this.speed = 250;
                   move(this);
-                  delayOperation = 100; // Set delay to give the motorbike enough time to move on
+                };
+                enemyBullet = eBullets.getFirstExists(false);
+                if (enemyBullet && delayMotorShoot == 0) {
+                  enemyBullet.reset(motor.body.x+5, motor.body.y+30);
+                  game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
+                  delayMotorShoot = 200;
                 }
-              };
-          });
-          motorbikeAttackStop = 0;
-        }
-        motorbikeAttackStop++;
+              }
+            });
+          }
+          if (delayOperation != 0) { delayOperation--;}
+
+          // The motorbike move on after staying in similar speed to the player's car for a short time.
+          if (motorbikeAttackStop == 200) {
+            this.motorbikes.forEach(function(motor){
+                motor.update = function() {
+                  if (this.speed == 250) {
+                    this.speed = 800;
+                    move(this);
+                    delayOperation = 100; // Set delay to give the motorbike enough time to move on
+                  }
+                };
+            });
+            motorbikeAttackStop = 0;
+          }
+          motorbikeAttackStop++;
     }
+
+      // Kill NPC car that go off screen.
+      this.civils.forEach(function(car) {
+        if (car.body.y - 400 > game.camera.y) car.kill(); // Cars got passed by the players
+        else if (car.body.y <= -100) car.kill(); // Cars that goes off the screen (Y-Axis == 0)
+      });
+
       // Collisions
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
         p.health = p.health - 5;
       });
 
-        // game.physics.arcade.collide(this.player, this.Boss, function(p,e){
-        //     p.health = p.health - 5;
-        // });
+
+        game.physics.arcade.collide(this.player, this.Boss, function(p,e){
+            p.health = p.health - 5;
+        });
+      game.physics.arcade.collide(this.player, this.con, function(p,e){
+           p.health = p.health - 5;
+      });
+
+      game.physics.arcade.collide(this.civils, this.con, function(p,e){
+           e.kill();
+      });
 
       game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
         h.kill();
         this.player.health = this.player.health + 25;
       }, null, this);
 
-	  game.physics.arcade.overlap(this.megahealth, this.player,  function(p,h){
+      game.physics.arcade.overlap(this.megahealth, this.player,  function(p,h){
         h.kill();
         this.player.health = this.player.health + 50;
       }, null, this);
 
+      this.con.animations.play('running');
 
 	  //The mega bullet comes with increased bullet speed, slightly better fire rate
 	  game.physics.arcade.overlap(this.megabullet, this.player,  function(p,h){
@@ -625,7 +710,7 @@ var playState = {
         this.player.scoreText.setText("Score " + this.player.score);
 		this.enemiesNum = this.enemiesNum -1;
 		this.enemiesKilled.setText("Enemies " + this.enemiesNum)
-		
+
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
@@ -666,33 +751,39 @@ var playState = {
         car2.kill();
       }, null, this);
 
-        //
-        // game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(b,e){
-        //
-        //     b.kill();
-        //    e.health = e.health - 20;
-        //    if(e.health <= 0){
-        //      e.kill();
-        //    }
-        // }, null, this);
-        //
-        //
-        // game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(b,e){
-        //
-        //     b.kill();
-        //     e.health = e.health - 50;
-        //     if(e.health <= 0){
-        //         e.kill();
-        //     }
-        // }, null, this);
-        //
-        // game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
-        //     e.stop(this.player);
-        //     b.kill();
-        //     this.player.score = this.player.score + 5;
-        //     this.player.scoreText.setText("Score " + this.player.score);
-        // }, null, this);
-        //
+
+        game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(b,e){
+
+            b.kill();
+           e.health = e.health - 20;
+           if(e.health <= 0){
+               this.player.score = this.player.score + 100;
+               this.player.scoreText.setText("Score " + this.player.score);
+               this.player.kills = this.player.kills+ 1;
+             e.kill();
+           }
+        }, null, this);
+
+
+        game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(b,e){
+
+            b.kill();
+            e.health = e.health - 50;
+            if(e.health <= 0){
+                this.player.score = this.player.score + 100;
+                this.player.scoreText.setText("Score " + this.player.score);
+              this.player.kills = this.player.kills+ 1;
+                e.kill();
+            }
+        }, null, this);
+
+        game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
+            e.stop(this.player);
+            b.kill();
+            this.player.score = this.player.score + 5;
+            this.player.scoreText.setText("Score " + this.player.score);
+        }, null, this);
+
 
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         //console.log("crash! Enemy + Civil");
@@ -702,16 +793,16 @@ var playState = {
 		
       }, null, this);
 
-        // game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(e,c){
-        //     c.health  = c.health - 10;
-        //     e.kill();
-        // }, null, this);
-        //
-        // game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(e,c){
-        //     c.health  = c.health - 50;
-        //     e.kill();
-        //
-        // }, null, this);
+        game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(e,c){
+            c.health  = c.health - 10;
+            e.kill();
+        }, null, this);
+
+        game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(e,c){
+            c.health  = c.health - 50;
+            e.kill();
+
+        }, null, this);
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
         //console.log("crash! Player + Civil");
@@ -740,9 +831,15 @@ var playState = {
       } else if ((this.player.y > this.curLevel[14]) && (game.input.keyboard.isDown(Phaser.Keyboard.DOWN))) {
         this.player.stopY();
       }
-	  
-	  
 
+      // Control the timing
+      if (second == -1) { condition = 3; game.state.start("preLevel");}
+      else if (second <= 6) {
+        if (beep == 55) { this.timing.setText("Time Left " + second); beep = 0; this.timing.addColor('#FF0000', 0);}
+        else { this.timing.setText("Time Left ") ; }
+        beep++;
+      }
+      else { this.timing.setText("Time Left " + second); }
 
     } // update
 }; // playState
@@ -825,30 +922,30 @@ function Enemy(x, y){
 
 	return enemy;
 }
-//
-// //boss
-// function boss(x, y){
-//     var boss = game.add.sprite(x, y, 'Boss');
-//     boss.frame = 4;
-//     boss.health = 100;
-//     boss.xDest = x;
-//     boss.yDest = -200;
-//
-//     boss.goToXY = function(x){
-//         boss.xDest = x;
-//     }
-//
-//     boss.update= function(){
-//         this.speed = 260;
-//         // this.goToXY(this.x, this.y - 100);
-//
-//         //enemy.body.velocity.y=-50;
-//         move(this);
-//     }
-//
-//
-//     return boss;
-// }
+
+//boss
+function boss(x, y){
+    var boss = game.add.sprite(x, y, 'Boss');
+    boss.frame = 4;
+    boss.health = 100;
+    boss.xDest = x;
+    boss.yDest = -200;
+
+    boss.goToXY = function(x){
+        boss.xDest = x;
+    }
+
+    boss.update= function(){
+        this.speed = 260;
+        // this.goToXY(this.x, this.y - 100);
+
+        //enemy.body.velocity.y=-50;
+        move(this);
+    }
+
+
+    return boss;
+}
 
 function move(b){
   if (Math.floor(b.x / 10) == Math.floor(b.xDest / 10)) {
@@ -869,7 +966,7 @@ function move(b){
 
 function nextLevel(player, noOfKills, curLevelInt){
   var level = 0;
-  if (player.kills === noOfKills && curLevelInt <= 4) {
+  if (player.kills === (noOfKills + 1) && curLevelInt <= 4) {       // add 1 for Boss
     var myJSON = localStorage.getItem("highScore");
     var p = JSON.parse(myJSON);
     p.shift();
@@ -943,4 +1040,8 @@ function addMotorbikes(motorbikes, numberOfMotorbikes, y) {
     y += 1500;
   }
   return motorbikes;
+}
+
+function countDown() {
+  second--;
 }

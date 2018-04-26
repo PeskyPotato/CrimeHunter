@@ -15,9 +15,10 @@ var loadState={
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('ultskill', 'assets/ultskill.png');
     game.load.image('addhealth', 'assets/health.png');
-	game.load.image('megahealth', 'assets/megahealth.png');
-	game.load.image('megabullet', 'assets/megabullet.png');
+    game.load.image('megahealth', 'assets/megahealth.png');
+    game.load.image('megabullet', 'assets/megabullet.png');
     game.load.spritesheet('characters', 'assets/[SPRITE].png', 32, 64);
+    game.load.spritesheet('construct', 'assets/Construction70x200.png', 70, 200);
     game.load.image('playButton', 'assets/buttons/play.png');
     game.load.image('scoreButton', 'assets/buttons/score.png');
     game.load.image('helpButton', 'assets/buttons/help.png');

@@ -20,7 +20,7 @@ var preLevelState = {
     if ( l <= 3) {  // Checks for condition 0
       if (condition == 2) {         // Player had died, restart level
         levelText = game.add.text(game.world.centerX, 110, "Level " + l, { font: "50px", fill: "#ffffff", align: "centre" });
-        levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies", { font: "30px", fill: "#ffffff", align: "centre" });
+        levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies and Boss", { font: "30px", fill: "#ffffff", align: "centre" });
         levelText2 = game.add.text(game.world.centerX, 220, "You died", { font: "30px", fill: "#ffffff", align: "centre"});
         levelText.anchor.setTo(.5, .5);
         levelText1.anchor.setTo(.5, .5);
@@ -28,7 +28,7 @@ var preLevelState = {
 
       } else if (condition == 1) {  // Player won, level up
         levelText = game.add.text(game.world.centerX, 110, "Level " + l, { font: "50px", fill: "#ffffff", align: "centre" });
-        levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies", { font: "30px", fill: "#ffffff", align: "centre" });
+        levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies and Boss", { font: "30px", fill: "#ffffff", align: "centre" });
         levelText2 = game.add.text(game.world.centerX, 220, "You won", { font: "30px", fill: "#ffffff", align: "centre"});
         levelText.anchor.setTo(.5, .5);
         levelText1.anchor.setTo(.5, .5);
@@ -36,7 +36,7 @@ var preLevelState = {
 
       } else if (condition == 3) {
         levelText = game.add.text(game.world.centerX, 110, "Level " + l, { font: "50px", fill: "#ffffff", align: "centre" });
-        levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies", { font: "30px", fill: "#ffffff", align: "centre" });
+        levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies and Boss", { font: "30px", fill: "#ffffff", align: "centre" });
         levelText2 = game.add.text(game.world.centerX, 220, "You lose, try again", { font: "30px", fill: "#ffffff", align: "centre"});
         levelText.anchor.setTo(.5, .5);
         levelText1.anchor.setTo(.5, .5);
@@ -44,7 +44,7 @@ var preLevelState = {
 
       } else {
         levelText = game.add.text(145, 110, "Level " + l, { font: "50px", fill: "#ffffff", align: "centre" });
-        levelText1 = game.add.text(130, 180, "Kill " + enemies + " enemies", { font: "30px", fill: "#ffffff", align: "centre" });
+        levelText1 = game.add.text(130, 180, "Kill " + enemies + " enemies and Boss", { font: "30px", fill: "#ffffff", align: "centre" });
       }
 
       game.time.events.add(Phaser.Timer.SECOND * 2, fadePicture, this);

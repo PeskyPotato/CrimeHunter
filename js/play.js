@@ -41,16 +41,19 @@ var playState = {
     plyrMving: null,
     plyrMvingBack: null,
     plyrMvingCount:null,
-	  enemiesKilled: null,
-	  enemiesNum: null,
-    // Boss: null,
+  	enemiesKilled: null,
+  	enemiesNum: null,
+  	playerNPC: null,
+  	numOfEnemies: null,
     con: null,
-    enemiesKilled: null,
-	  enemiesNum: null,
-    //Boss: null,
+
 
 		// Instantiate and assign game objects
     create: function () {
+		//  player crash NPC
+	  //this.playerNPC = game.add.sprite(100, 100, 'boomm');
+	  //this.playerNPC.visible = false;
+	  //this.playerNPC.animations.add('boomm', [0, 1, 2, 3,4,5,6,7,8], 4);
       sound = game.add.audio('gmusic');
       sound.loop = true;
 
@@ -177,15 +180,19 @@ var playState = {
       p.unshift(curScore);
 
       // Display player score on screen
-      this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
+      this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "15px", fill: "#ffffff", align: "center" });
       this.player.scoreText.fixedToCamera = true;
 
 	  // Display enemies number
 
 	  this.enemiesNum = this.curLevel[8];
-
-	  this.enemiesKilled = game.add.text(395,20, "Enemies " + this.enemiesNum, {font: "20px", fill: "#ffffff", align: "centre" })
+	  
+	  this.enemiesKilled = game.add.text(3,45, "Enemies " + this.enemiesNum, {font: "15px", fill: "#ffffff", align: "center" })
+	  //this.numOfEnemies = game.add.text(400,30, "Enemies " {font: "20px", fill: "#ffffff", align: "center" })
+	  //this.numOfEnemies =  game.add.text( 400,30, this.enemiesNum, {font: "20px", fill: "#ffffff", align: "center" })
 	  this.enemiesKilled.fixedToCamera = true;
+	  //this.numOfEnemies.fixedToCamera = true;
+	  
 
       // Timer for each level
       timer = game.time.create(false);
@@ -334,6 +341,7 @@ var playState = {
 
     // Anything that needs to be checked, collisions, user input etc...
     update: function () {
+	
       // Keyboard controls
       // if(game.input.keyboard.isDown(Phaser.Keyboard.X)) {
       //   this.player.speed = 400;
@@ -780,7 +788,9 @@ var playState = {
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         //console.log("crash! Enemy + Civil");
         //epsound.play();
-        c.kill();
+        
+		c.kill();
+		
       }, null, this);
 
         game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(e,c){
@@ -796,11 +806,17 @@ var playState = {
 
       game.physics.arcade.overlap(this.player, this.civils, function(p,c){
         //console.log("crash! Player + Civil");
-        //epsound.play();
-        c.kill();
-        p.health = p.health - 10;
+        //epsound.play
+		//this.playerNPC.animations.add('boomm', [4,5,6,7,8], 4);
+		//this.playerNPC.animations.play('boomm');
+		this.player.animations.play('runningShoot');
+		c.frame = 7;
+        //c.kill();
+        p.health = p.health - 0.1;
+		//console.log(c.body.x);
+		//this.playerNPC.animations.play('boomm');
       }, null, this);
-
+	
       game.physics.arcade.collide(this.player, this.layer, function(p, l){
         p.stop();
         //console.log("side of road");
@@ -837,9 +853,9 @@ function render() {
 function Player(x, y) {
   var player = game.add.sprite(x, y, 'characters');
   middle_layer.add(player);
-
+	
   player.frame = 0;
-  player.animations.add('runningShoot', [0, 1, 2, 3], 4);
+  player.animations.add('runningShoot', [0, 1, 2, 3], 0);
   player.speed = 280;
   player.xDest = x;
   player.yDest = y;

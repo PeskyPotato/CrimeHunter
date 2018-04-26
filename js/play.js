@@ -14,13 +14,15 @@ var motorbikeAttackStop = 0;
 var delayOperation = 0;
 var delayMotorShoot = 0;
 var isMusicStarted = false; //Boolean variable to hold whether or not music has started.
-
+var timer;
+var second;
+var beep = 0;
 
 // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY, enemyMove
-var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30, [300, 2150]];
-var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25, [300, 1000]];
-var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20, [100, 800]];
-var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15, [110, 4000]];
+var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30, [300, 2150], 15];
+var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25, [300, 1000], 15];
+var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20, [100, 800], 25];
+var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15, [110, 4000], 30];
 
 var lane = [];
 
@@ -39,8 +41,8 @@ var playState = {
     plyrMving: null,
     plyrMvingBack: null,
     plyrMvingCount:null,
-	enemiesKilled: null,
-	enemiesNum: null,
+	  enemiesKilled: null,
+	  enemiesNum: null,
     // Boss: null,
     con: null,
     enemiesKilled: null,
@@ -87,6 +89,8 @@ var playState = {
       var boundsX = this.curLevel[13];
       var boundsY = this.curLevel[14];
       var enemyMove = this.curLevel[15];
+      second = this.curLevel[17];
+      beep = 0;
 
       //Tilemap
       back_layer = game.add.group(); // maps + power ups + traps
@@ -183,6 +187,12 @@ var playState = {
 	  this.enemiesKilled = game.add.text(395,20, "Enemies " + this.enemiesNum, {font: "20px", fill: "#ffffff", align: "centre" })
 	  this.enemiesKilled.fixedToCamera = true;
 
+      // Timer for each level
+      timer = game.time.create(false);
+      timer.loop(1000, countDown, this);
+      timer.start();
+      this.timing = game.add.text(3,60, "Time Left " + second, {font: "15px", fill: "#ffffff", align: "centre" })
+      this.timing.fixedToCamera = true;
 
       //HealthBag allow player recover health
       this.healthbag = game.add.group();
@@ -268,10 +278,6 @@ var playState = {
             enemy.body.immovable = true;
         });
         this.Boss.enableBody = true;
-
-
-
-
 
         // Enemy
       this.enemies = game.add.group();
@@ -653,7 +659,7 @@ var playState = {
 
       game.physics.arcade.collide(this.civils, this.con, function(p,e){
            e.kill();
-
+        });
 
       game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
         h.kill();
@@ -805,8 +811,14 @@ var playState = {
         this.player.stopY();
       }
 
-
-
+      // Control the timing
+      if (second == -1) { condition = 3; game.state.start("preLevel");}
+      else if (second <= 5) {
+        if (beep == 55) { this.timing.setText("Time Left " + second); beep = 0;}
+        else { this.timing.setText("Time Left ") ; }
+        beep++;
+      }
+      else { this.timing.setText("Time Left " + second); }
 
     } // update
 }; // playState
@@ -1007,4 +1019,8 @@ function addMotorbikes(motorbikes, numberOfMotorbikes, y) {
     y += 1500;
   }
   return motorbikes;
+}
+
+function countDown() {
+  second--;
 }

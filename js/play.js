@@ -175,15 +175,15 @@ var playState = {
       // Display player score on screen
       this.player.scoreText = game.add.text(3, 30, "Score " + this.player.score, { font: "20px", fill: "#ffffff", align: "centre" });
       this.player.scoreText.fixedToCamera = true;
-	  
+
 	  // Display enemies number
-	  
+
 	  this.enemiesNum = this.curLevel[8];
-	  
+
 	  this.enemiesKilled = game.add.text(395,20, "Enemies " + this.enemiesNum, {font: "20px", fill: "#ffffff", align: "centre" })
 	  this.enemiesKilled.fixedToCamera = true;
-	  
-	  
+
+
       //HealthBag allow player recover health
       this.healthbag = game.add.group();
       back_layer.add(this.healthbag);
@@ -313,7 +313,7 @@ var playState = {
       if (this.curLevelInt == 2) {
         this.motorbikes = game.add.group();
         middle_layer.add(this.motorbikes);
-        var numberOfMotorbikes = 6;          // Number of motorbikes
+        var numberOfMotorbikes = 3;          // Number of motorbikes
         var startingMotorYAxis = civY + 1000;  // Have it offscreen for its initial location
         this.motorbikes = addMotorbikes(this.motorbikes,numberOfMotorbikes,startingMotorYAxis);
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
@@ -387,14 +387,11 @@ var playState = {
         //gsound.play();
       }
 
+      // Player's current X and Y axis
       var temY = this.player.body.y;
       var temX = this.player.body.x;
 
-	    //Enemy update
-      this.enemies.forEach(function(enemy, index){
-        enemy.update();
-      });
-
+      // Enemies check for player to attack if they are near the player
       if (attackTiming == 60) {
           enemyBullet = eBullets.getFirstExists(false);
           remainingEnemies.length=0;
@@ -459,41 +456,6 @@ var playState = {
         k = 0;
       }
 
-      var otherCars = this.civils;
-      // The function to avoid the NPC from overlapping each other.
-      this.civils.forEach(function(car){
-        otherCars.forEach(function(othercar){
-          if (((car.body.y - 100 < othercar.body.y) && (car.body.y > othercar.body.y))
-          ||  ((car.body.y + 100 > othercar.body.y) && (car.body.y < othercar.body.y))  ) {
-            // If there is a car at thr front around 1 car away, slow down to speed 50,
-            // as 50 is considered at the minimum speed for now.
-            if ((car.body.x == othercar.body.x)
-            || ((car.body.x <= othercar.body.x+30) && (car.body.x > othercar.body.x-30))) {
-              car.update = function() {
-                this.speed = 50;
-                move(this);
-              };
-            }
-            // Check for other cars before to avoid collision on either left or right.
-            // Check before moving to the left.
-           else if  ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
-              while ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
-                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
-              }
-              car.update();
-            }
-            // Check before moving to the right.
-            else if ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
-              while ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
-                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
-              }
-              car.update();
-            }
-          }
-        });
-      });
-
-      // The function that is implemented after Alpha Release
       // Described in 2. above
       this.civils.forEach(function(car){
         if (((car.y < temY) && (car.y >= temY-200)) || ((car.y >= temY) && (car.y <= temY+200))) {
@@ -524,25 +486,90 @@ var playState = {
             }
           }
         }
-
         car.update();
       });
-
       k++;
+
+      var otherCars = this.civils;
+      // The function to avoid the NPC from overlapping each other.
+      this.civils.forEach(function(car){
+        otherCars.forEach(function(othercar){
+          if (((car.body.y - 100 < othercar.body.y) && (car.body.y > othercar.body.y))
+          ||  ((car.body.y + 100 > othercar.body.y) && (car.body.y < othercar.body.y))  ) {
+            // 1. If there is a car at the front around 1 car away, slow down to speed
+            // the same as the car at the front.
+            if ((car.body.x == othercar.body.x)
+            || ((car.body.x <= othercar.body.x+30) && (car.body.x > othercar.body.x-30))) {
+              car.update = function() {
+                this.speed = othercar.speed;
+                move(this);
+              };
+            }
+            // 2. Check for other cars before to avoid collision on either left or right.
+            // 2.1. Check before moving to the left.
+           else if  ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
+              while ((car.xDest - 20 <= othercar.x) && (car.body.x >= othercar.x)) {
+                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+              car.update();
+            }
+            // 2.2. Check before moving to the right.
+            else if ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
+              while ((car.xDest + 20 >= othercar.x) && (car.body.x <= othercar.x)) {
+                  car.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+              }
+              car.update();
+            }
+          }
+        });
+      });
+
+      // Set the NPC cars to stop when they see the construction site
+      var cstX = this.con.x;
+      var cstY = this.con.y;
+      this.civils.forEach(function(car){
+        if ((cstY < car.y) && (cstY > car.y - 250)) { // Before reaching construction site
+          if  ((car.xDest <= cstX + 10) && (car.x >= cstX)) {
+            car.update = function() {
+              this.speed = 0;
+              move(this);
+            };
+          }
+          else if ((car.xDest >= cstX + 35) && (car.x <= cstX + 35)) {
+            car.update = function() {
+              this.speed = 0;
+              move(this);
+            };
+          }
+          k = 100;
+        }
+      });
 
 		// enemy's Car Movement Update
 		// the smaller m equal to , the higher frequency enemy movement can be
-
 	    if (m==this.curLevel[15]) {         // Use counting instead of timing where the larger makes it rarely move
         this.enemies.forEach(function(enemy){
           var moving = [false, true];
           var moveEnemy = moving[Math.floor(Math.random()*moving.length)];
           if (moveEnemy == true) {
-			    var lanes = [110, 180, 275, 325];
-				if (lanes.includes(enemy.xDest)) {
+			    var lanes = [110, 180, 275, 335];
+				  if (lanes.includes(enemy.xDest)) {
               enemy.xDest = lanes[Math.floor(Math.random()*lanes.length)];
             }
-		  }
+		      }
+          if (((cstY < enemy.y) && (cstY > enemy.y - 500))    // Before reaching construction site
+          ||  ((cstY > enemy.y) && (cstY < enemy.y + 100))) { // After passing construction site
+            if  ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
+               while ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
+                   enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+               }
+             }
+            else if ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
+              while ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
+                   enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
+               }
+             }
+          }
           enemy.update();
         });
         m = 0;
@@ -550,56 +577,67 @@ var playState = {
       m++;
 
       if (this.curLevelInt == 2) {
-        // Motorbike only available on level beyond 1
-        // Motorbike Update
-        if (motorbikeAttackTime == 100) {          // Timer for the motor bike to start moving
+          // Motorbike only available on level 2
+          // Motorbike Update
           this.motorbikes.forEach(function(motor){
-            motor.update = function() {
-              this.speed = 500;
-              move(this);
-            };
+            if (motor.body.y + 200 < game.camera.y) motor.kill();
           });
-        }
-        motorbikeAttackTime++;
 
-        // If the motor reach the range of Y-Axis where the player is, they start to attack
-        if (delayOperation == 0) {
-          // Delay is used to let the motorbike has enough time to move on after attacking the player
-          // after a short period of time.
-          var pl = this.player;
-          if (delayMotorShoot != 0) { delayMotorShoot--; }
-          this.motorbikes.forEach(function(motor){
-            if ((motor.y < temY - 200) && ( temY < motor.y + 400)){
+          if (motorbikeAttackTime == 100) {          // Timer for the motor bike to start moving
+            this.motorbikes.forEach(function(motor){
               motor.update = function() {
-                this.speed = 250;
+                this.speed = 500;
                 move(this);
               };
-              enemyBullet = eBullets.getFirstExists(false);
-              if (enemyBullet && delayMotorShoot == 0) {
-                enemyBullet.reset(motor.body.x+5, motor.body.y+30);
-                game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
-                delayMotorShoot = 200;
-              }
-            }
-          });
-        }
-        if (delayOperation != 0) { delayOperation--;}
+            });
+          }
+          motorbikeAttackTime++;
 
-        // The motorbike move on after staying in similar speed to the player's car for a short time.
-        if (motorbikeAttackStop == 200) {
-          this.motorbikes.forEach(function(motor){
-              motor.update = function() {
-                if (this.speed == 250) {
-                  this.speed = 800;
+          // If the motor reach the range of Y-Axis where the player is, they start to attack
+          if (delayOperation == 0) {
+            // Delay is used to let the motorbike has enough time to move on after attacking the player
+            // after a short period of time.
+            var pl = this.player;
+            if (delayMotorShoot != 0) { delayMotorShoot--; }
+            this.motorbikes.forEach(function(motor){
+              if ((motor.y < temY - 200) && ( temY < motor.y + 400)){
+                motor.update = function() {
+                  this.speed = 250;
                   move(this);
-                  delayOperation = 100; // Set delay to give the motorbike enough time to move on
+                };
+                enemyBullet = eBullets.getFirstExists(false);
+                if (enemyBullet && delayMotorShoot == 0) {
+                  enemyBullet.reset(motor.body.x+5, motor.body.y+30);
+                  game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
+                  delayMotorShoot = 200;
                 }
-              };
-          });
-          motorbikeAttackStop = 0;
-        }
-        motorbikeAttackStop++;
+              }
+            });
+          }
+          if (delayOperation != 0) { delayOperation--;}
+
+          // The motorbike move on after staying in similar speed to the player's car for a short time.
+          if (motorbikeAttackStop == 200) {
+            this.motorbikes.forEach(function(motor){
+                motor.update = function() {
+                  if (this.speed == 250) {
+                    this.speed = 800;
+                    move(this);
+                    delayOperation = 100; // Set delay to give the motorbike enough time to move on
+                  }
+                };
+            });
+            motorbikeAttackStop = 0;
+          }
+          motorbikeAttackStop++;
     }
+
+      // Kill NPC car that go off screen.
+      this.civils.forEach(function(car) {
+        if (car.body.y - 400 > game.camera.y) car.kill(); // Cars got passed by the players
+        else if (car.body.y <= -100) car.kill(); // Cars that goes off the screen (Y-Axis == 0)
+      });
+
       // Collisions
       game.physics.arcade.collide(this.player, this.enemies, function(p,e){
         p.health = p.health - 5;
@@ -612,6 +650,9 @@ var playState = {
       game.physics.arcade.collide(this.player, this.con, function(p,e){
            p.health = p.health - 5;
       });
+
+      game.physics.arcade.collide(this.civils, this.con, function(p,e){
+           e.kill();
 
 
       game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
@@ -650,7 +691,7 @@ var playState = {
         this.player.scoreText.setText("Score " + this.player.score);
 		this.enemiesNum = this.enemiesNum -1;
 		this.enemiesKilled.setText("Enemies " + this.enemiesNum)
-		
+
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
@@ -763,8 +804,8 @@ var playState = {
       } else if ((this.player.y > this.curLevel[14]) && (game.input.keyboard.isDown(Phaser.Keyboard.DOWN))) {
         this.player.stopY();
       }
-	  
-	  
+
+
 
 
     } // update

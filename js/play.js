@@ -51,6 +51,10 @@ var playState = {
 
 		// Instantiate and assign game objects
     create: function () {
+      motorbikeAttackTime = 0;
+      motorbikeAttackStop = 0;
+      k = 0;
+      m = 0;
       sound = game.add.audio('gmusic');
       sound.loop = true;
 
@@ -141,7 +145,7 @@ var playState = {
       this.myHealthBar.setFixedToCamera(true);
 
       //Player weapon: hand gun
-      this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
+      this.handgun = game.add.weapon(7, 'playerBullet');    // ammo 7
       this.handgun.bulletAngleOffset = 90;
       this.handgun.bulletSpeed = 750;
       this.handgun.fireRate = 600;
@@ -163,11 +167,21 @@ var playState = {
       eBullets = game.add.group();
       eBullets.enableBody = true;
       eBullets.physicsBodyType = Phaser.Physics.ARCADE;
-      eBullets.createMultiple(100, 'bullet');
+      eBullets.createMultiple(100, 'enemyBullet');
       eBullets.setAll('anchor.x', 0.5);
       eBullets.setAll('anchor.y', 1);
       eBullets.setAll('outOfBoundsKill', true);
       eBullets.setAll('checkWorldBounds', true);
+
+      // Motor Weapon
+      mBullets = game.add.group();
+      mBullets.enableBody = true;
+      mBullets.physicsBodyType = Phaser.Physics.ARCADE;
+      mBullets.createMultiple(100, 'motorBullet');
+      mBullets.setAll('anchor.x', 0.5);
+      mBullets.setAll('anchor.y', 1);
+      mBullets.setAll('outOfBoundsKill', true);
+      mBullets.setAll('checkWorldBounds', true);
 
       // Set player score to the latest score in array
       var myJSON = localStorage.getItem("highScore");
@@ -614,7 +628,7 @@ var playState = {
                 this.speed = 250;
                 move(this);
               };
-              enemyBullet = eBullets.getFirstExists(false);
+              enemyBullet = mBullets.getFirstExists(false);
               if (enemyBullet && delayMotorShoot == 0) {
                 enemyBullet.reset(motor.body.x+5, motor.body.y+30);
                 game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
@@ -723,6 +737,16 @@ var playState = {
       }, null, this);
 
       game.physics.arcade.overlap(eBullets, this.civils, function(b,c){
+        b.kill();
+        c.kill();
+      }, null, this);
+
+      game.physics.arcade.overlap(mBullets, this.player, function(p,b){
+        b.kill();
+        p.health = p.health - 10;
+      }, null, this);
+
+      game.physics.arcade.overlap(mBullets, this.civils, function(b,c){
         b.kill();
         c.kill();
       }, null, this);

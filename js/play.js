@@ -144,7 +144,7 @@ var playState = {
       this.myHealthBar.setFixedToCamera(true);
 
       //Player weapon: hand gun
-      this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
+      this.handgun = game.add.weapon(7, 'playerBullet');    // ammo 7
       this.handgun.bulletAngleOffset = 90;
       this.handgun.bulletSpeed = 750;
       this.handgun.fireRate = 600;
@@ -166,12 +166,22 @@ var playState = {
       eBullets = game.add.group();
       eBullets.enableBody = true;
       eBullets.physicsBodyType = Phaser.Physics.ARCADE;
-      eBullets.createMultiple(100, 'bullet');
+      eBullets.createMultiple(100, 'enemyBullet');
       eBullets.setAll('anchor.x', 0.5);
       eBullets.setAll('anchor.y', 1);
       eBullets.setAll('outOfBoundsKill', true);
       eBullets.setAll('checkWorldBounds', true);
 
+
+      // Enemy's motor Weapon
+      emBullets = game.add.group();
+      emBullets.enableBody = true;
+      emBullets.physicsBodyType = Phaser.Physics.ARCADE;
+      emBullets.createMultiple(100, 'motorBullet');
+      emBullets.setAll('anchor.x', 0.5);
+      emBullets.setAll('anchor.y', 1);
+      emBullets.setAll('outOfBoundsKill', true);
+      emBullets.setAll('checkWorldBounds', true);
       // Set player score to the latest score in array
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
@@ -186,13 +196,13 @@ var playState = {
 	  // Display enemies number
 
 	  this.enemiesNum = this.curLevel[8];
-	  
+
 	  this.enemiesKilled = game.add.text(3,45, "Enemies " + this.enemiesNum, {font: "15px", fill: "#ffffff", align: "center" })
 	  //this.numOfEnemies = game.add.text(400,30, "Enemies " {font: "20px", fill: "#ffffff", align: "center" })
 	  //this.numOfEnemies =  game.add.text( 400,30, this.enemiesNum, {font: "20px", fill: "#ffffff", align: "center" })
 	  this.enemiesKilled.fixedToCamera = true;
 	  //this.numOfEnemies.fixedToCamera = true;
-	  
+
 
       // Timer for each level
       timer = game.time.create(false);
@@ -341,7 +351,7 @@ var playState = {
 
     // Anything that needs to be checked, collisions, user input etc...
     update: function () {
-	
+
       // Keyboard controls
       // if(game.input.keyboard.isDown(Phaser.Keyboard.X)) {
       //   this.player.speed = 400;
@@ -418,7 +428,7 @@ var playState = {
               // Also, that enemy only shoot if the distant is around 300 away from player
               if (((temY > b.body.y) && (temY - b.body.y < 300))
               ||  ((temY < b.body.y) && (b.body.y - temY < 300))) {
-                enemyBullet.reset(b.body.x, b.body.y);
+                enemyBullet.reset(b.body.x+9, b.body.y+70);
                 game.physics.arcade.moveToObject(enemyBullet,this.player,120);
               }
           }
@@ -571,15 +581,15 @@ var playState = {
               enemy.xDest = lanes[Math.floor(Math.random()*lanes.length)];
             }
 		      }
-          if (((cstY < enemy.y) && (cstY > enemy.y - 500))    // Before reaching construction site
+          if (((cstY < enemy.y) && (cstY > enemy.y - 1000))    // Before reaching construction site
           ||  ((cstY > enemy.y) && (cstY < enemy.y + 100))) { // After passing construction site
             if  ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
                while ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
                    enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
                }
              }
-            else if ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
-              while ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
+            else if ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 35)) {
+              while ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 35)) {
                    enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
                }
              }
@@ -624,7 +634,7 @@ var playState = {
                   this.speed = 250;
                   move(this);
                 };
-                enemyBullet = eBullets.getFirstExists(false);
+                enemyBullet = emBullets.getFirstExists(false);
                 if (enemyBullet && delayMotorShoot == 0) {
                   enemyBullet.reset(motor.body.x+5, motor.body.y+30);
                   game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
@@ -788,9 +798,9 @@ var playState = {
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         //console.log("crash! Enemy + Civil");
         //epsound.play();
-        
+
 		c.kill();
-		
+
       }, null, this);
 
         game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(e,c){
@@ -816,7 +826,7 @@ var playState = {
 		//console.log(c.body.x);
 		//this.playerNPC.animations.play('boomm');
       }, null, this);
-	
+
       game.physics.arcade.collide(this.player, this.layer, function(p, l){
         p.stop();
         //console.log("side of road");
@@ -851,7 +861,7 @@ function render() {
 function Player(x, y) {
   var player = game.add.sprite(x, y, 'characters');
   middle_layer.add(player);
-	
+
   player.frame = 0;
   player.animations.add('runningShoot', [0, 1, 2, 3], 0);
   player.speed = 280;

@@ -9,6 +9,7 @@ var newBut;
 
 titleState = {
 	create : function() {
+
 		var s = localStorage.getItem("highScore");
 		// list of scores from the player
 		var l = localStorage.getItem("level");
@@ -47,6 +48,8 @@ titleState = {
 	},
 	// Input listener for menu
 	update : function() {
+		//game.state.start('preLevel');
+
 	}
 }
 
@@ -153,7 +156,7 @@ function playAction() {
 	}
 	var vehicles = "<option selected='selected'></option><option>Vehicle1</option>	<option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option>";
 	document.getElementById("vehicle").innerHTML = vehicles;
-	
+
 	//YOU NEED TO CHANGE THIS TO MEET YOUR SPECIFICATION
 	var MAX_BULLET_SPEED =1000;
 	var enemy_slider = document.getElementById("enemy_range");
@@ -167,7 +170,7 @@ function playAction() {
 		enemy_slider_val.innerHTML = bullets_speed_enemy;
 	}
 	var player_slider = document.getElementById("player_range");
-	
+
 	document.getElementById("player_range").setAttribute("max", MAX_BULLET_SPEED);
 
 	var player_slider_val = document.getElementById("valPlayer");

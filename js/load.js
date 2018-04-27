@@ -29,7 +29,10 @@ var loadState={
     game.load.image('title-header', 'assets/buttons/title-header.png');
     game.load.image('Boss', 'assets/Boss.png');
     game.load.image('motorbike', 'assets/motorbike26x52.png');
-	game.load.image('boomm', 'assets/boomm.png' )
+	  game.load.image('boomm', 'assets/boomm.png' );
+    game.load.image('playerBullet', 'assets/bullet192.png');
+    game.load.image('enemyBullet', 'assets/bullet211.png');
+    game.load.image('motorBullet', 'assets/bullet246.png');
 
     // Maps
     game.load.tilemap('level2', 'assets/map/Level2.json', null, Phaser.Tilemap.TILED_JSON);

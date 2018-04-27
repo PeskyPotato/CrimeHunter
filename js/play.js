@@ -141,7 +141,7 @@ var playState = {
       this.myHealthBar.setFixedToCamera(true);
 
       //Player weapon: hand gun
-      this.handgun = game.add.weapon(7, 'bullet');    // ammo 7
+      this.handgun = game.add.weapon(7, 'playerBullet');    // ammo 7
       this.handgun.bulletAngleOffset = 90;
       this.handgun.bulletSpeed = 750;
       this.handgun.fireRate = 600;
@@ -163,12 +163,22 @@ var playState = {
       eBullets = game.add.group();
       eBullets.enableBody = true;
       eBullets.physicsBodyType = Phaser.Physics.ARCADE;
-      eBullets.createMultiple(100, 'bullet');
+      eBullets.createMultiple(100, 'enemyBullet');
       eBullets.setAll('anchor.x', 0.5);
       eBullets.setAll('anchor.y', 1);
       eBullets.setAll('outOfBoundsKill', true);
       eBullets.setAll('checkWorldBounds', true);
 
+
+      // Enemy's motor Weapon
+      emBullets = game.add.group();
+      emBullets.enableBody = true;
+      emBullets.physicsBodyType = Phaser.Physics.ARCADE;
+      emBullets.createMultiple(100, 'motorBullet');
+      emBullets.setAll('anchor.x', 0.5);
+      emBullets.setAll('anchor.y', 1);
+      emBullets.setAll('outOfBoundsKill', true);
+      emBullets.setAll('checkWorldBounds', true);
       // Set player score to the latest score in array
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
@@ -187,7 +197,6 @@ var playState = {
       this.player.enemyText = game.add.text(50, 77, this.player.enemyLeft, { font: "20px", fill: "#ffffff", align: "right" });
       this.player.enemyText.fixedToCamera = true;
       enemyTextLabel.fixedToCamera = true;
-
 
       // Timer for each level
       timer = game.time.create(false);
@@ -407,7 +416,7 @@ var playState = {
               // Also, that enemy only shoot if the distant is around 300 away from player
               if (((temY > b.body.y) && (temY - b.body.y < 300))
               ||  ((temY < b.body.y) && (b.body.y - temY < 300))) {
-                enemyBullet.reset(b.body.x, b.body.y);
+                enemyBullet.reset(b.body.x+9, b.body.y+70);
                 game.physics.arcade.moveToObject(enemyBullet,this.player,120);
               }
           }
@@ -561,15 +570,15 @@ var playState = {
               enemy.xDest = lanes[Math.floor(Math.random()*lanes.length)];
             }
 		      }
-          if (((cstY < enemy.y) && (cstY > enemy.y - 500))    // Before reaching construction site
+          if (((cstY < enemy.y) && (cstY > enemy.y - 1000))    // Before reaching construction site
           ||  ((cstY > enemy.y) && (cstY < enemy.y + 100))) { // After passing construction site
             if  ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
                while ((enemy.xDest <= cstX + 10) && (enemy.x >= cstX)) {
                    enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
                }
              }
-            else if ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
-              while ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 50)) {
+            else if ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 35)) {
+              while ((enemy.xDest >= cstX + 35) && (enemy.x <= cstX + 35)) {
                    enemy.xDest = (lane)[Math.floor(Math.random()*(lane).length)];
                }
              }
@@ -632,7 +641,15 @@ var playState = {
                 if (this.speed == 250) {
                   this.speed = 800;
                   move(this);
+                };
+                enemyBullet = emBullets.getFirstExists(false);
+                if (enemyBullet && delayMotorShoot == 0) {
+                  enemyBullet.reset(motor.body.x+5, motor.body.y+30);
+                  game.physics.arcade.moveToXY(enemyBullet,temX,temY-300, 200, 2000);
+                  delayMotorShoot = 200;
+
                   delayOperation = 100; // Set delay to give the motorbike enough time to move on
+
                 }
               };
           });
@@ -759,7 +776,11 @@ var playState = {
       game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
         //console.log("crash! Enemy + Civil");
         //epsound.play();
-        c.kill();
+        
+        
+        
+		c.kill();
+
 
       }, null, this);
 

@@ -635,7 +635,6 @@
                 enemyBullet = mBullets.getFirstExists(false);
                 if (enemyBullet && delayMotorShoot == 0) {
                   enemyBullet.reset(motor.body.x+5, motor.body.y+30);
-                  middle_layer.add(enemyBullets);
                   game.physics.arcade.moveToXY(enemyBullet,temX,temY-450, 200, 2000);
                   delayMotorShoot = 200;
                 }

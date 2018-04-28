@@ -58,7 +58,7 @@ var playState = {
       sound = game.add.audio('gmusic');
       sound.loop = true;
 
-      this.curLevelInt = 3; //localStorage.getItem("level");
+      this.curLevelInt = localStorage.getItem("level");
       if (this.curLevelInt == 0){
         this.curLevel = level0;
         this.curLevelInt = 0;

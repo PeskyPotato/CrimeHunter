@@ -116,7 +116,7 @@ var playState = {
       epsound = game.add.audio('boom');
       gsound = game.add.audio('gunshot');
       if (isMusicStarted == false) {
-        sound.play();
+        //sound.play();
         isMusicStarted = true;
       }
 
@@ -158,7 +158,7 @@ var playState = {
       this.ultskill = game.add.weapon(7, 'ultskill');
       this.ultskill.bulletAngleOffset = 90;
       this.ultskill.bulletSpeed = 2000;
-      this.ultskill.fireRate = 5000;
+      this.ultskill.fireRate = 4000;
       this.ultskill.trackSprite(this.player, -2, -80);
       this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
       ultskillButton = this.input.keyboard.addKey(Phaser.KeyCode.Z);
@@ -363,12 +363,12 @@ var playState = {
         this.plyrMving = true;
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-        this.player.setDest(this.player.x + 50, this.player.y);
+        this.player.setDest(this.player.x + 25, this.player.y);
         //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
         //this.plyrMving = true;
       }
       else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-        this.player.setDest(this.player.x - 50, this.player.y);
+        this.player.setDest(this.player.x - 25, this.player.y);
         //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
         //this.plyrMving = true;
       }
@@ -671,6 +671,22 @@ var playState = {
       game.physics.arcade.collide(this.player, this.con, function(p,e){
         p.health = p.health - 5;
       });
+      game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
+        c.kill();
+      	var boomm = game.add.sprite(c.x - 35, c.y - 40, 'boomm');
+        boomm.animations.add('bao');
+        boomm.animations.play('bao', 30,false);
+        middle_layer.add(boomm);
+      }, null, this);
+      game.physics.arcade.overlap(this.player, this.civils, function(p,c){
+        c.kill();
+        p.health = p.health - 0.1;
+      	var boomm = game.add.sprite(c.x - 35, c.y - 40, 'boomm');
+      	boomm.animations.add('bao');
+        boomm.animations.play('bao', 30,false);
+        middle_layer.add(boomm);
+        p.health = p.health - 0.1;
+      }, null, this);
       game.physics.arcade.collide(this.civils, this.con, function(p,e){
         e.kill();
       });
@@ -683,8 +699,6 @@ var playState = {
         h.kill();
         this.player.health = this.player.health + 50;
       }, null, this);
-
-      this.con.animations.play('running');
 
 	     //The mega bullet comes with increased bullet speed, slightly better fire rate
       game.physics.arcade.overlap(this.megabullet, this.player,  function(p,h){
@@ -704,7 +718,7 @@ var playState = {
       game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
         e.stop(this.player);
         b.kill();
-        var boomm = game.add.sprite(b.x, b.y, 'boomm');
+        var boomm = game.add.sprite(e.x - 35, e.y - 35, 'boomm');
         boomm.animations.add('bao');
         boomm.animations.play('bao', 30,false);
         this.player.score = this.player.score + 5;
@@ -712,34 +726,32 @@ var playState = {
         this.player.updateScore();
         this.player.updateEnemies();
       }, null, this);
-
-      game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
-        c.kill();
-        b.kill();
-        this.player.score = this.player.score - 5;
-        var boomm = game.add.sprite(c.x, c.y, 'boomm');
-        boomm.animations.add('bao');
-        boomm.animations.play('bao', 30,false);
-        middle_layer.add(boomm);
-        this.player.updateScore();
-      }, null, this);
-
       game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
         e.stop(this.player);
         b.kill();
-        var boomm = game.add.sprite(b.x, b.y, 'boomm');
+        var boomm = game.add.sprite(b.x - 60, b.y - 130, 'boomm');
         boomm.animations.add('bao');
         boomm.animations.play('bao', 30,false);
         this.player.score = this.player.score + 5;
         middle_layer.add(boomm);
         this.player.updateScore();
-        this.enemiesKilled.setText(this.enemiesNum)
+      }, null, this);
+      game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
+        c.kill();
+        b.kill();
+        this.player.score = this.player.score - 5;
+        var boomm = game.add.sprite(c.x - 30, c.y - 20, 'boomm');
+        boomm.animations.add('bao');
+        boomm.animations.play('bao', 30,false);
+        middle_layer.add(boomm);
+        this.player.updateScore();
       }, null, this);
 
       game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
         c.kill();
+        b.kill();
         this.player.score = this.player.score - 5;
-        var boomm = game.add.sprite(c.x, c.y, 'boomm');
+        var boomm = game.add.sprite(c.x - 30, c.y - 20, 'boomm');
         boomm.animations.add('bao');
         boomm.animations.play('bao', 30,false);
         middle_layer.add(boomm);
@@ -754,7 +766,7 @@ var playState = {
       game.physics.arcade.overlap(eBullets, this.civils, function(b,c){
         b.kill();
         c.kill();
-		    var boomm = game.add.sprite(c.x, c.y, 'boomm');
+		    var boomm = game.add.sprite(c.x - 30, c.y -25, 'boomm');
 		    boomm.animations.add('bao');
 		    boomm.animations.play('bao', 30,false);
 		    middle_layer.add(boomm);
@@ -773,7 +785,6 @@ var playState = {
       game.physics.arcade.overlap(this.civils, this.civils, function(car1,car2){
         car1.kill();
         car2.kill();
-		//middle_layer.add(boomm);
       }, null, this);
 
       game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(b,e){
@@ -783,59 +794,34 @@ var playState = {
           this.player.score = this.player.score + 100;
           this.player.updateScore();
           this.player.kills = this.player.kills+ 1;
+          //TODO: Might need to incorporate Enemies Left
           e.kill();
         }
-		    var boomm = game.add.sprite(b.x, b.y, 'boomm');
+		    var boomm = game.add.sprite(b.x-40, b.y-200, 'boomm');
 		    boomm.animations.add('bao');
 		    boomm.animations.play('bao', 30,false);
 		    middle_layer.add(boomm);
       }, null, this);
-
-
-
-        game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(b,e){
-            b.kill();
-            e.health = e.health - 50;
-            if(e.health <= 0){
-                this.player.score = this.player.score + 100;
-                this.player.updateScore();
-                this.player.kills = this.player.kills+ 1;    
-                //TODO: Might need to incorporate Enemies Left
-                e.kill();
-            }
-					  var boomm = game.add.sprite(b.x, b.y, 'boomm');
-		        boomm.animations.add('bao');
-		        boomm.animations.play('bao', 30,false);
-			      middle_layer.add(boomm);
-        }, null, this);
-
-
-      game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
-        c.kill();
-				var boomm = game.add.sprite(c.x, c.y, 'boomm');
-        boomm.animations.add('bao');
-        boomm.animations.play('bao', 30,false);
-        middle_layer.add(boomm);
-      }, null, this);
-
-      game.physics.arcade.overlap(this.player, this.civils, function(p,c){
-        c.kill();
-        p.health = p.health - 0.1;
-		    var boomm = game.add.sprite(c.x, c.y, 'boomm');
+      game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(b,e){
+        b.kill();
+        e.health = e.health - 50;
+        if(e.health <= 0){
+          this.player.score = this.player.score + 100;
+          this.player.updateScore();
+          this.player.kills = this.player.kills+ 1;
+          //TODO: Might need to incorporate Enemies Left
+          e.kill();
+        }
+				var boomm = game.add.sprite(b.x, b.y, 'boomm');
 		    boomm.animations.add('bao');
 		    boomm.animations.play('bao', 30,false);
-        middle_layer.add(boomm);
-
-        p.health = p.health - 0.1;
-
+			  middle_layer.add(boomm);
       }, null, this);
 
       game.physics.arcade.collide(this.player, this.layer, function(p, l){
         p.stop();
-        //console.log("side of road");
       });
 
-      //updateScore(this.player);
       this.myHealthBar.setPercent(this.player.health);
 
       // Checks if player is at the end of map
@@ -854,6 +840,7 @@ var playState = {
       }
       else { this.timing.setText(second); }
 
+      this.con.animations.play('running');
 
     } // update
 }; // playState

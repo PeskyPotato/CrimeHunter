@@ -21,6 +21,7 @@ var loadState={
     game.load.image('megabullet', 'assets/megabullet.png');
     game.load.spritesheet('characters', 'assets/[SPRITE].png', 32, 64);
     game.load.spritesheet('construct', 'assets/Construction70x200.png', 70, 200);
+    game.load.spritesheet('boomm', 'assets/explode.png', 128, 128);
     game.load.image('playButton', 'assets/buttons/play.png');
     game.load.image('scoreButton', 'assets/buttons/score.png');
     game.load.image('helpButton', 'assets/buttons/help.png');

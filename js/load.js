@@ -12,7 +12,9 @@ var loadState={
 
     game.stage.backgroundColor = '#000000';
 
-    game.load.image('bullet', 'assets/bullet.png');
+    game.load.image('playerBullet', 'assets/bullet192.png');
+    game.load.image('enemyBullet', 'assets/bullet211.png');
+    game.load.image('motorBullet', 'assets/bullet246.png');
     game.load.image('ultskill', 'assets/ultskill.png');
     game.load.image('addhealth', 'assets/health.png');
     game.load.image('megahealth', 'assets/megahealth.png');

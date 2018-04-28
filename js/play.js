@@ -160,7 +160,7 @@
         middle_layer.add(this.ultskill.bullets);
         this.ultskill.bulletAngleOffset = 90;
         this.ultskill.bulletSpeed = 2000;
-        this.ultskill.fireRate = 4000;
+        this.ultskill.fireRate = 5000;
         this.ultskill.trackSprite(this.player, -2, -80);
         this.ultskill.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
         ultskillButton = this.input.keyboard.addKey(Phaser.KeyCode.Z);
@@ -827,7 +827,7 @@
             //TODO: Might need to incorporate Enemies Left
             e.kill();
 
-            var boomm = game.add.sprite(b.x, b.y, 'boomm');
+            var boomm = game.add.sprite(b.x-30, b.y-200, 'boomm');
             boomm.animations.add('bao');
             boomm.animations.play('bao', 30,false);
             middle_layer.add(boomm);

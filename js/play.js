@@ -2,8 +2,6 @@
   var k = 0; // k and m: Use counting instead of timing where the larger makes it rarely move
   var m = 0;
   var sound;  // Game music
-  var epsound; // Explosion sound
-  var gsound; // Shotgun sound
   var eBullets; // Enemies' Bullets
   var remainingEnemies = [] ; // Remaining Enemies
   var attackTiming = 0; // Time when enemies attack the player
@@ -17,12 +15,16 @@
   var timer;
   var second;
   var beep = 0;
+  var eps;
+  var eps0;
 
   // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY, enemyMove
   var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30, [300, 2150], 15];
   var level1 = [300, 3600, 3350, 110, 180, 275, 335, 200, 2, 3350, 'level1', 'Tile Layer 1', [2, 3], 480, 3680, 25, [300, 1000], 15];
   var level2 = [300, 5050, 4800, 110, 180, 275, 335, 300, 3, 4800, 'level2', 'Tile Layer 1', [25], 480, 5120, 20, [100, 800], 25];
   var level3 = [300, 6950, 6700, 110, 180, 275, 335, 300, 4, 6700, 'level3', 'Tile Layer 1', [46], 480, 7040, 15, [110, 4000], 30];
+  var level4 = [300, 15910, 15660, 110, 180, 275, 335, 300, 8, 15660, 'level4', 'Tile Layer 1', [46, 3, 2, 21], 480, 16000, 15, [110, 4000], 50];
+
 
   var lane = [];
 
@@ -73,7 +75,11 @@
 
         } else if (this.curLevelInt == 3) {
            this.curLevel = level3;
-           this.curLevelInt= 3;
+           this.curLevelInt = 3;
+
+        } else if (this.curLevelInt == 4) {
+          this.curLevel = level4;
+          this.curLevelInt = 4;
         }
 
         // World variables
@@ -113,7 +119,9 @@
         game.world.setBounds(0, 0, boundsX, boundsY);
 
         // Sound
-        epsound = game.add.audio('boom');
+        eps = game.add.audio('boom0');
+        eps0 = game.add.audio('boom1');
+        this.powerupSound = game.add.audio('powerupsound');
         gsound = game.add.audio('gunshot');
         if (isMusicStarted == false) {
           sound.play();
@@ -666,23 +674,29 @@
         });
 
         // Collisions
+
         game.physics.arcade.collide(this.player, this.enemies, function(p,e){
+          eps.play();
           p.health = p.health - 5;
         });
         game.physics.arcade.collide(this.player, this.Boss, function(p,e){
+          eps.play();
           p.health = p.health - 5;
         });
         game.physics.arcade.collide(this.player, this.con, function(p,e){
+          eps.play();
           p.health = p.health - 5;
         });
         game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
           c.kill();
+          eps.play();
         	var boomm = game.add.sprite(c.x - 35, c.y - 40, 'boomm');
           boomm.animations.add('bao');
           boomm.animations.play('bao', 30,false);
           middle_layer.add(boomm);
         }, null, this);
         game.physics.arcade.overlap(this.player, this.civils, function(p,c){
+          eps.play();
           c.kill();
           p.health = p.health - 0.1;
           this.player.score -= 5;
@@ -697,17 +711,20 @@
           e.kill();
         });
         game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
+          this.powerupSound.play();
           h.kill();
           this.player.health = this.player.health + 25;
         }, null, this);
 
         game.physics.arcade.overlap(this.megahealth, this.player,  function(p,h){
+          this.powerupSound.play();
           h.kill();
           this.player.health = this.player.health + 50;
         }, null, this);
 
   	     //The mega bullet comes with increased bullet speed, slightly better fire rate
         game.physics.arcade.overlap(this.megabullet, this.player,  function(p,h){
+          this.powerupSound.play();
           h.kill();
           this.handgun = game.add.weapon(7, 'megabullet');
           this.handgun.bulletSpeed = 1000;
@@ -723,6 +740,7 @@
 
         game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
           e.stop(this.player);
+          eps0.play();
           b.kill();
           var boomm = game.add.sprite(e.x - 35, e.y - 35, 'boomm');
           boomm.animations.add('bao');
@@ -734,6 +752,7 @@
         }, null, this);
         game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
           e.stop(this.player);
+          eps0.play();
           b.kill();
           var boomm = game.add.sprite(b.x - 60, b.y - 130, 'boomm');
           boomm.animations.add('bao');
@@ -743,6 +762,7 @@
           this.player.updateScore();
         }, null, this);
         game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
+          eps.play();
           c.kill();
           b.kill();
           this.player.score = this.player.score - 5;
@@ -754,6 +774,7 @@
         }, null, this);
 
         game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
+          eps.play();
           c.kill();
           b.kill();
           this.player.score = this.player.score - 5;
@@ -765,11 +786,13 @@
         }, null, this);
 
         game.physics.arcade.overlap(eBullets, this.player, function(p,b){
+          eps.play();
           b.kill();
           p.health = p.health - 10;
         }, null, this);
 
         game.physics.arcade.overlap(eBullets, this.civils, function(b,c){
+          eps.play();
           b.kill();
           c.kill();
   		    var boomm = game.add.sprite(c.x - 30, c.y -25, 'boomm');
@@ -779,11 +802,13 @@
         }, null, this);
 
         game.physics.arcade.overlap(mBullets, this.player, function(p,b){
+          eps.play();
           b.kill();
           p.health = p.health - 10;
         }, null, this);
 
         game.physics.arcade.overlap(mBullets, this.civils, function(b,c){
+          eps.play();
           b.kill();
           c.kill();
           var boomm = game.add.sprite(c.x - 30, c.y -25, 'boomm');
@@ -792,6 +817,7 @@
         }, null, this);
 
         game.physics.arcade.overlap(this.civils, this.civils, function(car1,car2){
+          eps.play();
           car1.kill();
           car2.kill();
           var boomm = game.add.sprite(car1.x - 30, car1.y -25, 'boomm');
@@ -803,6 +829,7 @@
           b.kill();
           e.health = e.health - 20;
           if(e.health <= 0){
+            eps0.play();
             this.player.score = this.player.score + 100;
             this.player.updateScore();
             this.player.kills = this.player.kills+ 1;
@@ -820,6 +847,7 @@
           b.kill();
           e.health = e.health - 50;
           if(e.health <= 0){
+            eps0.play();
             this.player.score = this.player.score + 100;
             this.player.updateScore();
             this.player.kills = this.player.kills+ 1;
@@ -1003,7 +1031,7 @@
     var level = 0;
     console.log(player.kills);
     console.log(noOfKills);
-    if (player.kills === (noOfKills + 1) && curLevelInt <= 4) {       // add 1 for Boss
+    if (player.kills === (noOfKills + 1) && curLevelInt <= 5) {       // add 1 for Boss
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
       p.shift();
@@ -1012,7 +1040,7 @@
       level = curLevelInt + 1;
       localStorage.setItem("level", parseInt(level));
       condition = 1; // Player won, level up
-    } else if (level > 3) {
+    } else if (level > 4) {
       condition = 0; // Player won game, finished all levels
       localStorage.setItem("level", 0);
     } else {

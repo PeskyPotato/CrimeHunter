@@ -32,19 +32,21 @@ var loadState={
     game.load.image('title-header', 'assets/buttons/title-header.png');
     game.load.image('Boss', 'assets/Boss.png');
     game.load.image('motorbike', 'assets/motorbike26x52.png');
-	game.load.image('boomm', 'assets/boomm.png' )
 
     // Maps
     game.load.tilemap('level2', 'assets/map/Level2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level0', 'assets/map/Level0.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level1', 'assets/map/Level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level3', 'assets/map/Level3.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level4', 'assets/map/Level4.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tile_master', 'assets/map/Tileset_Master.png');
 
 
     // Music
-    game.load.audio('gmusic', 'assets/Title Song v1.0.mp3');
-    game.load.audio('boom', 'assets/explode1.wav');
+    game.load.audio('gmusic', 'assets/sound/Firefox_Tip_ChineseDream.mp3');
+    game.load.audio('boom0', 'assets/sound/sfx_exp_shortest_soft2.wav');
+    game.load.audio('boom1', 'assets/sound/sfx_exp_shortest_hard6.wav');
+    game.load.audio('powerupsound', 'assets/sound/sfx_coin_double3.wav');
     game.load.audio('gunshot', 'assets/shotgun.wav');
   },
   // Called after preload

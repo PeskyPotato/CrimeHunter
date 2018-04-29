@@ -28,7 +28,7 @@ titleState = {
 
 		if (!l) {
 			localStorage.setItem("level", 0);
-		} else if (l > 3) {// Change for more levels
+		} else if (l > 4) {										// Change for more levels
 			localStorage.setItem("level", 0);
 		}
 

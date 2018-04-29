@@ -15,9 +15,11 @@ var preLevelState = {
       enemies = 3;
     } else if (l === "3") {
       enemies = 4;
+    } else if (l === "4") {
+      enemies = 8;
     }
 
-    if ( l <= 3) {  // Checks for condition 0
+    if ( l <= 4) {  // Checks for condition 0
       if (condition == 2) {         // Player had died, restart level
         levelText = game.add.text(game.world.centerX, 110, "Level " + l, { font: "50px", fill: "#ffffff", align: "centre" });
         levelText1 = game.add.text(game.world.centerX, 180, "Kill " + enemies + " enemies and Boss", { font: "30px", fill: "#ffffff", align: "centre" });

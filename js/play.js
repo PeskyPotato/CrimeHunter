@@ -15,6 +15,8 @@
   var timer;
   var second;
   var beep = 0;
+  var eps;
+  var eps0;
 
   // levels: playerX, playerY, civY, lane1, lane2, lane3, lane4, civNumber, enemyNumber, enemyY, levelName, layerName, collision, boundsX, boundsY, enemyMove
   var level0 = [300, 3150, 2900, 110, 180, 275, 335, 100, 1, 2900, 'level0', 'Tile Layer 1', [42, 43], 480, 3200, 30, [300, 2150], 15];
@@ -117,8 +119,8 @@
         game.world.setBounds(0, 0, boundsX, boundsY);
 
         // Sound
-        this.epsound = game.add.audio('boom0');
-        this.epsound0 = game.add.audio('boom1');
+        eps = game.add.audio('boom0');
+        eps0 = game.add.audio('boom1');
         this.powerupSound = game.add.audio('powerupsound');
         gsound = game.add.audio('gunshot');
         if (isMusicStarted == false) {
@@ -672,28 +674,29 @@
         });
 
         // Collisions
+
         game.physics.arcade.collide(this.player, this.enemies, function(p,e){
-          this.epsound.play();
+          eps.play();
           p.health = p.health - 5;
         });
         game.physics.arcade.collide(this.player, this.Boss, function(p,e){
-          this.epsound.play();
+          eps.play();
           p.health = p.health - 5;
         });
         game.physics.arcade.collide(this.player, this.con, function(p,e){
-          this.epsound.play();
+          eps.play();
           p.health = p.health - 5;
         });
         game.physics.arcade.overlap(this.enemies, this.civils, function(e,c){
           c.kill();
-          this.epsound.play();
+          eps.play();
         	var boomm = game.add.sprite(c.x - 35, c.y - 40, 'boomm');
           boomm.animations.add('bao');
           boomm.animations.play('bao', 30,false);
           middle_layer.add(boomm);
         }, null, this);
         game.physics.arcade.overlap(this.player, this.civils, function(p,c){
-          this.epsound.play();
+          eps.play();
           c.kill();
           p.health = p.health - 0.1;
           this.player.score -= 5;
@@ -737,7 +740,7 @@
 
         game.physics.arcade.overlap(this.handgun.bullets, this.enemies, function(b,e){
           e.stop(this.player);
-          this.epsound0.play();
+          eps0.play();
           b.kill();
           var boomm = game.add.sprite(e.x - 35, e.y - 35, 'boomm');
           boomm.animations.add('bao');
@@ -749,7 +752,7 @@
         }, null, this);
         game.physics.arcade.overlap(this.ultskill.bullets, this.enemies, function(b,e){
           e.stop(this.player);
-          this.epsound0.play();
+          eps0.play();
           b.kill();
           var boomm = game.add.sprite(b.x - 60, b.y - 130, 'boomm');
           boomm.animations.add('bao');
@@ -759,7 +762,7 @@
           this.player.updateScore();
         }, null, this);
         game.physics.arcade.overlap(this.handgun.bullets, this.civils, function(b,c){
-          this.epsound.play();
+          eps.play();
           c.kill();
           b.kill();
           this.player.score = this.player.score - 5;
@@ -771,7 +774,7 @@
         }, null, this);
 
         game.physics.arcade.overlap(this.ultskill.bullets, this.civils, function(b,c){
-          this.epsound.play();
+          eps.play();
           c.kill();
           b.kill();
           this.player.score = this.player.score - 5;
@@ -783,13 +786,13 @@
         }, null, this);
 
         game.physics.arcade.overlap(eBullets, this.player, function(p,b){
-          this.epsound.play();
+          eps.play();
           b.kill();
           p.health = p.health - 10;
         }, null, this);
 
         game.physics.arcade.overlap(eBullets, this.civils, function(b,c){
-          this.epsound.play();
+          eps.play();
           b.kill();
           c.kill();
   		    var boomm = game.add.sprite(c.x - 30, c.y -25, 'boomm');
@@ -799,13 +802,13 @@
         }, null, this);
 
         game.physics.arcade.overlap(mBullets, this.player, function(p,b){
-          this.epsound.play();
+          eps.play();
           b.kill();
           p.health = p.health - 10;
         }, null, this);
 
         game.physics.arcade.overlap(mBullets, this.civils, function(b,c){
-          this.epsound.play();
+          eps.play();
           b.kill();
           c.kill();
           var boomm = game.add.sprite(c.x - 30, c.y -25, 'boomm');
@@ -814,7 +817,7 @@
         }, null, this);
 
         game.physics.arcade.overlap(this.civils, this.civils, function(car1,car2){
-          this.epsound.play();
+          eps.play();
           car1.kill();
           car2.kill();
           var boomm = game.add.sprite(car1.x - 30, car1.y -25, 'boomm');
@@ -826,7 +829,7 @@
           b.kill();
           e.health = e.health - 20;
           if(e.health <= 0){
-            this.epsound0.play();
+            eps0.play();
             this.player.score = this.player.score + 100;
             this.player.updateScore();
             this.player.kills = this.player.kills+ 1;
@@ -844,7 +847,7 @@
           b.kill();
           e.health = e.health - 50;
           if(e.health <= 0){
-            this.epsound0.play();
+            eps0.play();
             this.player.score = this.player.score + 100;
             this.player.updateScore();
             this.player.kills = this.player.kills+ 1;

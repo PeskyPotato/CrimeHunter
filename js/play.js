@@ -1,4 +1,3 @@
-
   var k = 0; // k and m: Use counting instead of timing where the larger makes it rarely move
   var m = 0;
   var sound;  // Game music
@@ -148,9 +147,15 @@
         game.camera.y = game.world.centerY;
         game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
+        // Create Health Bar
         this.myHealthBar = new HealthBar(this.game, {x: 45, y: 20, height: 10, width: 80});
         this.myHealthBar.setBarColor('#ff1c1c');
         this.myHealthBar.setFixedToCamera(true);
+
+        // Create Speedometer
+        this.speedometer = new HealthBar(this.game, {x: 45, y: 160, height: 10, width: 80, flipped: true,
+                          bg: {color: '#08FF03'}, bar: { color: '#651828'},});
+        this.speedometer.setFixedToCamera(true);
 
         //Player weapon: hand gun
         this.handgun = game.add.weapon(7, 'playerBullet');    // ammo 7
@@ -214,6 +219,9 @@
         this.player.enemyText.fixedToCamera = true;
         enemyTextLabel.fixedToCamera = true;
 
+        // Display speed
+        var enemyTextLabel = game.add.text(3, 130, "Speed", {font: "15px", fill: "#ffffff", align: "center"});
+        enemyTextLabel.fixedToCamera = true;
 
         // Timer for each level
         timer = game.time.create(false);
@@ -376,12 +384,12 @@
         }
         else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
           this.player.setDest(this.player.x + 25, this.player.y);
-          //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+          setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
           //this.plyrMving = true;
         }
         else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
           this.player.setDest(this.player.x - 25, this.player.y);
-          //setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
+          setSpeed(this.player, game.input.keyboard.isDown(Phaser.Keyboard.X));
           //this.plyrMving = true;
         }
         else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)){
@@ -400,10 +408,15 @@
           this.plyrMvingCount = this.plyrMvingCount + 1;
           if (this.player.speed <= 0){
             this.player.setDest(this.player.x, this.player.y);
-            this.player.speed = 280;
+            this.player.speed = 0;
             this.plyrMving = false;
           }
         }
+        else {
+          this.player.speed = 0;
+        }
+
+        this.speedometer.setPercent(100 - this.player.speed*0.25);
 
         if (fireButton.isDown){
           this.handgun.fire();
@@ -868,6 +881,7 @@
 
         this.myHealthBar.setPercent(this.player.health);
 
+
         // Checks if player is at the end of map
         if (this.player.y < 100){
           nextLevel(this.player, this.curLevel[8], this.curLevelInt);
@@ -901,7 +915,7 @@
 
     player.frame = 0;
     player.animations.add('runningShoot', [0, 1, 2, 3], 4);
-    player.speed = 280;
+    player.speed = 0;
     player.xDest = x;
     player.yDest = y;
     player.anchor.setTo(.5, 1);

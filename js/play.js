@@ -721,7 +721,11 @@
           p.health = p.health - 0.1;
         }, null, this);
         game.physics.arcade.collide(this.civils, this.con, function(p,e){
+          eps.play();
           e.kill();
+          var boomm = game.add.sprite(e.x - 30, e.y -25, 'boomm');
+          boomm.animations.add('bao');
+          boomm.animations.play('bao', 30,false);
         });
         game.physics.arcade.overlap(this.healthbag, this.player,  function(p,h){
           this.powerupSound.play();

@@ -30,7 +30,6 @@ var loadState={
     game.load.image('pothole', 'assets/Pothole32.png')
     game.load.image('newButton','assets/buttons/new-game.png');
     game.load.image('title-header', 'assets/buttons/title-header.png');
-//    game.load.image('Boss', 'assets/Boss.png');
     game.load.image('motorbike', 'assets/motorbike26x52.png');
 
     // Maps
@@ -47,7 +46,6 @@ var loadState={
     game.load.audio('boom0', 'assets/sound/sfx_exp_shortest_soft2.wav');
     game.load.audio('boom1', 'assets/sound/sfx_exp_shortest_hard6.wav');
     game.load.audio('powerupsound', 'assets/sound/sfx_coin_double3.wav');
-    game.load.audio('gunshot', 'assets/shotgun.wav');
   },
   // Called after preload
   create: function() {

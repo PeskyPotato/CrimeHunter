@@ -138,49 +138,8 @@ function scoreAction() {
 }
 
 function playAction() {
-	var modal = document.getElementById('myModal');
+	game.state.start('preLevel');
 
-	var close_modal = document.getElementsByClassName("close")[0];
-
-	modal.style.display = "block";
-	close_modal.onclick = function() {
-		modal.style.display = "none";
-		game.state.start('preLevel');
-
-	}
-	// when anyhwere else in the window is clicked
-	window.onclick = function(event) {
-		if (event.target == modal) {
-			modal.style.display = "none";
-		}
-	}
-	var vehicles = "<option selected='selected'></option><option>Vehicle1</option>	<option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option><option>Vehicle2</option>";
-	document.getElementById("vehicle").innerHTML = vehicles;
-
-	//YOU NEED TO CHANGE THIS TO MEET YOUR SPECIFICATION
-	var MAX_BULLET_SPEED =1000;
-	var enemy_slider = document.getElementById("enemy_range");
-	document.getElementById("enemy_range").setAttribute("max", MAX_BULLET_SPEED);
-	var enemy_slider_val = document.getElementById("valEnemy");
-	enemy_slider_val.innerHTML = enemy_slider.value;
-
-	enemy_slider.oninput = function() {
-		//enemy's bullet speed. YOU MIGHT WANT TO MODIFY THIS TO MAKE IT GLOBALLY ACCESSIBLE
-		var bullets_speed_enemy = this.value;
-		enemy_slider_val.innerHTML = bullets_speed_enemy;
-	}
-	var player_slider = document.getElementById("player_range");
-
-	document.getElementById("player_range").setAttribute("max", MAX_BULLET_SPEED);
-
-	var player_slider_val = document.getElementById("valPlayer");
-	player_slider_val.innerHTML = player_slider.value;
-
-	player_slider.oninput = function() {
-		//player's bullet speed. YOU MIGHT WANT TO MODIFY THIS TO GLOBALLY ACCESSIBLE
-		var bullets_speed_player = this.value;
-		player_slider_val.innerHTML = bullets_speed_player;
-	}
 }
 
 function myFunction() {

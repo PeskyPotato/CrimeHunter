@@ -291,7 +291,8 @@
           this.trap.create(hXaxis, hYaxis, 'pothole');
           hYaxis -= poleGap ;
         }
-
+        var lanes = [lane1, lane2, lane3, lane4];
+          /*
           //Boss
           this.Boss = game.add.group();
           middle_layer.add(this.Boss);
@@ -299,15 +300,16 @@
           this.Boss.physicsBodyType = Phaser.Physics.ARCADE;
 
         //  this.Boss.health = 100;
-
-          var y = enemyY - 20;
+          */
+      //    var y = enemyY - 20;
 
          // var numberOfRandomCars = enemyNumber;
-          var lanes = [lane1, lane2, lane3, lane4];
 
-              var x = lanes[Math.floor(Math.random()*lanes.length)];
-              this.Boss.add(boss(x,y));
-              y -=150;
+
+          /*
+          var x = lanes[Math.floor(Math.random()*lanes.length)];
+          this.Boss.add(boss(x,y));
+          y -=150;
 
 
           this.Boss.forEach(function(enemy, index){
@@ -315,6 +317,7 @@
               enemy.body.immovable = true;
           });
           this.Boss.enableBody = true;
+          */
 
         // Enemy
         this.enemies = game.add.group();
@@ -692,10 +695,11 @@
           eps.play();
           p.health = p.health - 5;
         });
-        game.physics.arcade.collide(this.player, this.Boss, function(p,e){
+  /*      game.physics.arcade.collide(this.player, this.Boss, function(p,e){
           eps.play();
           p.health = p.health - 5;
         });
+  */
         game.physics.arcade.collide(this.player, this.con, function(p,e){
           eps.play();
           p.health = p.health - 5;
@@ -842,7 +846,7 @@
           boomm.animations.play('bao', 30,false);
         }, null, this);
 
-        game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(b,e){
+/*        game.physics.arcade.overlap(this.handgun.bullets, this.Boss, function(b,e){
           b.kill();
           e.health = e.health - 20;
           if(e.health <= 0){
@@ -860,6 +864,7 @@
           }
 
         }, null, this);
+
         game.physics.arcade.overlap(this.ultskill.bullets, this.Boss, function(b,e){
           b.kill();
           e.health = e.health - 50;
@@ -878,7 +883,7 @@
           }
 
         }, null, this);
-
+*/
         game.physics.arcade.collide(this.player, this.layer, function(p, l){
           p.stop();
         });
@@ -1004,6 +1009,7 @@
   	return enemy;
   }
 
+/*
   //boss
   function boss(x, y){
       var boss = game.add.sprite(x, y, 'Boss');
@@ -1027,6 +1033,7 @@
 
       return boss;
   }
+*/
 
   function move(b){
     if (Math.floor(b.x / 10) == Math.floor(b.xDest / 10)) {
@@ -1049,7 +1056,7 @@
     var level = 0;
     console.log(player.kills);
     console.log(noOfKills);
-    if (player.kills === (noOfKills + 1) && curLevelInt <= 5) {       // add 1 for Boss
+    if (player.kills === (noOfKills ) && curLevelInt <= 5) {
       var myJSON = localStorage.getItem("highScore");
       var p = JSON.parse(myJSON);
       p.shift();

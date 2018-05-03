@@ -1,12 +1,15 @@
 # CodeFarmer
 [![Join the chat at https://gitter.im/_CodeFarmer/Lobby](https://badges.gitter.im/_CodeFarmer/Lobby.svg)](https://gitter.im/_CodeFarmer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Beta Release
-[YouTube Demo](https://www.youtube.com/watch?v=MVxeNLh7GZM)
+## Official Release
+[YouTube Demo](https://www.youtube.com/watch?v=tRWf4YDuM1I&feature=youtu.be)
 
 The game is live on [crime-hunter.herokuapp.com](http://crime-hunter.herokuapp.com/).
 
-Beta testing information such as use and test cases is available in the [wiki](https://github.com/LameLemon/CrimeHunter/wiki/Beta-Testing). The Prototype and Alpha release information can be found under [Releases](https://github.com/LameLemon/CrimeHunter/releases).
+All in game sound effects - Subspace Audio on OpenGameArts.org
+Background music - Firefox and Tip - Chinese Dream
+
+The prototype, alpha and beta release information can be found under [Releases](https://github.com/LameLemon/CrimeHunter/releases).
 
 ## Project Description
 
